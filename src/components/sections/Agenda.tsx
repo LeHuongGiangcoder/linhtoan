@@ -1,15 +1,18 @@
 import { Decor } from "@/components/Decor";
+import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
 import { AGENDA } from "@/lib/content";
 
 export function Agenda() {
   return (
-    <section id="agenda" className="section section--tall relative">
+    <section id="agenda" className="section relative">
       {/* Đài phun nước & ly champagne làm nền hai bên */}
       <Decor id="16" width="46%" top="4%" left="-16%" />
       <Decor id="14" width="38%" bottom="6%" right="-13%" />
 
       <div className="section-inner">
+        <Divider />
+
         <Reveal className="section-head">
           <p className="eyebrow">Chương trình</p>
           <h2 className="display-2">Agenda</h2>
@@ -49,7 +52,7 @@ export function Agenda() {
         </ol>
 
         {/* Xe hoa khép lại phần agenda */}
-        <Reveal delay={4} className="mt-12">
+        <Reveal delay={4} className="mt-10">
           <Decor
             id="18"
             width="72%"

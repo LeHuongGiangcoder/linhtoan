@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { Decor } from "@/components/Decor";
+import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
 
 type Attending = "yes" | "no";
@@ -21,11 +22,13 @@ export function Rsvp() {
   }
 
   return (
-    <section id="rsvp" className="section section--tall relative">
+    <section id="rsvp" className="section relative">
       <Decor id="17" width="56%" top="0%" left="-20%" rotate={-6} />
       <Decor id="20" width="34%" bottom="4%" right="-12%" />
 
       <div className="section-inner">
+        <Divider />
+
         <Reveal className="section-head">
           <p className="eyebrow">Xác nhận tham dự</p>
           <h2 className="display-2">R.S.V.P</h2>
@@ -38,13 +41,15 @@ export function Rsvp() {
               Cảm ơn bạn đã dành thời gian phản hồi. Chúng mình mong sớm được
               gặp bạn trong ngày trọng đại.
             </p>
-            <button
-              type="button"
-              className="btn btn--ghost btn--sm"
-              onClick={() => setSent(false)}
-            >
-              Gửi phản hồi khác
-            </button>
+            <div className="btn-row">
+              <button
+                type="button"
+                className="btn btn--ghost btn--sm"
+                onClick={() => setSent(false)}
+              >
+                Gửi phản hồi khác
+              </button>
+            </div>
           </Reveal>
         ) : (
           <Reveal delay={1}>
@@ -115,13 +120,15 @@ export function Rsvp() {
 
               <input type="hidden" name="attending" value={attending} />
 
-              <button
-                type="submit"
-                className="btn btn--primary btn--block"
-                disabled={sending}
-              >
-                {sending ? "Đang gửi…" : "Gửi xác nhận"}
-              </button>
+              <div className="btn-row pt-2">
+                <button
+                  type="submit"
+                  className="btn btn--primary"
+                  disabled={sending}
+                >
+                  {sending ? "Đang gửi…" : "Gửi xác nhận"}
+                </button>
+              </div>
             </form>
           </Reveal>
         )}

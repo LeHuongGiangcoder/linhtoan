@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Decor } from "@/components/Decor";
+import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
 import { LAYERS } from "@/lib/layers";
 import { COUPLE, VENUE } from "@/lib/content";
@@ -13,9 +14,11 @@ export function TimeVenue() {
   return (
     <section id="time-venue" className="section relative">
       <div className="section-inner">
+        <Divider />
+
         <Reveal className="section-head">
           <p className="eyebrow">Save the moment</p>
-          <h2 className="display-2">Thời gian & Địa điểm</h2>
+          <h2 className="display-2">Thông tin</h2>
         </Reveal>
 
         <Reveal delay={1}>
@@ -78,7 +81,7 @@ export function TimeVenue() {
           </div>
         </Reveal>
 
-        <Reveal delay={2} className="mt-8 flex justify-center">
+        <Reveal delay={2} className="btn-row mt-8">
           <a
             className="btn btn--outline"
             href={VENUE.mapUrl}

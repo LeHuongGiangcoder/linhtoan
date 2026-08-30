@@ -1,10 +1,11 @@
 import { Decor } from "@/components/Decor";
+import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
 import { DRESSCODE } from "@/lib/content";
 
 export function Dresscode() {
   return (
-    <section id="dresscode" className="section section--tall relative">
+    <section id="dresscode" className="section relative">
       {/* Hoa pastel: hồng đào, vàng bơ, cúc trắng */}
       <Decor id="21" width="52%" top="2%" right="-14%" />
       <Decor id="23" width="22%" top="26%" left="-6%" rotate={12} />
@@ -12,6 +13,8 @@ export function Dresscode() {
       <Decor id="24" width="30%" bottom="2%" right="-8%" flip />
 
       <div className="section-inner">
+        <Divider />
+
         <Reveal className="section-head">
           <p className="eyebrow">Cùng nhau đồng điệu</p>
           <h2 className="display-2">Dresscode</h2>
@@ -22,15 +25,12 @@ export function Dresscode() {
         </Reveal>
 
         <Reveal delay={2} className="mt-9">
-          <ul className="m-0 grid grid-cols-3 gap-x-4 gap-y-6 p-0 list-none">
+          <ul className="swatch-grid">
             {DRESSCODE.palette.map((c) => (
-              <li key={c.name} className="flex flex-col items-center gap-2.5">
+              <li key={c.name} className="swatch">
                 <span
-                  className="block h-14 w-14 rounded-full border border-[var(--color-line)]"
-                  style={{
-                    backgroundColor: c.hex,
-                    boxShadow: "var(--shadow-lift)",
-                  }}
+                  className="swatch-dot"
+                  style={{ backgroundColor: c.hex }}
                 />
                 <span className="label !text-[0.625rem]">{c.name}</span>
               </li>
