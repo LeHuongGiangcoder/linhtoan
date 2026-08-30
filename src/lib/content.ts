@@ -22,19 +22,16 @@ export const VENUE = {
 export const AGENDA = [
   {
     time: "10:30",
-    end: "11:30",
     title: "Welcome Guest",
     desc: "Chụp ảnh check-in photobooth sảnh ballroom cùng khách mời",
   },
   {
     time: "11:30",
-    end: "11:45",
     title: "Ceremony",
     desc: "Cắt bánh, rót rượu — nghi thức làm lễ",
   },
   {
     time: "11:45",
-    end: "12:30",
     title: "Khai tiệc",
     desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
   },

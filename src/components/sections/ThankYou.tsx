@@ -18,12 +18,12 @@ export function ThankYou() {
           />
         </Reveal>
 
-        <Reveal delay={1} className="mt-4 flex flex-col items-center gap-2">
+        <Reveal delay={1} className="section-head mt-5">
           <p className="eyebrow">Thank you</p>
           <h2 className="display-2">Cảm ơn bạn</h2>
         </Reveal>
 
-        <Reveal delay={2} className="mt-5">
+        <Reveal delay={2}>
           <p className="body-text center text-balance">
             Sự hiện diện của bạn là món quà ý nghĩa nhất với chúng mình. Cảm ơn
             vì đã đồng hành và chúc phúc cho chặng đường phía trước.

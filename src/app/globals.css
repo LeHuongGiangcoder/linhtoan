@@ -32,7 +32,7 @@
   --font-body: var(--font-body), Georgia, serif;
 
   /* Nhịp dọc của section */
-  --spacing-section: 4.5rem;
+  --spacing-section: 3rem;
   --spacing-section-lg: 7rem;
   --spacing-gutter: 1.5rem;
 
@@ -50,7 +50,7 @@
   --content-max: 26rem; /* 416px — khung nội dung mobile-first */
   --stack: 1.25rem; /* khoảng cách mặc định giữa các khối trong section */
   --heading-gap: 0.75rem; /* eyebrow -> heading */
-  --heading-lead: 1.75rem; /* heading -> body */
+  --heading-lead: 2.25rem; /* heading -> nội dung, dùng chung mọi section */
 }
 
 @media (min-width: 768px) {
@@ -131,7 +131,7 @@
 
   /* Section nhiều nội dung — thu padding để vẫn gói trong 1 viewport */
   .section--dense {
-    padding-block: 2.5rem;
+    padding-block: 2rem;
   }
 
   /* Section không cần chiếm hết viewport (dải phân cách, phần phụ) */
@@ -172,7 +172,9 @@
     align-items: center;
     text-align: center;
     gap: var(--heading-gap);
-    margin-bottom: var(--heading-lead);
+    /* padding thay margin: không bị margin collapse với phần tử kế tiếp,
+       nên khoảng cách này luôn bằng nhau ở mọi section. */
+    padding-bottom: var(--heading-lead);
   }
 
   /* ─────────── 4. TYPOGRAPHY ─────────── */

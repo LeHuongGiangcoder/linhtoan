@@ -17,7 +17,7 @@ export function Agenda() {
         </Reveal>
 
         {/* Timeline canh giữa, các mốc nối nhau bằng dấu ✛ như phần tên couple */}
-        <ol className="m-0 mt-2 list-none p-0 text-center">
+        <ol className="m-0 list-none p-0 text-center">
           {AGENDA.map((item, i) => (
             <Fragment key={item.title}>
               {i > 0 && (
@@ -33,9 +33,7 @@ export function Agenda() {
                 delay={Math.min(i + 1, 5) as 1 | 2 | 3 | 4 | 5}
                 className="flex flex-col items-center"
               >
-                <p className="date-text--xs">
-                  {item.time} <span className="opacity-40">—</span> {item.end}
-                </p>
+                <p className="date-text--xs">{item.time}</p>
                 <h3 className="display-3 mt-3 !text-[1.5rem]">{item.title}</h3>
                 <p className="body-text body-text--sm mt-2.5 max-w-[19rem] text-balance">
                   {item.desc}

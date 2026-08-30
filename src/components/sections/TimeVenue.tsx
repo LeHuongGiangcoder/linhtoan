@@ -22,7 +22,7 @@ export function TimeVenue() {
         </Reveal>
 
         <Reveal delay={1}>
-          <div className="relative mx-auto w-full max-w-[24rem] pt-[14%] pb-[16%]">
+          <div className="relative mx-auto w-full max-w-[24rem] pt-[7%] pb-[16%]">
             {/* Phong bì */}
             <Decor id="12" width="98%" left="1%" top="10%" />
             {/* Ruy băng vắt qua chân phong bì */}
