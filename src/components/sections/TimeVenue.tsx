@@ -24,11 +24,13 @@ export function TimeVenue() {
         <Reveal delay={1}>
           <div className="relative mx-auto w-full max-w-[24rem] pt-[14%] pb-[16%]">
             {/* Phong bì */}
-            <Decor id="12" width="98%" left="1%" top="16%" />
+            <Decor id="12" width="98%" left="1%" top="10%" />
             {/* Ruy băng vắt qua chân phong bì */}
             <Decor id="13" width="128%" left="-14%" bottom="0%" front />
 
-            {/* Tấm thiệp ren */}
+            {/* Tấm thiệp ren. Ren màu trắng nên phần nhô ra khỏi phong bì
+                sẽ chìm vào nền giấy kem — .lace-card đổ bóng theo alpha
+                để đường ren nổi lên đủ. */}
             <div className="relative z-[2] mx-auto w-[86%]">
               <Image
                 src={LAYERS["9"].src}
@@ -37,7 +39,7 @@ export function TimeVenue() {
                 width={LAYERS["9"].w}
                 height={LAYERS["9"].h}
                 sizes="(max-width: 640px) 74vw, 320px"
-                className="block h-auto w-full"
+                className="lace-card block h-auto w-full"
               />
 
               {/* Nội dung nằm trên mặt giấy */}

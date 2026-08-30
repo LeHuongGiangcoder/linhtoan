@@ -1,4 +1,3 @@
-import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
 import { DRESSCODE } from "@/lib/content";
@@ -6,11 +5,6 @@ import { DRESSCODE } from "@/lib/content";
 export function Dresscode() {
   return (
     <section id="dresscode" className="section relative">
-      {/* Hoa pastel: hồng đào, vàng bơ, cúc trắng */}
-      <Decor id="21" width="52%" top="2%" right="-14%" />
-      <Decor id="23" width="22%" top="26%" left="-6%" rotate={12} />
-      <Decor id="22" width="40%" bottom="-4%" left="-12%" />
-      <Decor id="24" width="30%" bottom="2%" right="-8%" flip />
 
       <div className="section-inner">
         <Divider />

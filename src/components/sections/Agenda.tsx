@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+import { Cross } from "@/components/Cross";
 import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
@@ -5,11 +7,7 @@ import { AGENDA } from "@/lib/content";
 
 export function Agenda() {
   return (
-    <section id="agenda" className="section relative">
-      {/* Đài phun nước & ly champagne làm nền hai bên */}
-      <Decor id="16" width="46%" top="4%" left="-16%" />
-      <Decor id="14" width="38%" bottom="6%" right="-13%" />
-
+    <section id="agenda" className="section section--dense relative">
       <div className="section-inner">
         <Divider />
 
@@ -18,44 +16,40 @@ export function Agenda() {
           <h2 className="display-2">Agenda</h2>
         </Reveal>
 
-        <ol className="relative m-0 list-none p-0">
-          {/* Đường trục thời gian */}
-          <span
-            aria-hidden
-            className="absolute top-2 bottom-2 left-[4.25rem] w-px bg-[var(--color-line)]"
-          />
-
+        {/* Timeline canh giữa, các mốc nối nhau bằng dấu ✛ như phần tên couple */}
+        <ol className="m-0 mt-2 list-none p-0 text-center">
           {AGENDA.map((item, i) => (
-            <Reveal
-              as="li"
-              key={item.title}
-              delay={(Math.min(i + 1, 5) as 1 | 2 | 3 | 4 | 5)}
-              className="relative grid grid-cols-[4.25rem_1fr] gap-x-6 pb-9 last:pb-0"
-            >
-              <div className="pt-1 text-right">
-                <p className="date-text--xs">{item.time}</p>
-                <p className="label mt-1 !text-[0.625rem] !tracking-[0.14em]">
-                  {item.end}
-                </p>
-              </div>
+            <Fragment key={item.title}>
+              {i > 0 && (
+                <li className="flex flex-col items-center gap-2.5">
+                  <span className="rule !h-7" />
+                  <Cross size="1rem" className="opacity-55" />
+                  <span className="rule !h-7" />
+                </li>
+              )}
 
-              <div className="relative pl-6">
-                <span
-                  aria-hidden
-                  className="absolute top-[0.6rem] -left-[0.3rem] h-[7px] w-[7px] rounded-full bg-[var(--color-olive)]"
-                />
-                <h3 className="display-3 !text-[1.375rem]">{item.title}</h3>
-                <p className="body-text body-text--sm mt-1">{item.desc}</p>
-              </div>
-            </Reveal>
+              <Reveal
+                as="li"
+                delay={Math.min(i + 1, 5) as 1 | 2 | 3 | 4 | 5}
+                className="flex flex-col items-center"
+              >
+                <p className="date-text--xs">
+                  {item.time} <span className="opacity-40">—</span> {item.end}
+                </p>
+                <h3 className="display-3 mt-3 !text-[1.5rem]">{item.title}</h3>
+                <p className="body-text body-text--sm mt-2.5 max-w-[19rem] text-balance">
+                  {item.desc}
+                </p>
+              </Reveal>
+            </Fragment>
           ))}
         </ol>
 
         {/* Xe hoa khép lại phần agenda */}
-        <Reveal delay={4} className="mt-10">
+        <Reveal delay={4} className="mt-8">
           <Decor
             id="18"
-            width="72%"
+            width="58%"
             className="!relative !top-auto !right-auto !bottom-auto !left-auto mx-auto"
           />
         </Reveal>

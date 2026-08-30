@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Cross } from "@/components/Cross";
 import { Decor } from "@/components/Decor";
 import { Reveal } from "@/components/Reveal";
 import { LAYERS } from "@/lib/layers";
@@ -18,7 +19,7 @@ export function Hero() {
       <Decor id="3" width="29%" top="7%" left="-8%" priority />
 
       {/* Khối chữ — chiếm phần trên, căn giữa khoảng trống còn lại */}
-      <div className="section-inner flex flex-1 flex-col items-center justify-center pb-2 text-center">
+      <div className="section-inner flex flex-1 flex-col items-center justify-center pt-[7vh] pb-2 text-center">
         <Reveal>
           <p className="eyebrow">The wedding of</p>
         </Reveal>
@@ -28,13 +29,7 @@ export function Hero() {
         </Reveal>
 
         <Reveal delay={2} className="my-3">
-          <span
-            aria-hidden
-            className="block text-[1.15rem] leading-none text-[var(--color-olive)]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            ✛
-          </span>
+          <Cross />
         </Reveal>
 
         <Reveal delay={2} className="w-full">

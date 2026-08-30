@@ -129,6 +129,11 @@
     justify-content: flex-start;
   }
 
+  /* Section nhiều nội dung — thu padding để vẫn gói trong 1 viewport */
+  .section--dense {
+    padding-block: 2.5rem;
+  }
+
   /* Section không cần chiếm hết viewport (dải phân cách, phần phụ) */
   .section--auto {
     min-height: 0;
@@ -322,6 +327,14 @@
     height: auto;
     margin: 0 auto 1.25rem;
     opacity: 0.85;
+  }
+
+  /* Dấu nối dùng chung: tên couple, mốc agenda */
+  .cross-mark {
+    display: block;
+    font-family: var(--font-display);
+    line-height: 1;
+    color: var(--color-olive);
   }
 
   .ornament {
@@ -525,7 +538,7 @@
   .swatch-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem 1rem;
+    gap: 1.5rem 0.75rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -541,11 +554,16 @@
   .swatch-dot {
     display: block;
     width: 100%;
-    max-width: 5.5rem;
+    max-width: 4rem;
     aspect-ratio: 1;
     border-radius: 50%;
     border: 1px solid rgba(84, 78, 48, 0.14);
     box-shadow: none;
+  }
+
+  /* Thiệp ren: bóng bám theo alpha để viền ren trắng nổi trên nền kem */
+  .lace-card {
+    filter: drop-shadow(0 5px 10px rgba(84, 78, 48, 0.22));
   }
 
   .card-soft {
