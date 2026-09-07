@@ -2,10 +2,15 @@ import Image from "next/image";
 import { Cross } from "@/components/Cross";
 import { Decor } from "@/components/Decor";
 import { Reveal } from "@/components/Reveal";
-import { LAYERS } from "@/lib/layers";
-import { COUPLE } from "@/lib/content";
+import { COUPLE_TYPO, LAYERS } from "@/lib/layers";
+import { COUPLE, HERO } from "@/lib/content";
 
-export function Hero() {
+type HeroProps = {
+  /** Tên khách lấy từ link riêng; bỏ trống thì dùng lời chào chung. */
+  guestName?: string;
+};
+
+export function Hero({ guestName }: HeroProps) {
   return (
     <section
       id="hero"
@@ -20,34 +25,56 @@ export function Hero() {
 
       {/* Khối chữ — chiếm phần trên, căn giữa khoảng trống còn lại */}
       <div className="section-inner flex flex-1 flex-col items-center justify-center pt-[7vh] pb-2 text-center">
-        <Reveal>
-          <p className="eyebrow">The wedding of</p>
+        <Reveal className="max-w-[17.5rem]">
+          <p className="guest-line">
+            {HERO.greeting}, {guestName?.trim() || HERO.guest}
+          </p>
         </Reveal>
 
-        <Reveal delay={1} className="mt-3 w-full">
-          <h1 className="display-1">{COUPLE.bride}</h1>
+        <Reveal delay={1} className="mt-3 max-w-[19rem]">
+          <p className="invite-line">{HERO.invite}</p>
         </Reveal>
 
-        <Reveal delay={2} className="my-3">
+        <Reveal delay={2} className="mt-4 w-full">
+          <Image
+            src={COUPLE_TYPO.bride.src}
+            alt={COUPLE.bride}
+            width={COUPLE_TYPO.bride.w}
+            height={COUPLE_TYPO.bride.h}
+            priority
+            sizes="(max-width: 640px) 74vw, 474px"
+            className="mx-auto block h-auto w-[74%]"
+          />
+        </Reveal>
+
+        <Reveal delay={3} className="my-1">
           <Cross />
         </Reveal>
 
-        <Reveal delay={2} className="w-full">
-          <h1 className="display-1">{COUPLE.groom}</h1>
+        <Reveal delay={3} className="w-full">
+          <Image
+            src={COUPLE_TYPO.groom.src}
+            alt={COUPLE.groom}
+            width={COUPLE_TYPO.groom.w}
+            height={COUPLE_TYPO.groom.h}
+            priority
+            sizes="(max-width: 640px) 71vw, 451px"
+            className="mx-auto block h-auto w-[70.5%]"
+          />
         </Reveal>
 
-        <Reveal delay={3} className="mt-5">
+        <Reveal delay={4} className="mt-5">
           <p className="date-text">{COUPLE.dateDisplay}</p>
         </Reveal>
 
-        <Reveal delay={4} className="mt-3">
+        <Reveal delay={5} className="mt-3">
           <p className="eyebrow">{COUPLE.city}</p>
         </Reveal>
       </div>
 
-      {/* Tranh lễ đường — tràn viền dưới, luôn nằm trong 1 viewport */}
-      <div className="relative -mx-[18%] -mt-[5%] w-[136%] shrink-0">
-        <Decor id="7" width="40%" top="-1%" right="8%" front />
+      {/* Tranh lễ đường — dải dưới cùng, neo đáy và tràn hết bề ngang */}
+      <div className="relative h-[58svh] w-full shrink-0">
+        <Decor id="7" width="38%" top="9%" right="4%" front />
         <Image
           src={LAYERS["6"].src}
           alt="Minh hoạ lễ đường cưới trong vườn"
@@ -55,7 +82,7 @@ export function Hero() {
           height={LAYERS["6"].h}
           priority
           sizes="(max-width: 640px) 100vw, 640px"
-          className="relative z-[1] block h-auto w-full"
+          className="relative z-[1] block h-full w-full object-cover object-bottom [mask-image:linear-gradient(to_bottom,transparent,#000_14%)]"
         />
       </div>
     </section>

@@ -9,6 +9,13 @@ export const COUPLE = {
   city: "Hà Nội",
 };
 
+/** Dòng chào ở hero. `guest` là tên mặc định khi thiệp mở không kèm link riêng. */
+export const HERO = {
+  greeting: "Dear",
+  guest: "Quý khách",
+  invite: "We joyfully invite you to our wedding",
+};
+
 export const VENUE = {
   event: "Tiệc cưới",
   time: "10:30",

@@ -245,6 +245,29 @@
     color: var(--color-olive);
   }
 
+  /* Dòng "Dear, <tên khách>" và lời mời ngay trên tên cô dâu chú rể */
+  .guest-line {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    color: var(--color-olive);
+    margin: 0;
+  }
+
+  .invite-line {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    color: var(--color-olive-soft);
+    margin: 0;
+    text-wrap: balance;
+  }
+
   .body-text {
     font-family: var(--font-body);
     font-size: 1rem;
@@ -296,6 +319,7 @@
   .decor--front {
     z-index: 3;
   }
+
 
   /* ─────────── 6. DIVIDER ─────────── */
   .rule {
@@ -594,9 +618,9 @@
     opacity: 1;
     will-change: transform, filter, opacity;
     transition:
-      transform 2.4s cubic-bezier(0.6, 0.02, 0.25, 1) 0.85s,
-      filter 1.6s ease-in 1.4s,
-      opacity 0.9s ease-in 2.7s;
+      transform 3.2s cubic-bezier(0.6, 0.02, 0.25, 1) 1.2s,
+      filter 2s ease-in 2s,
+      opacity 1.1s ease-in 3.7s;
   }
 
   .intro.is-opening {
@@ -639,7 +663,7 @@
   .intro-door {
     transform-origin: left center;
     transform: perspective(1500px) rotateY(0deg);
-    transition: transform 2.6s cubic-bezier(0.45, 0.02, 0.2, 1);
+    transition: transform 3.6s cubic-bezier(0.45, 0.02, 0.2, 1);
     will-change: transform;
     backface-visibility: hidden;
   }

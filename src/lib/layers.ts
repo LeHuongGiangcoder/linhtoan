@@ -6,7 +6,7 @@ export const LAYERS = {
   "3": { src: "/assets/3.webp", w: 1012, h: 679, left: 0.0652, top: 0.2687, width: 0.8916, height: 0.4244 },
   "4": { src: "/assets/4.webp", w: 1064, h: 909, left: 0.0335, top: 0.1925, width: 0.9374, height: 0.5681 },
   "5": { src: "/assets/5.webp", w: 965, h: 996, left: 0.0987, top: 0.1613, width: 0.8502, height: 0.6225 },
-  "6": { src: "/assets/6.webp", w: 1135, h: 1052, left: 0.0, top: 0.2725, width: 1.0, height: 0.6575 },
+  "6": { src: "/assets/hero-background.webp", w: 1108, h: 1420, left: 0.0, top: 0.2725, width: 1.0, height: 0.6575 },
   "7": { src: "/assets/7.webp", w: 1013, h: 475, left: 0.0537, top: 0.2169, width: 0.8925, height: 0.2969 },
   "8": { src: "/assets/8.webp", w: 1135, h: 1461, left: 0.0, top: 0.0706, width: 1.0, height: 0.9131 },
   "9": { src: "/assets/9.webp", w: 956, h: 1339, left: 0.0784, top: 0.0706, width: 0.8423, height: 0.8369 },
@@ -25,8 +25,15 @@ export const LAYERS = {
   "22": { src: "/assets/22.webp", w: 1007, h: 1354, left: 0.0608, top: 0.1025, width: 0.8872, height: 0.8462 },
   "23": { src: "/assets/23.webp", w: 651, h: 1412, left: 0.2326, top: 0.055, width: 0.5736, height: 0.8825 },
   "24": { src: "/assets/24.webp", w: 997, h: 1367, left: 0.0661, top: 0.1081, width: 0.8784, height: 0.8544 },
-  "37": { src: "/assets/37.webp", w: 1265, h: 1700, left: 0.06374, top: 0.14903, width: 0.87226, height: 0.83175 },
+  "37": { src: "/assets/hero-background.webp", w: 1108, h: 1420, left: 0.06374, top: 0.16835, width: 0.87226, height: 0.79311 },
   "38": { src: "/assets/38.webp", w: 1437, h: 1700, left: 0.0, top: 0.12688, width: 1.0, height: 0.83925 },
   "39": { src: "/assets/39.webp", w: 573, h: 1700, left: 0.20103, top: 0.23947, width: 0.30581, height: 0.64372 },
   "40": { src: "/assets/40.webp", w: 573, h: 1700, left: 0.48439, top: 0.23947, width: 0.30581, height: 0.64372 },
+} as const;
+
+/** Chữ ký tên cô dâu / chú rể — cắt từ public/couple typo.png.
+ *  `width` = bề rộng so với canvas gốc 3875px, giữ đúng tỉ lệ giữa hai dòng. */
+export const COUPLE_TYPO = {
+  bride: { src: "/assets/couple-bride.webp", w: 1400, h: 292, width: 0.8797 },
+  groom: { src: "/assets/couple-groom.webp", w: 1400, h: 316, width: 0.8385 },
 } as const;

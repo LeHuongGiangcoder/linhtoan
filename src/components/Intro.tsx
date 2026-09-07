@@ -30,7 +30,7 @@ type Phase = "idle" | "dismissing" | "opening" | "gone";
 /** Nút blur biến mất xong mới bắt đầu mở cổng. */
 const BUTTON_FADE_MS = 480;
 /** Tổng thời lượng mở cổng + zoom + blur + tan. */
-const REVEAL_MS = 3700;
+const REVEAL_MS = 4900;
 
 export function Intro() {
   const [phase, setPhase] = useState<Phase>("idle");
