@@ -1,0 +1,498 @@
+/**
+ * Khánh Linh & Toàn Phạm — danh sách khách + RSVP, một tab duy nhất.
+ *
+ * Sheet vừa là nguồn danh sách khách (website đọc lên), vừa là nơi RSVP đổ về
+ * (website ghi xuống). Cô dâu chú rể chỉ gõ hai cột: Name và Event.
+ *
+ * Khác với bản của Đức Anh & Diễm My: đám này có HAI sự kiện, nên cột Event
+ * quyết định link riêng của từng khách trỏ vào sự kiện nào —
+ * mỗi sự kiện là một đường dẫn riêng trên site.
+ *
+ * Cài đặt: xem docs/RSVP_SETUP.md.
+ */
+
+/** Phải khớp CHÍNH XÁC tên tab dưới đáy spreadsheet, kể cả khoảng trắng. */
+const SHEET_NAME = 'RSVP';
+
+/**
+ * Đổi thành một chuỗi ngẫu nhiên thật dài. Đây là thứ duy nhất canh cửa Web App
+ * (Web App phải để "Anyone" mới gọi vào được), nên đừng commit giá trị thật lên
+ * git — chỉ dán vào Apps Script và vào biến môi trường RSVP_SHARED_SECRET.
+ */
+const SECRET = 'CHANGE-ME-to-a-long-random-string';
+
+/** Đổi thành domain thật sau khi deploy — chỉ dùng để dựng cột Link. */
+const SITE_ORIGIN = 'https://khanhlinhtoanpham.gloweb.site';
+
+/* ------------------------------------------------------------------ events */
+
+/**
+ * HAI SỰ KIỆN CỦA ĐÁM CƯỚI — sửa ở đây là đổi cả link lẫn dropdown.
+ *
+ *   key    giá trị website nhận được, dùng để chọn nội dung sẽ hiển thị
+ *   path   đoạn đường dẫn trong link riêng:  SITE_ORIGIN/<path>/<slug>
+ *   label  chữ hiện trong ô dropdown của sheet
+ *   alias  các cách gõ khác vẫn hiểu là sự kiện này (không dấu, viết thường)
+ *
+ * ĐỔI `path` SAU KHI ĐÃ GỬI LINK CHO KHÁCH LÀ HỎNG HẾT LINK CŨ. Chốt hai đoạn
+ * đường dẫn này trước khi gửi thiệp đầu tiên.
+ */
+const EVENTS = [
+  {
+    key: 'le-cuoi',
+    path: 'le-cuoi',
+    label: 'Lễ cưới',
+    alias: ['le cuoi', 'le', 'ceremony', 'lễ cưới', '1'],
+  },
+  {
+    key: 'tiec-cuoi',
+    path: 'tiec-cuoi',
+    label: 'Tiệc cưới',
+    alias: ['tiec cuoi', 'tiec', 'party', 'reception', 'tiệc cưới', '2'],
+  },
+];
+
+/** Ô Event để trống thì rơi về sự kiện đầu tiên trong EVENTS. */
+const DEFAULT_EVENT = EVENTS[0].key;
+
+const HEADERS = [
+  'No', 'Name', 'Event', 'Slug', 'Link',
+  'Attending', 'Guests', 'Other', 'Meal Preferences', 'Message', 'Updated',
+];
+
+const FIRST_ROW = 2; // hàng 1 là header
+const DEFAULT_GUESTS = 2;
+
+/**
+ * Tra một ô Event bất kỳ về đúng key trong EVENTS.
+ *
+ * Ô này là dropdown, nhưng người ta vẫn dán đè hoặc gõ tay — và một ô ghi
+ * 'tiec' mà lặng lẽ ra link của lễ cưới là kiểu lỗi không ai phát hiện cho tới
+ * khi khách đã tới nhầm chỗ.
+ */
+function eventOf_(value) {
+  const raw = normKey_(value);
+  if (!raw) return DEFAULT_EVENT;
+
+  for (let i = 0; i < EVENTS.length; i++) {
+    const ev = EVENTS[i];
+    if (raw === normKey_(ev.key) || raw === normKey_(ev.label)) return ev.key;
+    for (let j = 0; j < ev.alias.length; j++) {
+      if (raw === normKey_(ev.alias[j])) return ev.key;
+    }
+  }
+  return DEFAULT_EVENT;
+}
+
+/** Đường dẫn của một sự kiện, tra theo key. */
+function eventPath_(key) {
+  for (let i = 0; i < EVENTS.length; i++) {
+    if (EVENTS[i].key === key) return EVENTS[i].path;
+  }
+  return EVENTS[0].path;
+}
+
+/** Bỏ dấu để 'Tiệc cưới' và 'tiec cuoi' cùng tra được một chỗ. */
+function normKey_(value) {
+  return String(value == null ? '' : value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/gi, 'd')
+    .trim()
+    .toLowerCase();
+}
+
+/* ------------------------------------------------------------------ menu */
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('Wedding')
+    .addItem('Tạo link cho khách mới', 'generateLinks')
+    .addItem('Dựng lại sheet (chạy 1 lần)', 'setupSheet')
+    .addItem('Kiểm tra dữ liệu gửi cho website', 'checkData')
+    .addToUi();
+}
+
+/** Chạy tay khi vừa thêm khách và muốn thấy link ngay. */
+function generateLinks() {
+  const sheet = sheet_();
+  const n = syncGuests_(sheet, columns_(sheet));
+  SpreadsheetApp.getActiveSpreadsheet().toast(n + ' khách đã có link.', 'Wedding');
+}
+
+/** Chạy 1 lần lúc mới dựng: tạo tab, header, định dạng. */
+function setupSheet() {
+  const sheet = sheet_();
+  sheet.getRange(1, 1, 1, HEADERS.length)
+    .setValues([HEADERS])
+    .setFontWeight('bold');
+  sheet.setFrozenRows(1);
+
+  const col = columns_(sheet);
+  const rows = sheet.getMaxRows() - 1;
+
+  // Cột No là mã khách, phải là text — để dạng số thì 001 rút thành 1.
+  sheet.getRange(FIRST_ROW, col.no, rows, 1).setNumberFormat('@');
+  sheet.setColumnWidth(col.name, 220);
+  sheet.setColumnWidth(col.link, 340);
+  sheet.setColumnWidth(col['meal preferences'], 200);
+  sheet.setColumnWidth(col.message, 320);
+
+  // Ô Event thành dropdown hai sự kiện để khỏi gõ sai.
+  const labels = EVENTS.map(function (ev) { return ev.label; });
+  const rule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(labels, true)
+    .setAllowInvalid(false)
+    .setHelpText('Khách này được mời tới sự kiện nào. Trống = ' + EVENTS[0].label + '.')
+    .build();
+  sheet.getRange(FIRST_ROW, col.event, rows, 1).setDataValidation(rule);
+
+  SpreadsheetApp.getActiveSpreadsheet().toast('Sheet đã sẵn sàng.', 'Wedding');
+}
+
+/**
+ * Hiện đúng thứ website sẽ nhận được — không đoán nữa.
+ *
+ * Chạy từ menu nên dùng code MỚI NHẤT ĐÃ SAVE, còn website thì dùng bản đã
+ * Deploy. Nên nếu bảng này ghi `Tiệc cưới` mà thiệp vẫn ra lễ cưới, lỗi nằm ở
+ * chỗ deployment chưa lên version mới, không phải ở dữ liệu trong sheet.
+ */
+function checkData() {
+  const sheet = sheet_();
+  const col = columns_(sheet);
+  syncGuests_(sheet, col);
+  const guests = readGuests_(sheet, col);
+
+  const lines = guests.slice(0, 12).map(function (g) {
+    return g.event + '   ' + g.slug + '   ' + g.name;
+  });
+
+  const tally = EVENTS.map(function (ev) {
+    const n = guests.filter(function (g) { return g.event === ev.key; }).length;
+    return n + ' ' + ev.label;
+  }).join(', ');
+
+  const message =
+    guests.length + ' khách — ' + tally + '\n\n' +
+    'event  slug  name\n' + lines.join('\n') +
+    (guests.length > 12 ? '\n… còn ' + (guests.length - 12) + ' dòng' : '');
+
+  SpreadsheetApp.getUi().alert('Dữ liệu gửi cho website', message,
+    SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
+/* -------------------------------------------------------------- endpoint */
+
+/**
+ * Một endpoint cho cả hai chiều:
+ *   { action: 'guests' }  → trả danh sách khách cho website
+ *   { slug, attending, … } → ghi RSVP vào đúng hàng của khách đó
+ */
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000); // xếp hàng các phản hồi đồng thời
+
+  try {
+    const body = JSON.parse(e.postData.contents);
+
+    if (body.secret !== SECRET) {
+      return json({ ok: false, error: 'unauthorized' });
+    }
+
+    const sheet = sheet_();
+    const col = columns_(sheet);
+    // Khách mới gõ tay vào sheet chưa có slug — bù trước khi đọc hoặc ghi,
+    // để cô dâu chú rể không phải nhớ bấm menu.
+    syncGuests_(sheet, col);
+
+    if (body.action === 'guests') {
+      return json({
+        ok: true,
+        events: EVENTS.map(function (ev) {
+          return { key: ev.key, path: ev.path, label: ev.label };
+        }),
+        guests: readGuests_(sheet, col),
+      });
+    }
+
+    return json(writeRsvp_(sheet, col, body));
+  } catch (err) {
+    return json({ ok: false, error: String(err) });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/* ---------------------------------------------------------------- helpers */
+
+function sheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME);
+    sheet.getRange(1, 1, 1, HEADERS.length)
+      .setValues([HEADERS])
+      .setFontWeight('bold');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+/**
+ * Vị trí từng cột, tra theo TÊN ở hàng 1 chứ không theo thứ tự cố định.
+ *
+ * Nghĩa là kéo cột đi chỗ khác hay chèn thêm cột vào giữa, script vẫn chạy
+ * đúng — miễn chữ ở hàng 1 giữ nguyên. Cột nào chưa tồn tại thì được tạo thêm
+ * vào cuối, kèm chữ header, nên sheet cũ tự nâng cấp mà không mất dữ liệu.
+ */
+function columns_(sheet) {
+  const width = Math.max(sheet.getLastColumn(), 1);
+  const header = sheet.getRange(1, 1, 1, width).getValues()[0]
+    .map(function (h) { return String(h).trim().toLowerCase(); });
+
+  const col = {};
+  let next = header.length + 1;
+
+  HEADERS.forEach(function (name) {
+    const at = header.indexOf(name.toLowerCase());
+    if (at !== -1) {
+      col[name.toLowerCase()] = at + 1;
+    } else {
+      sheet.getRange(1, next).setValue(name).setFontWeight('bold');
+      col[name.toLowerCase()] = next;
+      next++;
+    }
+  });
+  return col;
+}
+
+/**
+ * Số hàng dữ liệu hiện có (không tính header), đo theo CỘT NAME.
+ *
+ * Không dùng getLastRow() được: một ARRAYFORMULA ở cột nào đó đổ xuống hết cột,
+ * và những ô nó trả về "" vẫn bị Apps Script tính là ô có nội dung —
+ * getLastRow() sẽ nhảy xuống tận hàng 1000 và hàng RSVP mới bị nối vào đó, để
+ * lại một khoảng trống khổng lồ giữa bảng. Cột Name do người gõ tay, nên nó
+ * mới là mốc thật của danh sách.
+ */
+function dataRows_(sheet, col) {
+  const last = sheet.getLastRow() - 1;
+  if (last <= 0) return 0;
+
+  const names = sheet.getRange(FIRST_ROW, col.name, last, 1).getValues();
+  for (let i = names.length - 1; i >= 0; i--) {
+    if (String(names[i][0]).trim()) return i + 1;
+  }
+  return 0;
+}
+
+/**
+ * Điền No / Slug / Link cho mọi hàng đã có tên.
+ *
+ * Slug đã tồn tại thì KHÔNG bao giờ đổi — link đã gửi cho khách phải sống mãi,
+ * kể cả khi sau này sửa lại chính tả cái tên. Nhưng Link thì có: đổi ô Event
+ * là link được dựng lại sang đường dẫn của sự kiện kia, vẫn giữ nguyên slug.
+ */
+function syncGuests_(sheet, col) {
+  const rows = dataRows_(sheet, col);
+  if (rows === 0) return 0;
+
+  const width = sheet.getLastColumn();
+  const values = sheet.getRange(FIRST_ROW, 1, rows, width).getValues();
+
+  const taken = {};
+  values.forEach(function (row) {
+    const slug = String(row[col.slug - 1]).trim();
+    if (slug) taken[slug] = true;
+  });
+
+  // Ghi lại TỪNG CỘT một, không ghi cả hàng: những cột cô dâu chú rể để công
+  // thức nằm xen giữa các cột script này quản, mà setValues() cả hàng sẽ đè
+  // công thức bằng giá trị đọc được lúc đó — đó chính là lý do công thức tự
+  // biến mất sau khi link được generate.
+  const nos = [];
+  const slugs = [];
+  const links = [];
+  let noChanged = false;
+  let slugChanged = false;
+  let linkChanged = false;
+  let counted = 0;
+
+  values.forEach(function (row) {
+    const name = String(row[col.name - 1]).trim();
+    const currentNo = row[col.no - 1];
+    const currentSlug = String(row[col.slug - 1]).trim();
+    const currentLink = row[col.link - 1];
+
+    if (!name) {
+      // Hàng trống ở giữa danh sách — giữ nguyên, không đụng vào.
+      nos.push([currentNo]);
+      slugs.push([currentSlug]);
+      links.push([currentLink]);
+      return;
+    }
+
+    counted++;
+
+    // Ba chữ số, lưu dạng text: số này vừa là số thứ tự vừa là MÃ khách nhập
+    // ở trang mở thiệp, nên 7 và 007 phải luôn là một.
+    const no = code_(counted);
+    if (String(currentNo).trim() !== no) noChanged = true;
+    nos.push([no]);
+
+    let slug = currentSlug;
+    if (!slug) {
+      slug = uniqueSlug_(slugify_(name), taken);
+      taken[slug] = true;
+      slugChanged = true;
+    }
+    slugs.push([slug]);
+
+    // Link riêng = gốc site + đường dẫn của SỰ KIỆN + slug của khách.
+    // Dấu / thừa ở cuối SITE_ORIGIN sinh ra link //… — vẫn tới nơi, nhưng qua
+    // một cú redirect 308 mà trình duyệt trong app không phải lúc nào cũng theo.
+    const link = SITE_ORIGIN.replace(/\/+$/, '') + '/' +
+      eventPath_(eventOf_(row[col.event - 1])) + '/' + slug;
+    if (currentLink !== link) linkChanged = true;
+    links.push([link]);
+  });
+
+  if (noChanged) {
+    sheet.getRange(FIRST_ROW, col.no, rows, 1)
+      .setNumberFormat('@') // không có dòng này thì Sheets lưu 001 thành số 1
+      .setValues(nos);
+  }
+  if (slugChanged) sheet.getRange(FIRST_ROW, col.slug, rows, 1).setValues(slugs);
+  if (linkChanged) sheet.getRange(FIRST_ROW, col.link, rows, 1).setValues(links);
+
+  return counted;
+}
+
+/** 7 → "007". Cột No cũng chính là mã khách gõ vào để mở thiệp. */
+function code_(n) {
+  let out = String(n == null ? '' : n).trim();
+  if (!out) return '';
+  while (out.length < 3) out = '0' + out;
+  return out;
+}
+
+/**
+ * Slug là duy nhất trên TOÀN sheet, không phải trong từng sự kiện.
+ *
+ * Nhờ vậy website tra một khách chỉ bằng slug là đủ — đoạn sự kiện trong link
+ * chỉ để khách nhìn thấy mình được mời tới đâu, không phải khoá tra cứu. Khách
+ * bấm nhầm link của sự kiện kia vẫn ra đúng hàng của họ.
+ */
+function uniqueSlug_(base, taken) {
+  if (!base) base = 'guest';
+  if (!taken[base]) return base;
+  // Hai người trùng tên vẫn phải có hai link khác nhau.
+  let n = 2;
+  while (taken[base + '-' + n]) n++;
+  return base + '-' + n;
+}
+
+/** "Ms. Trần Thị Bảo Ngọc" → "ms-tran-thi-bao-ngoc" */
+function slugify_(value) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // bỏ dấu thanh
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function readGuests_(sheet, col) {
+  const rows = dataRows_(sheet, col);
+  if (rows === 0) return [];
+
+  return sheet.getRange(FIRST_ROW, 1, rows, sheet.getLastColumn())
+    .getValues()
+    .map(function (row) {
+      const attending = String(row[col.attending - 1]).trim().toUpperCase();
+      const guestCount = parseInt(row[col.guests - 1], 10);
+      const event = eventOf_(row[col.event - 1]);
+      return {
+        slug: String(row[col.slug - 1]).trim(),
+        name: String(row[col.name - 1]).trim(),
+        // Mã khách nhập ở cổng vào. Ô đã định dạng text nên đọc ra đúng '001';
+        // sheet cũ còn lưu dạng số thì code_() bù lại số 0 ở đầu.
+        code: code_(String(row[col.no - 1]).trim().replace(/\D/g, '')),
+        // Sự kiện khách này được mời — website dùng nó để chọn giờ, địa điểm,
+        // chương trình sẽ hiển thị.
+        event: event,
+        eventPath: eventPath_(event),
+        // Phản hồi đã ghi trước đó, để khách quay lại thấy đúng trạng thái của
+        // mình chứ không phải form trắng.
+        attending: attending === 'YES' ? true : (attending === 'NO' ? false : null),
+        guestCount: guestCount > 0 ? guestCount : 0,
+        other: String(row[col.other - 1]).trim(),
+        meal: String(row[col['meal preferences'] - 1]).trim(),
+        message: String(row[col.message - 1]).trim(),
+      };
+    })
+    .filter(function (g) { return g.slug && g.name; });
+}
+
+/**
+ * Ghi phản hồi vào đúng hàng của khách. Đổi ý thì ghi đè, không sinh hàng mới.
+ * Khách vào thẳng trang RSVP (không qua link riêng) thì nối thêm một hàng mới.
+ *
+ * KHÔNG đụng vào ô Event: sự kiện là do nhà trai nhà gái quyết, không phải do
+ * khách chọn trong form.
+ */
+function writeRsvp_(sheet, col, body) {
+  const slug = String(body.slug || '').trim();
+  const answer = {};
+  answer[col.attending] = body.attending ? 'YES' : 'NO';
+  answer[col.guests] = body.guestCount || 0;
+  answer[col.other] = body.other || '';
+  answer[col['meal preferences']] = body.meal || '';
+  answer[col.message] = body.message || '';
+  answer[col.updated] = new Date();
+
+  const rows = dataRows_(sheet, col);
+  const slugs = rows > 0
+    ? sheet.getRange(FIRST_ROW, col.slug, rows, 1).getValues()
+    : [];
+
+  for (let i = 0; i < slugs.length; i++) {
+    if (slug && String(slugs[i][0]).trim() === slug) {
+      const at = FIRST_ROW + i;
+      // Từng ô một: các cột trả lời không nhất thiết nằm cạnh nhau.
+      Object.keys(answer).forEach(function (c) {
+        sheet.getRange(at, Number(c)).setValue(answer[c]);
+      });
+      return { ok: true, row: at };
+    }
+  }
+
+  // Không khớp slug nào: khách tự vào, chỉ có cái tên họ gõ.
+  // Nối ngay dưới cái tên cuối cùng, không phải dưới ô cuối cùng có công thức.
+  const at = FIRST_ROW + rows;
+  sheet.getRange(at, col.name).setValue(body.name || '');
+  // Khách tự vào vẫn phải thuộc về một sự kiện, nếu không hàng này sẽ lặng lẽ
+  // rơi vào sự kiện mặc định khi đọc lên.
+  sheet.getRange(at, col.event).setValue(eventLabel_(eventOf_(body.event)));
+  Object.keys(answer).forEach(function (c) {
+    sheet.getRange(at, Number(c)).setValue(answer[c]);
+  });
+  return { ok: true, row: at };
+}
+
+/** Chữ hiện trong ô Event, tra theo key. */
+function eventLabel_(key) {
+  for (let i = 0; i < EVENTS.length; i++) {
+    if (EVENTS[i].key === key) return EVENTS[i].label;
+  }
+  return EVENTS[0].label;
+}
+
+function json(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
