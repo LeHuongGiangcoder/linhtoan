@@ -33,6 +33,10 @@ export const LAYERS = {
 
 /** Chữ ký tên cô dâu / chú rể — cắt từ public/couple typo.png.
  *  `width` = bề rộng so với canvas gốc 3875px, giữ đúng tỉ lệ giữa hai dòng. */
+export const PAINTING = {
+  swans: { src: "/assets/painting-swans.webp", w: 720, h: 1280 },
+} as const;
+
 export const COUPLE_TYPO = {
   bride: { src: "/assets/couple-bride.webp", w: 1400, h: 292, width: 0.8797 },
   groom: { src: "/assets/couple-groom.webp", w: 1400, h: 316, width: 0.8385 },

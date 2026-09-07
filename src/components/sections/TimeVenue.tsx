@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
-import { LAYERS } from "@/lib/layers";
+import { LAYERS, PAINTING } from "@/lib/layers";
 import { COUPLE, VENUE } from "@/lib/content";
 
 /**
@@ -13,6 +13,17 @@ import { COUPLE, VENUE } from "@/lib/content";
 export function TimeVenue() {
   return (
     <section id="time-venue" className="section relative">
+      {/* Tranh sơn dầu mờ phía sau toàn bộ section — đôi thiên nga trên sông. */}
+      <div className="section-painting" aria-hidden>
+        <Image
+          src={PAINTING.swans.src}
+          alt=""
+          width={PAINTING.swans.w}
+          height={PAINTING.swans.h}
+          sizes="(max-width: 640px) 100vw, 640px"
+        />
+      </div>
+
       <div className="section-inner">
         <Divider />
 

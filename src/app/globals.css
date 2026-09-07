@@ -320,6 +320,43 @@
     z-index: 3;
   }
 
+  /* Nền tranh sơn dầu mờ, nằm dưới mọi thứ trong section.
+     Ảnh đã được blur sẵn khi build asset nên lúc chạy không tốn filter — trên
+     máy yếu một filter: blur() phủ cả màn hình là thứ làm cuộn trang giật.
+     z-index âm ăn theo isolation: isolate của .section, nên nó nằm trên nền
+     giấy của chính section mà vẫn dưới decor (z-0) và nội dung (z-2). */
+  .section-painting {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .section-painting img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Màn giấy kem phủ lên tranh: vừa giữ chữ olive đủ tương phản, vừa làm hai
+     mép trên/dưới tan hẳn vào các section kem liền kề — không để lộ đường cắt
+     ngang giữa hai section. */
+  .section-painting::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        to bottom,
+        var(--color-cream) 0%,
+        rgba(246, 244, 240, 0.34) 22%,
+        rgba(246, 244, 240, 0.34) 78%,
+        var(--color-cream) 100%
+      );
+  }
 
   /* ─────────── 6. DIVIDER ─────────── */
   .rule {
