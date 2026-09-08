@@ -10,7 +10,9 @@ type HeroProps = {
   guestName?: string;
 };
 
-export function Hero({ guestName }: HeroProps) {
+// Mặc định `{}` để Hero vẫn gọi được không tham số — route /preview/[id] gom
+// các section vào một map `() => ReactNode`, thiếu nó là build TS đứt.
+export function Hero({ guestName }: HeroProps = {}) {
   return (
     <section
       id="hero"
