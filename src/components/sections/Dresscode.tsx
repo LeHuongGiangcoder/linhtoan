@@ -6,10 +6,6 @@ import { DRESSCODE } from "@/lib/content";
 export function Dresscode() {
   return (
     <section id="dresscode" className="section relative">
-      {/* Vòm hoa trắng gác hai góc trên */}
-      <Decor id="el-41" width="50%" top="-1%" left="-14%" />
-      <Decor id="el-42" width="50%" top="-1%" right="-14%" flip />
-
       <div className="section-inner">
         <Divider />
 

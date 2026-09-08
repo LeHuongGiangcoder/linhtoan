@@ -22,10 +22,12 @@ export function Rsvp() {
   }
 
   return (
-    <section id="rsvp" className="section relative">
-      {/* Chùm cẩm tú cầu hai góc trên, đài phun nước hai góc dưới */}
-      <Decor id="el-hydrangea" width="40%" top="-3%" left="-13%" />
-      <Decor id="el-hydrangea" width="36%" top="-5%" right="-12%" flip />
+    <section id="rsvp" className="section section--bleed relative">
+      {/* Một chùm cẩm tú cầu bên trái. Đặt sát mép trái (-3%) chứ không âm sâu:
+          màu kem nằm ngoài cùng bên trái nên lùi thêm là mất một trong ba màu.
+          Section để overflow dọc nên chùm hoa tràn lên section trên, không bị
+          cắt ngang ở ranh giới. */}
+      <Decor id="el-hydrangea" width="46%" top="-11%" left="-3%" />
       <Decor id="el-18" width="36%" bottom="0%" left="-10%" />
       <Decor id="el-18" width="36%" bottom="0%" right="-10%" flip />
 

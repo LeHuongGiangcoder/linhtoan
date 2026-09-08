@@ -327,6 +327,26 @@
     z-index: 3;
   }
 
+  /* Vuốt mờ chân section: nằm trên decor (z-0) nhưng dưới nội dung (z-2), nên
+     hoa lá tan dần vào nền kem thay vì bị cắt ngang một đường thẳng ở mép. */
+  .section-fade-bottom {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 16%;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent, var(--color-cream) 88%);
+  }
+
+  /* Cho decor tràn lên/xuống sang section kế bên.
+     overflow-x: clip + overflow-y: visible là cặp DUY NHẤT giữ được ý đồ này:
+     hidden + visible sẽ bị tính lại thành auto và sinh thanh cuộn. */
+  .section--bleed {
+    overflow-x: clip;
+    overflow-y: visible;
+  }
+
   /* Nền tranh sơn dầu mờ, nằm dưới mọi thứ trong section.
      Ảnh đã được blur sẵn khi build asset nên lúc chạy không tốn filter — trên
      máy yếu một filter: blur() phủ cả màn hình là thứ làm cuộn trang giật.
@@ -611,7 +631,9 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    margin: 0;
+    max-width: 17.5rem;
+    margin-inline: auto;
+    margin: 0 auto;
     padding: 0;
     list-style: none;
   }

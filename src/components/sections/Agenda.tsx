@@ -10,10 +10,13 @@ export function Agenda() {
     <section id="agenda" className="section section--dense relative">
       {/* Hai cột rèm đứng trước, dải cẩm tú cầu xanh vẽ đè lên chân cột —
           thứ tự DOM quyết định lớp trên vì mọi .decor đều z-index 0. */}
-      <Decor id="el-43" width="44%" top="32%" left="-15%" />
-      <Decor id="el-44" width="38%" top="28%" right="-13%" />
+      <Decor id="el-43" width="52%" top="36%" left="-16%" />
+      <Decor id="el-44" width="46%" top="28%" right="-15%" />
       <Decor id="el-45" width="126%" bottom="-5%" left="-24%" />
       <Decor id="el-45" width="126%" bottom="-5%" right="-24%" flip />
+
+      {/* Chân section tan dần vào nền kem thay vì cắt ngang một đường thẳng */}
+      <div className="section-fade-bottom" aria-hidden />
 
       <div className="section-inner flex flex-col justify-center">
         <Divider />

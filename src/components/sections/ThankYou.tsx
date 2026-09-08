@@ -7,7 +7,9 @@ import { COUPLE } from "@/lib/content";
 export function ThankYou() {
   return (
     <section id="thank-you" className="section relative overflow-hidden">
-      {/* Dải bụi hoa trắng chạy hết chân section, đàn bướm ở khoảng trống trái */}
+      {/* Bụi hoa trắng chân section: hai lớp lệch nhau cho dày, lớp sau lật
+          gương và tụt xuống để không lộ ra là cùng một dải lặp lại. */}
+      <Decor id="el-54-strip" width="152%" bottom="-7%" left="-31%" flip />
       <Decor id="el-54-strip" width="118%" bottom="-2%" left="-9%" />
       <Decor id="el-46" width="34%" bottom="16%" left="0%" />
 
@@ -37,7 +39,7 @@ export function ThankYou() {
         <Reveal delay={3} className="mt-8 flex flex-col items-center gap-3">
           <span className="rule !h-8" />
           <p className="display-2">L &amp; T</p>
-          <p className="date-text date-text--sm">{COUPLE.dateDisplay}</p>
+          <p className="date-text date-text--hero">{COUPLE.dateDisplay}</p>
           <p className="eyebrow">{COUPLE.city}</p>
         </Reveal>
       </div>
