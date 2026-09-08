@@ -1,9 +1,9 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { LAYERS, type LayerId } from "@/lib/layers";
+import { ART, type ArtId } from "@/lib/layers";
 
 type DecorProps = {
-  id: LayerId;
+  id: ArtId;
   /** Bề rộng của element, tính theo % bề rộng khung cha */
   width: string;
   /** Vị trí — dùng bất kỳ cặp nào (top/bottom, left/right) */
@@ -40,7 +40,7 @@ export function Decor({
   className = "",
   style,
 }: DecorProps) {
-  const layer = LAYERS[id];
+  const layer = ART[id];
   const transforms = [
     flip ? "scaleX(-1)" : null,
     rotate ? `rotate(${rotate}deg)` : null,

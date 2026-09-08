@@ -8,7 +8,13 @@ import { AGENDA } from "@/lib/content";
 export function Agenda() {
   return (
     <section id="agenda" className="section section--dense relative">
-      <div className="section-inner">
+      {/* Hai cột rèm hai bên + dải cẩm tú cầu xanh khép chân section */}
+      <Decor id="el-43" width="34%" top="6%" left="-12%" />
+      <Decor id="el-44" width="30%" top="2%" right="-10%" />
+      <Decor id="el-45" width="70%" bottom="-2%" left="-16%" />
+      <Decor id="el-45" width="70%" bottom="-2%" right="-16%" flip />
+
+      <div className="section-inner flex flex-col justify-center">
         <Divider />
 
         <Reveal className="section-head">
@@ -43,14 +49,6 @@ export function Agenda() {
           ))}
         </ol>
 
-        {/* Xe hoa khép lại phần agenda */}
-        <Reveal delay={4} className="mt-8">
-          <Decor
-            id="18"
-            width="58%"
-            className="!relative !top-auto !right-auto !bottom-auto !left-auto mx-auto"
-          />
-        </Reveal>
       </div>
     </section>
   );

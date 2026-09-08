@@ -17,6 +17,7 @@
   --color-line: #d8d3c4;
   --color-sage: #5d6353;
   --color-ivory: #fffdf9;
+  --color-gold: #c4a256;
 
   /* Pastel — dresscode */
   --color-pastel-blush: #e7c9bd;
@@ -617,11 +618,24 @@
   .swatch-dot {
     display: block;
     width: 100%;
-    max-width: 4rem;
+    max-width: 4.75rem;
     aspect-ratio: 1;
     border-radius: 50%;
-    border: 1px solid rgba(84, 78, 48, 0.14);
-    box-shadow: none;
+    /* Vòng vàng mảnh ôm sát mép đĩa màu + bóng đổ nhẹ, như bảng màu mẫu */
+    border: 1.5px solid var(--color-gold);
+    box-shadow: 0 4px 10px rgba(84, 78, 48, 0.13);
+  }
+
+  /* Tên màu: serif nghiêng, viết hoa đầu chữ — không phải label in hoa */
+  .swatch-name {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    color: var(--color-olive-soft);
+    text-align: center;
+    text-wrap: balance;
   }
 
   /* Thiệp ren: bóng bám theo alpha để viền ren trắng nổi trên nền kem */

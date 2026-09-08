@@ -37,6 +37,29 @@ export const PAINTING = {
   swans: { src: "/assets/painting-swans.webp", w: 900, h: 1600 },
 } as const;
 
+/**
+ * Element rời từ bộ minh hoạ thứ hai — chỉ dùng làm decor nên không có toạ độ
+ * trên canvas như LAYERS.
+ *
+ * Tiền tố `el-` là bắt buộc chứ không phải cho đẹp: `assets/18.webp` là xe hoa
+ * còn `element (1)/18.png` là đài phun nước, trùng số nhưng khác hẳn hình.
+ */
+export const ELEMENTS = {
+  "el-41": { src: "/assets/el-41.webp", w: 800, h: 753 },
+  "el-42": { src: "/assets/el-42.webp", w: 800, h: 772 },
+  "el-43": { src: "/assets/el-43.webp", w: 560, h: 967 },
+  "el-44": { src: "/assets/el-44.webp", w: 560, h: 1404 },
+  "el-45": { src: "/assets/el-45.webp", w: 900, h: 469 },
+  /** Đài phun nước — khác với "18" trong LAYERS (xe hoa). */
+  "el-18": { src: "/assets/el-18.webp", w: 700, h: 829 },
+  /** Chùm cẩm tú cầu ba màu, ghép sẵn từ 37 + 38 + 39. */
+  "el-hydrangea": { src: "/assets/el-hydrangea.webp", w: 700, h: 816 },
+} as const;
+
+/** Mọi hình Decor có thể dùng — LAYERS chỉ khác ở chỗ có thêm toạ độ canvas. */
+export const ART = { ...LAYERS, ...ELEMENTS };
+export type ArtId = keyof typeof ART;
+
 /** Cô dâu chú rể đi trên lối vào của tranh lễ đường.
  *  left/bottom/width tính theo canvas tranh 1108x1420, không phải theo section —
  *  ảnh tranh và lớp này phải nằm chung một khung thì mới khớp ở mọi bề ngang. */

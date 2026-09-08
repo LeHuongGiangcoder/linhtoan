@@ -1,3 +1,4 @@
+import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
 import { DRESSCODE } from "@/lib/content";
@@ -5,6 +6,9 @@ import { DRESSCODE } from "@/lib/content";
 export function Dresscode() {
   return (
     <section id="dresscode" className="section relative">
+      {/* Chùm cẩm tú cầu ba màu gác hai góc trên */}
+      <Decor id="el-hydrangea" width="40%" top="-3%" left="-13%" />
+      <Decor id="el-hydrangea" width="36%" top="-5%" right="-12%" flip />
 
       <div className="section-inner">
         <Divider />
@@ -26,7 +30,7 @@ export function Dresscode() {
                   className="swatch-dot"
                   style={{ backgroundColor: c.hex }}
                 />
-                <span className="label !text-[0.625rem]">{c.name}</span>
+                <span className="swatch-name">{c.name}</span>
               </li>
             ))}
           </ul>
@@ -35,6 +39,15 @@ export function Dresscode() {
         <Reveal delay={3} className="mt-9 flex flex-col items-center gap-3">
           <span className="rule" />
           <p className="quote center text-balance">{DRESSCODE.avoid}</p>
+        </Reveal>
+
+        {/* Xe hoa khép lại phần dresscode */}
+        <Reveal delay={4} className="mt-8">
+          <Decor
+            id="18"
+            width="58%"
+            className="!relative !top-auto !right-auto !bottom-auto !left-auto mx-auto"
+          />
         </Reveal>
       </div>
     </section>
