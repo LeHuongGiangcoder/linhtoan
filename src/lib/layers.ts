@@ -34,7 +34,19 @@ export const LAYERS = {
 /** Chữ ký tên cô dâu / chú rể — cắt từ public/couple typo.png.
  *  `width` = bề rộng so với canvas gốc 3875px, giữ đúng tỉ lệ giữa hai dòng. */
 export const PAINTING = {
-  swans: { src: "/assets/painting-swans.webp", w: 720, h: 1280 },
+  swans: { src: "/assets/painting-swans.webp", w: 900, h: 1600 },
+} as const;
+
+/** Cô dâu chú rể đi trên lối vào của tranh lễ đường.
+ *  left/bottom/width tính theo canvas tranh 1108x1420, không phải theo section —
+ *  ảnh tranh và lớp này phải nằm chung một khung thì mới khớp ở mọi bề ngang. */
+export const COUPLE_WALKING = {
+  src: "/assets/couple-walking.webp",
+  w: 480,
+  h: 582,
+  left: 0.4208,
+  bottom: 0.2324,
+  width: 0.1625,
 } as const;
 
 export const COUPLE_TYPO = {

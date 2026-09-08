@@ -248,9 +248,9 @@
   /* Dòng "Dear, <tên khách>" và lời mời ngay trên tên cô dâu chú rể */
   .guest-line {
     font-family: var(--font-body);
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     font-weight: 500;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     line-height: 1.4;
     color: var(--color-olive);

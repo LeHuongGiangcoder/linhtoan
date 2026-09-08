@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Cross } from "@/components/Cross";
 import { Decor } from "@/components/Decor";
 import { Reveal } from "@/components/Reveal";
-import { COUPLE_TYPO, LAYERS } from "@/lib/layers";
+import { COUPLE_TYPO, COUPLE_WALKING, LAYERS } from "@/lib/layers";
 import { COUPLE, HERO } from "@/lib/content";
 
 type HeroProps = {
@@ -26,7 +26,7 @@ export function Hero({ guestName }: HeroProps = {}) {
       <Decor id="3" width="29%" top="7%" left="-8%" priority />
 
       {/* Khối chữ — chiếm phần trên, căn giữa khoảng trống còn lại */}
-      <div className="section-inner flex flex-1 flex-col items-center justify-center pt-[7vh] pb-2 text-center">
+      <div className="section-inner flex flex-1 flex-col items-center justify-center pt-[14vh] pb-2 text-center">
         <Reveal className="max-w-[17.5rem]">
           <p className="guest-line">
             {HERO.greeting}, {guestName?.trim() || HERO.guest}
@@ -66,7 +66,7 @@ export function Hero({ guestName }: HeroProps = {}) {
         </Reveal>
 
         <Reveal delay={4} className="mt-5">
-          <p className="date-text">{COUPLE.dateDisplay}</p>
+          <p className="date-text date-text--sm">{COUPLE.dateDisplay}</p>
         </Reveal>
 
         <Reveal delay={5} className="mt-3">
@@ -74,18 +74,42 @@ export function Hero({ guestName }: HeroProps = {}) {
         </Reveal>
       </div>
 
-      {/* Tranh lễ đường — dải dưới cùng, neo đáy và tràn hết bề ngang */}
-      <div className="relative h-[58svh] w-full shrink-0">
+      {/* Tranh lễ đường — dải dưới cùng, neo đáy và tràn hết bề ngang.
+          Chiều cao lấy min(58svh, bề cao tự nhiên của tranh) để máy màn hình
+          hẹp mà cao không bị hở một dải trống phía trên tranh. */}
+      <div className="relative h-[min(58svh,128.16vw)] w-full shrink-0 overflow-hidden">
         <Decor id="7" width="38%" top="9%" right="4%" front />
-        <Image
-          src={LAYERS["6"].src}
-          alt="Minh hoạ lễ đường cưới trong vườn"
-          width={LAYERS["6"].w}
-          height={LAYERS["6"].h}
-          priority
-          sizes="(max-width: 640px) 100vw, 640px"
-          className="relative z-[1] block h-full w-full object-cover object-bottom [mask-image:linear-gradient(to_bottom,transparent,#000_14%)]"
-        />
+
+        {/* Tranh và lớp cô dâu chú rể nằm chung một khung đúng tỉ lệ canvas
+            1108x1420, nên toạ độ % của lớp người luôn rơi đúng lối đi trong
+            tranh ở mọi bề ngang màn hình. */}
+        <div className="absolute inset-x-0 bottom-0 z-[1] [mask-image:linear-gradient(to_bottom,transparent,#000_14%)]">
+          <Image
+            src={LAYERS["6"].src}
+            alt="Minh hoạ lễ đường cưới trong vườn"
+            width={LAYERS["6"].w}
+            height={LAYERS["6"].h}
+            priority
+            sizes="(max-width: 640px) 100vw, 640px"
+            className="block h-auto w-full"
+          />
+
+          <Image
+            src={COUPLE_WALKING.src}
+            alt=""
+            aria-hidden
+            width={COUPLE_WALKING.w}
+            height={COUPLE_WALKING.h}
+            priority
+            sizes="(max-width: 640px) 17vw, 110px"
+            className="absolute h-auto select-none"
+            style={{
+              left: `${COUPLE_WALKING.left * 100}%`,
+              bottom: `${COUPLE_WALKING.bottom * 100}%`,
+              width: `${COUPLE_WALKING.width * 100}%`,
+            }}
+          />
+        </div>
       </div>
     </section>
   );
