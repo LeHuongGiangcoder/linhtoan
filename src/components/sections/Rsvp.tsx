@@ -23,9 +23,9 @@ export function Rsvp() {
 
   return (
     <section id="rsvp" className="section relative">
-      {/* Vòm hoa trắng hai góc trên, đài phun nước hai góc dưới */}
-      <Decor id="el-41" width="50%" top="-1%" left="-14%" />
-      <Decor id="el-42" width="50%" top="-1%" right="-14%" flip />
+      {/* Chùm cẩm tú cầu hai góc trên, đài phun nước hai góc dưới */}
+      <Decor id="el-hydrangea" width="40%" top="-3%" left="-13%" />
+      <Decor id="el-hydrangea" width="36%" top="-5%" right="-12%" flip />
       <Decor id="el-18" width="36%" bottom="0%" left="-10%" />
       <Decor id="el-18" width="36%" bottom="0%" right="-10%" flip />
 

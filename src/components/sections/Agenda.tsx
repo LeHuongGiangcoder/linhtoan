@@ -8,11 +8,12 @@ import { AGENDA } from "@/lib/content";
 export function Agenda() {
   return (
     <section id="agenda" className="section section--dense relative">
-      {/* Hai cột rèm hai bên + dải cẩm tú cầu xanh khép chân section */}
-      <Decor id="el-43" width="34%" top="6%" left="-12%" />
-      <Decor id="el-44" width="30%" top="2%" right="-10%" />
-      <Decor id="el-45" width="70%" bottom="-2%" left="-16%" />
-      <Decor id="el-45" width="70%" bottom="-2%" right="-16%" flip />
+      {/* Hai cột rèm đứng trước, dải cẩm tú cầu xanh vẽ đè lên chân cột —
+          thứ tự DOM quyết định lớp trên vì mọi .decor đều z-index 0. */}
+      <Decor id="el-43" width="44%" top="32%" left="-15%" />
+      <Decor id="el-44" width="38%" top="28%" right="-13%" />
+      <Decor id="el-45" width="126%" bottom="-5%" left="-24%" />
+      <Decor id="el-45" width="126%" bottom="-5%" right="-24%" flip />
 
       <div className="section-inner flex flex-col justify-center">
         <Divider />

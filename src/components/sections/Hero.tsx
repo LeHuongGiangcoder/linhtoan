@@ -16,7 +16,7 @@ export function Hero({ guestName }: HeroProps = {}) {
   return (
     <section
       id="hero"
-      className="section section--flush relative flex h-[100svh] flex-col overflow-hidden"
+      className="section section--flush relative flex min-h-[100svh] flex-col overflow-hidden"
     >
       {/* Góc trên phải: lớp lá (5) nằm sau bông hoa (4) */}
       <Decor id="5" width="46%" top="-9%" right="-13%" rotate={-8} priority />
@@ -66,7 +66,7 @@ export function Hero({ guestName }: HeroProps = {}) {
         </Reveal>
 
         <Reveal delay={4} className="mt-5">
-          <p className="date-text date-text--sm">{COUPLE.dateDisplay}</p>
+          <p className="date-text date-text--hero">{COUPLE.dateDisplay}</p>
         </Reveal>
 
         <Reveal delay={5} className="mt-3">
@@ -74,16 +74,15 @@ export function Hero({ guestName }: HeroProps = {}) {
         </Reveal>
       </div>
 
-      {/* Tranh lễ đường — dải dưới cùng, neo đáy và tràn hết bề ngang.
-          Chiều cao lấy min(58svh, bề cao tự nhiên của tranh) để máy màn hình
-          hẹp mà cao không bị hở một dải trống phía trên tranh. */}
-      <div className="relative h-[min(58svh,128.16vw)] w-full shrink-0 overflow-hidden">
+      {/* Tranh lễ đường — để nguyên bề cao thật, không cắt. Section vì thế cao
+          hơn một viewport và tranh tràn sang phần cuộn tiếp theo, đúng ý đồ. */}
+      <div className="relative w-full shrink-0">
         <Decor id="7" width="38%" top="9%" right="4%" front />
 
         {/* Tranh và lớp cô dâu chú rể nằm chung một khung đúng tỉ lệ canvas
             1108x1420, nên toạ độ % của lớp người luôn rơi đúng lối đi trong
             tranh ở mọi bề ngang màn hình. */}
-        <div className="absolute inset-x-0 bottom-0 z-[1] [mask-image:linear-gradient(to_bottom,transparent,#000_14%)]">
+        <div className="relative z-[1] [mask-image:linear-gradient(to_bottom,transparent,#000_14%)]">
           <Image
             src={LAYERS["6"].src}
             alt="Minh hoạ lễ đường cưới trong vườn"

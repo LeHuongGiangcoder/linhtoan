@@ -6,9 +6,9 @@ import { DRESSCODE } from "@/lib/content";
 export function Dresscode() {
   return (
     <section id="dresscode" className="section relative">
-      {/* Chùm cẩm tú cầu ba màu gác hai góc trên */}
-      <Decor id="el-hydrangea" width="40%" top="-3%" left="-13%" />
-      <Decor id="el-hydrangea" width="36%" top="-5%" right="-12%" flip />
+      {/* Vòm hoa trắng gác hai góc trên */}
+      <Decor id="el-41" width="50%" top="-1%" left="-14%" />
+      <Decor id="el-42" width="50%" top="-1%" right="-14%" flip />
 
       <div className="section-inner">
         <Divider />
@@ -22,7 +22,7 @@ export function Dresscode() {
           <p className="body-text center text-balance">{DRESSCODE.note}</p>
         </Reveal>
 
-        <Reveal delay={2} className="mt-9">
+        <Reveal delay={2} className="mt-9 px-1">
           <ul className="swatch-grid">
             {DRESSCODE.palette.map((c) => (
               <li key={c.name} className="swatch">

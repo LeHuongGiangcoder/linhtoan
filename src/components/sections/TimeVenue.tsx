@@ -34,9 +34,7 @@ export function TimeVenue() {
 
         <Reveal delay={1}>
           <div className="relative mx-auto w-full max-w-[24rem] pt-[7%] pb-[16%]">
-            {/* Phong bì */}
-            <Decor id="12" width="98%" left="1%" top="10%" />
-            {/* Ruy băng vắt qua chân phong bì */}
+            {/* Ruy băng vắt qua chân thiệp */}
             <Decor id="13" width="128%" left="-14%" bottom="0%" front />
 
             {/* Tấm thiệp ren. Ren màu trắng nên phần nhô ra khỏi phong bì
@@ -80,6 +78,9 @@ export function TimeVenue() {
                 </p>
               </div>
             </div>
+
+            {/* Đôi thiên nga đậu dưới chân thiệp */}
+            <Decor id="el-swans" width="46%" bottom="0%" left="27%" front />
 
             {/* Hai bông hoa rum gác góc phải trên của tấm thiệp */}
             <Decor id="10" width="30%" top="6%" right="-2%" rotate={8} front />

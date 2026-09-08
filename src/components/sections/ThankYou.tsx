@@ -7,6 +7,10 @@ import { COUPLE } from "@/lib/content";
 export function ThankYou() {
   return (
     <section id="thank-you" className="section relative overflow-hidden">
+      {/* Dải bụi hoa trắng chạy hết chân section, đàn bướm ở khoảng trống trái */}
+      <Decor id="el-54-strip" width="118%" bottom="-2%" left="-9%" />
+      <Decor id="el-46" width="34%" bottom="16%" left="0%" />
+
       <div className="section-inner flex flex-col items-center text-center">
         <Divider />
 

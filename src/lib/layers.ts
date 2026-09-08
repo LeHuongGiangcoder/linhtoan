@@ -52,8 +52,13 @@ export const ELEMENTS = {
   "el-45": { src: "/assets/el-45.webp", w: 900, h: 469 },
   /** Đài phun nước — khác với "18" trong LAYERS (xe hoa). */
   "el-18": { src: "/assets/el-18.webp", w: 700, h: 829 },
+  "el-46": { src: "/assets/el-46.webp", w: 520, h: 400 },
   /** Chùm cẩm tú cầu ba màu, ghép sẵn từ 37 + 38 + 39. */
   "el-hydrangea": { src: "/assets/el-hydrangea.webp", w: 700, h: 816 },
+  /** Đôi thiên nga chụm đầu thành hình trái tim. */
+  "el-swans": { src: "/assets/el-swans.webp", w: 560, h: 557 },
+  /** Dải bụi hoa trắng: 54.png lặp 5 lần, vuốt mép và chồng lấn để liền mạch. */
+  "el-54-strip": { src: "/assets/el-54-strip.webp", w: 1700, h: 361 },
 } as const;
 
 /** Mọi hình Decor có thể dùng — LAYERS chỉ khác ở chỗ có thêm toạ độ canvas. */

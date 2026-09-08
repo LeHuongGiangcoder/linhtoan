@@ -233,6 +233,12 @@
     margin: 0;
   }
 
+  /* Ngày ở hero — nhỏ hơn --sm để không tranh chấp với tên cô dâu chú rể */
+  .date-text--hero {
+    font-size: clamp(1.35rem, 5.8vw, 1.75rem);
+    letter-spacing: 0.09em;
+  }
+
   .date-text--sm {
     font-size: clamp(1.5rem, 7vw, 2rem);
     letter-spacing: 0.08em;
@@ -599,38 +605,45 @@
   }
 
   /* Bảng màu dresscode */
+  /* Một hàng duy nhất, các đĩa màu chồng nhẹ lên nhau như bảng màu mẫu.
+     flex:1 cho mọi cột bằng nhau, margin âm kéo đĩa sau đè lên đĩa trước. */
   .swatch-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem 0.75rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .swatch {
+    flex: 1 1 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.7rem;
+  }
+
+  .swatch + .swatch {
+    margin-left: -3.2%;
   }
 
   .swatch-dot {
     display: block;
     width: 100%;
-    max-width: 4.75rem;
     aspect-ratio: 1;
     border-radius: 50%;
-    /* Vòng vàng mảnh ôm sát mép đĩa màu + bóng đổ nhẹ, như bảng màu mẫu */
-    border: 1.5px solid var(--color-gold);
-    box-shadow: 0 4px 10px rgba(84, 78, 48, 0.13);
+    /* Viền vàng mảnh, không đổ bóng — bảng màu phải sạch, phẳng */
+    border: 1px solid var(--color-gold);
+    box-shadow: none;
   }
 
   /* Tên màu: serif nghiêng, viết hoa đầu chữ — không phải label in hoa */
   .swatch-name {
     font-family: var(--font-body);
     font-style: italic;
-    font-size: 0.8125rem;
+    font-size: 0.6875rem;
     line-height: 1.35;
     letter-spacing: 0.01em;
     color: var(--color-olive-soft);
