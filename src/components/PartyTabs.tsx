@@ -5,6 +5,8 @@ import { PARTIES, PARTY_ORDER, type PartyId } from "@/lib/content";
 type PartyTabsProps = {
   value: PartyId;
   onChange: (id: PartyId) => void;
+  /** Những buổi tiệc khách này được xem. Chỉ một buổi thì không hiện nút. */
+  options?: PartyId[];
   /** Dòng gợi ý phía trên — mỗi chỗ đặt nút một cách nói khác nhau. */
   hint?: string;
   className?: string;
@@ -19,15 +21,20 @@ type PartyTabsProps = {
 export function PartyTabs({
   value,
   onChange,
+  options = PARTY_ORDER,
   hint,
   className = "",
 }: PartyTabsProps) {
+  // Khách chỉ được mời một buổi thì cái nút chuyển vừa thừa vừa tiết lộ là có
+  // buổi khác mà họ không được mời.
+  if (options.length < 2) return null;
+
   return (
     <div className={`party-tabs ${className}`}>
       {hint ? <p className="eyebrow">{hint}</p> : null}
 
       <div className="party-tabs-row" role="tablist" aria-label="Chọn buổi tiệc">
-        {PARTY_ORDER.map((id) => (
+        {options.map((id) => (
           <button
             key={id}
             type="button"

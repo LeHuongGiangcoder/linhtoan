@@ -33,22 +33,29 @@ const SITE_ORIGIN = 'https://khanhlinhtoanpham.gloweb.site';
  *   path   đoạn đường dẫn trong link riêng:  SITE_ORIGIN/<path>/<slug>
  *   label  chữ hiện trong ô dropdown của sheet
  *   alias  các cách gõ khác vẫn hiểu là sự kiện này (không dấu, viết thường)
+ *   sees   khách của sự kiện này xem được những buổi nào trên thiệp — khách
+ *          tiệc thân mật được mời cả hai buổi nên xem cả hai, khách tiệc
+ *          chính chỉ xem tiệc chính. Phải khớp PARTY_ACCESS trong
+ *          src/lib/guests.ts.
  *
  * ĐỔI `path` SAU KHI ĐÃ GỬI LINK CHO KHÁCH LÀ HỎNG HẾT LINK CŨ. Chốt hai đoạn
  * đường dẫn này trước khi gửi thiệp đầu tiên.
  */
 const EVENTS = [
   {
-    key: 'le-cuoi',
-    path: 'le-cuoi',
-    label: 'Lễ cưới',
-    alias: ['le cuoi', 'le', 'ceremony', 'lễ cưới', '1'],
+    key: 'intimate',
+    path: 'intimate',
+    label: 'Tiệc thân mật',
+    alias: ['tiec than mat', 'than mat', 'intimate', 'tiệc thân mật', '1'],
+    /** Khách của buổi này xem được những buổi nào trên thiệp. */
+    sees: ['intimate', 'main'],
   },
   {
-    key: 'tiec-cuoi',
-    path: 'tiec-cuoi',
-    label: 'Tiệc cưới',
-    alias: ['tiec cuoi', 'tiec', 'party', 'reception', 'tiệc cưới', '2'],
+    key: 'main',
+    path: 'main',
+    label: 'Tiệc chính',
+    alias: ['tiec chinh', 'chinh', 'main', 'main party', 'tiệc chính', '2'],
+    sees: ['main'],
   },
 ];
 
@@ -90,6 +97,14 @@ function eventPath_(key) {
     if (EVENTS[i].key === key) return EVENTS[i].path;
   }
   return EVENTS[0].path;
+}
+
+/** Những buổi tiệc mà khách của sự kiện này xem được. */
+function eventSees_(key) {
+  for (let i = 0; i < EVENTS.length; i++) {
+    if (EVENTS[i].key === key) return EVENTS[i].sees.slice();
+  }
+  return [EVENTS[0].key];
 }
 
 /** Bỏ dấu để 'Tiệc cưới' và 'tiec cuoi' cùng tra được một chỗ. */
@@ -164,7 +179,7 @@ function checkData() {
   const guests = readGuests_(sheet, col);
 
   const lines = guests.slice(0, 12).map(function (g) {
-    return g.event + '   ' + g.slug + '   ' + g.name;
+    return g.event + '  (xem: ' + g.sees.join('+') + ')   ' + g.slug + '   ' + g.name;
   });
 
   const tally = EVENTS.map(function (ev) {
@@ -209,7 +224,7 @@ function doPost(e) {
       return json({
         ok: true,
         events: EVENTS.map(function (ev) {
-          return { key: ev.key, path: ev.path, label: ev.label };
+          return { key: ev.key, path: ev.path, label: ev.label, sees: ev.sees };
         }),
         guests: readGuests_(sheet, col),
       });
@@ -425,6 +440,9 @@ function readGuests_(sheet, col) {
         // chương trình sẽ hiển thị.
         event: event,
         eventPath: eventPath_(event),
+        // Những buổi khách này xem được trên thiệp. Thiệp dùng nó để quyết
+        // định có hiện nút chuyển buổi tiệc hay không.
+        sees: eventSees_(event),
         // Phản hồi đã ghi trước đó, để khách quay lại thấy đúng trạng thái của
         // mình chứ không phải form trắng.
         attending: attending === 'YES' ? true : (attending === 'NO' ? false : null),

@@ -11,7 +11,7 @@ script dựng link riêng cho từng người, và website ghi phản hồi RSVP
 |-----|---------|---------|
 | `No` | tự sinh | số thứ tự **và là mã khách** — 3 chữ số (`001`, `002`…) |
 | `Name` | **bạn gõ** | tên hiện trên thiệp — có dấu tiếng Việt thoải mái |
-| `Event` | **bạn chọn** | `Lễ cưới` hoặc `Tiệc cưới`. **Bỏ trống = `Lễ cưới`** |
+| `Event` | **bạn chọn** | `Tiệc thân mật` hoặc `Tiệc chính`. **Bỏ trống = `Tiệc thân mật`** |
 | `Slug` | tự sinh | phần đuôi URL, sinh từ tên |
 | `Link` | tự sinh | link để gửi cho khách — copy thẳng từ đây |
 | `Attending` | website ghi | `YES` / `NO` |
@@ -33,8 +33,8 @@ vào cuối khi script chạy lần đầu.
 ```
 SITE_ORIGIN / <đường dẫn của sự kiện> / <slug của khách>
 
-https://khanhlinhtoanpham.gloweb.site/le-cuoi/anh-chi-nguyen-van-a
-https://khanhlinhtoanpham.gloweb.site/tiec-cuoi/ms-tran-thi-bao-ngoc
+https://khanhlinhtoanpham.gloweb.site/intimate/anh-chi-nguyen-van-a
+https://khanhlinhtoanpham.gloweb.site/main/ms-tran-thi-bao-ngoc
 ```
 
 - `Slug` sinh ra một lần rồi **không bao giờ tự đổi** — link đã gửi cho khách
@@ -53,19 +53,36 @@ nhất cho cả link, cả dropdown trong sheet:
 
 ```js
 const EVENTS = [
-  { key: 'le-cuoi',   path: 'le-cuoi',   label: 'Lễ cưới',   alias: [...] },
-  { key: 'tiec-cuoi', path: 'tiec-cuoi', label: 'Tiệc cưới', alias: [...] },
+  { key: 'intimate', path: 'intimate', label: 'Tiệc thân mật',
+    alias: [...], sees: ['intimate', 'main'] },
+  { key: 'main',     path: 'main',     label: 'Tiệc chính',
+    alias: [...], sees: ['main'] },
 ];
 ```
 
 `alias` là các cách gõ khác vẫn hiểu là sự kiện đó — ô `Event` là dropdown,
 nhưng người ta vẫn dán đè hoặc gõ tay, và một ô ghi `tiec` mà lặng lẽ ra link
-của lễ cưới là kiểu lỗi không ai phát hiện cho tới khi khách đã tới nhầm chỗ.
+của tiệc thân mật là kiểu lỗi không ai phát hiện cho tới khi khách đã tới nhầm chỗ.
 Giá trị lạ hoàn toàn thì rơi về sự kiện đầu tiên — dùng menu **Kiểm tra dữ
 liệu** để soát trước khi gửi thiệp.
 
 > **Chốt `path` trước khi gửi thiệp đầu tiên.** Đổi `path` sau đó là hỏng toàn
 > bộ link đã gửi. `key` và `label` thì đổi lúc nào cũng được.
+
+### Ai xem được buổi nào
+
+| `Event` trong sheet | Link mở ra | Thiệp hiện |
+|---|---|---|
+| `Tiệc thân mật` | `/intimate/<slug>` | **cả hai buổi**, có nút chuyển qua lại |
+| `Tiệc chính` | `/main/<slug>` | **chỉ tiệc chính**, không có nút chuyển |
+
+Khách chỉ được mời tiệc chính thì nút chuyển tự ẩn hẳn: để nút ở đó chỉ tổ
+cho họ biết còn một buổi nữa mà mình không được mời.
+
+Quy tắc này nằm ở hai chỗ và phải khớp nhau: `sees` trong `EVENTS` của
+[`apps-script.gs`](apps-script.gs), và `PARTY_ACCESS` trong
+`src/lib/guests.ts`. Sửa một bên nhớ sửa bên kia.
+
 
 ---
 
@@ -91,7 +108,7 @@ liệu** để soát trước khi gửi thiệp.
 4. **Deploy**, cấp quyền, copy **Web app URL**.
 
 > Mỗi lần sửa script phải **Deploy → Manage deployments → ✏️ → New version**,
-> không thì code cũ vẫn chạy. Nếu sheet ghi `Tiệc cưới` mà link vẫn ra lễ cưới,
+> không thì code cũ vẫn chạy. Nếu sheet ghi `Tiệc chính` mà link vẫn ra tiệc thân mật,
 > lỗi gần như chắc chắn nằm ở đây.
 
 ## 3. Trỏ website vào đó

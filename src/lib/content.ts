@@ -1,5 +1,15 @@
 /** Toàn bộ nội dung hardcode — sửa ở đây là đổi cả site. */
 
+/**
+ * Domain thật của thiệp. Dùng cho thẻ xem trước khi chia sẻ (Open Graph) —
+ * Facebook / Zalo / iMessage đòi đường dẫn tuyệt đối, đường dẫn tương đối là
+ * ảnh không hiện.
+ *
+ * PHẢI khớp với `SITE_ORIGIN` trong docs/apps-script.gs, nếu không link riêng
+ * gửi cho khách sẽ trỏ sang một domain khác.
+ */
+export const SITE_URL = "https://khanhlinhtoanpham.gloweb.site";
+
 export const COUPLE = {
   bride: "Khánh Linh",
   groom: "Toàn Phạm",

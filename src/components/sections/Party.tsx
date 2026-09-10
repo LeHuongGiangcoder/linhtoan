@@ -6,10 +6,15 @@ import { TimeVenue } from "@/components/sections/TimeVenue";
 import { Agenda } from "@/components/sections/Agenda";
 import { Dresscode } from "@/components/sections/Dresscode";
 import { Rsvp } from "@/components/sections/Rsvp";
-import { PARTIES, type PartyId } from "@/lib/content";
+import { PARTIES, PARTY_ORDER, type PartyId } from "@/lib/content";
 
 /**
  * Phần thân thiệp — nội dung đổi theo buổi tiệc khách chọn.
+ *
+ * `options` là những buổi khách này được mời, lấy từ link riêng của họ: khách
+ * tiệc thân mật xem được cả hai buổi, khách tiệc chính chỉ xem tiệc chính. Chỉ
+ * có một buổi thì nút chuyển tự ẩn — hiện ra chỉ tổ cho khách biết còn một
+ * buổi nữa mà họ không được mời.
  *
  * Tiệc thân mật có Thời gian & Địa điểm, Dresscode rồi tới RSVP; tiệc chính
  * có thêm Chương trình. Nút chuyển đặt ở cả hai đầu để khách đọc hết một buổi
@@ -18,8 +23,10 @@ import { PARTIES, type PartyId } from "@/lib/content";
  * `key` trên panel khiến React dựng lại cây con khi đổi tiệc: hiệu ứng reveal
  * và form RSVP đều bắt đầu lại từ đầu thay vì giữ trạng thái của buổi trước.
  */
-export function Party() {
-  const [party, setParty] = useState<PartyId>("intimate");
+export function Party({
+  options = PARTY_ORDER,
+}: { options?: PartyId[] } = {}) {
+  const [party, setParty] = useState<PartyId>(options[0] ?? "main");
   const isMain = party === "main";
 
   return (
@@ -27,6 +34,7 @@ export function Party() {
       <PartyTabs
         value={party}
         onChange={setParty}
+        options={options}
         hint="Bạn muốn xem buổi tiệc nào?"
         className="party-tabs--top"
       />
@@ -48,6 +56,7 @@ export function Party() {
       <PartyTabs
         value={party}
         onChange={setParty}
+        options={options}
         hint="Xem buổi tiệc còn lại"
         className="party-tabs--bottom"
       />
