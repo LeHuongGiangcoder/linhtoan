@@ -1,9 +1,6 @@
 import { Intro } from "@/components/Intro";
 import { Hero } from "@/components/sections/Hero";
-import { TimeVenue } from "@/components/sections/TimeVenue";
-import { Agenda } from "@/components/sections/Agenda";
-import { Dresscode } from "@/components/sections/Dresscode";
-import { Rsvp } from "@/components/sections/Rsvp";
+import { Party } from "@/components/sections/Party";
 import { ThankYou } from "@/components/sections/ThankYou";
 
 export default function Home() {
@@ -12,10 +9,8 @@ export default function Home() {
       <Intro />
       <main>
         <Hero />
-        <TimeVenue />
-        <Agenda />
-        <Dresscode />
-        <Rsvp />
+        {/* Thân thiệp đổi theo buổi tiệc khách chọn — xem Party.tsx */}
+        <Party />
         <ThankYou />
       </main>
     </>

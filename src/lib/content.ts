@@ -3,9 +3,9 @@
 export const COUPLE = {
   bride: "Khánh Linh",
   groom: "Toàn Phạm",
-  dateDisplay: "03.24.28",
-  dateFull: "Thứ Sáu, ngày 24 tháng 03 năm 2028",
-  lunar: "Nhằm ngày 29 tháng 02 năm Mậu Thân",
+  dateDisplay: "11.29.26",
+  dateFull: "Chủ Nhật, ngày 29 tháng 11 năm 2026",
+  lunar: "Nhằm ngày 21 tháng 10 năm Bính Ngọ",
   city: "Hà Nội",
 };
 
@@ -16,16 +16,84 @@ export const HERO = {
   invite: "We joyfully invite you to our wedding",
 };
 
-export const VENUE = {
-  event: "Tiệc cưới",
-  time: "10:30",
-  hall: "Grand Ballroom",
-  name: "Khách sạn Metropole",
-  address: "15 Ngô Quyền, Hoàn Kiếm, Hà Nội",
-  mapUrl:
-    "https://www.google.com/maps/search/?api=1&query=Metropole+Hanoi+15+Ngo+Quyen",
+/** Hai buổi tiệc — khách tự chọn xem buổi nào bằng nút chuyển. */
+export type PartyId = "intimate" | "main";
+
+export type Party = {
+  id: PartyId;
+  /** Nhãn trên nút chuyển */
+  tab: string;
+  /** Chữ khắc trên tấm biển chạm nổi trong ảnh ghép */
+  plaqueTitle: string;
+  plaqueNote: string;
+  /** Id ảnh trong ART — mỗi tiệc một kiểu biển */
+  plaque: "tv-plaque-intimate" | "tv-plaque-main";
+  /**
+   * Lề trong của tấm biển, đo trên chính file ảnh: phần mặt phẳng viết được
+   * nằm gọn trong khung hoa văn chạm nổi. Hai tấm khác hình nên khác lề.
+   */
+  plaqueInset: string;
+  event: string;
+  weekday: string;
+  /** Dòng chữ lớn trên vé — giữ ngắn, mặt vé hẹp */
+  dateScript: string;
+  dateShort: string;
+  /** TODO: giờ đãi tiệc chưa chốt, sửa lại khi có lịch chính thức. */
+  time: string;
+  hall: string;
+  venue: string;
+  address: string;
+  city: string;
+  mapUrl: string;
 };
 
+export const PARTIES: Record<PartyId, Party> = {
+  intimate: {
+    id: "intimate",
+    tab: "Tiệc thân mật",
+    plaqueTitle: "Intimate",
+    plaqueNote: "Tiệc thân mật",
+    plaque: "tv-plaque-intimate",
+    plaqueInset: "17%",
+    event: "Tiệc thân mật",
+    weekday: "Thứ Bảy",
+    dateScript: "21 Tháng 11",
+    dateShort: "21 . 11 . 2026",
+    time: "18:00",
+    hall: "",
+    venue: "InterContinental Hạ Long",
+    address: "Bãi Cháy, TP. Hạ Long, Quảng Ninh",
+    city: "Hạ Long",
+    mapUrl:
+      "https://www.google.com/maps/search/?api=1&query=InterContinental+Halong+Bay+Resort",
+  },
+  main: {
+    id: "main",
+    tab: "Tiệc chính",
+    plaqueTitle: "Main Party",
+    plaqueNote: "Tiệc chính",
+    plaque: "tv-plaque-main",
+    plaqueInset: "27% 19% 29%",
+    event: "Tiệc cưới",
+    weekday: "Chủ Nhật",
+    dateScript: "29 Tháng 11",
+    dateShort: "29 . 11 . 2026",
+    time: "10:30",
+    hall: "",
+    venue: "Trung tâm Hội nghị Quốc gia",
+    address: "57 Phạm Hùng, Mễ Trì, Nam Từ Liêm, Hà Nội",
+    city: "Hà Nội",
+    mapUrl:
+      "https://www.google.com/maps/search/?api=1&query=Trung+tam+Hoi+nghi+Quoc+gia+57+Pham+Hung+Ha+Noi",
+  },
+};
+
+export const PARTY_ORDER: PartyId[] = ["intimate", "main"];
+
+/** Chữ dựng đứng trên cuống vé — cuống hẹp nên giữ thật ngắn. */
+export const TICKET_STUB = "Kính mời";
+
+/** Chương trình — chỉ có ở tiệc chính. */
 export const AGENDA = [
   {
     time: "10:30",

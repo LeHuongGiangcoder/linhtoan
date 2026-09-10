@@ -59,6 +59,42 @@ export const ELEMENTS = {
   "el-swans": { src: "/assets/el-swans.webp", w: 560, h: 557 },
   /** Dải bụi hoa trắng: 54.png lặp 5 lần, vuốt mép và chồng lấn để liền mạch. */
   "el-54-strip": { src: "/assets/el-54-strip.webp", w: 1700, h: 361 },
+
+  /* Bộ element cắt từ public/element.png cho section Thời gian & Địa điểm —
+     xem scripts/build-timevenue-assets.mjs. Tiền tố `tv-`. */
+
+  /** Phong bì mở, lớp nằm SAU nội dung (thấy nắp và lòng phong bì). */
+  "tv-envelope-back": { src: "/assets/tv-envelope-back.webp", w: 1532, h: 1291 },
+  /** Túi trước của cùng phong bì đó — cùng khung ảnh nên đặt trùng toạ độ
+   *  với lớp sau là hai lớp khít nhau, nội dung kẹp ở giữa. */
+  "tv-envelope-front": {
+    src: "/assets/tv-envelope-front.webp",
+    w: 1532,
+    h: 1291,
+  },
+  /** Vé mời đen, đã dựng thẳng; vạch răng cưa ở 72.2% bề ngang. */
+  "tv-ticket": { src: "/assets/tv-ticket.webp", w: 1204, h: 597 },
+  /** Tờ giấy deckle nằm ngang — mặt thư ghi địa điểm. */
+  "tv-letter": { src: "/assets/tv-letter.webp", w: 1339, h: 956 },
+  "tv-calla": { src: "/assets/tv-calla.webp", w: 728, h: 806 },
+  "tv-sprig": { src: "/assets/tv-sprig.webp", w: 853, h: 857 },
+  "tv-peony": { src: "/assets/tv-peony.webp", w: 932, h: 1213 },
+  "tv-blossoms": { src: "/assets/tv-blossoms.webp", w: 572, h: 1461 },
+  "tv-news": { src: "/assets/tv-news.webp", w: 463, h: 1160 },
+  /** Dấu xi vàng dập hình hoa hồng — ảnh thật, thay cho chữ lồng. */
+  "tv-seal": { src: "/assets/tv-seal.webp", w: 900, h: 1005 },
+  /** Biển chạm nổi tròn — tiệc thân mật. Chữ viết đè lên bằng CSS. */
+  "tv-plaque-intimate": {
+    src: "/assets/tv-plaque-intimate.webp",
+    w: 1100,
+    h: 1102,
+  },
+  /** Biển chạm nổi hình khiên — tiệc chính. */
+  "tv-plaque-main": { src: "/assets/tv-plaque-main.webp", w: 1100, h: 1330 },
+
+  /** Dải ren trắng: mép trên phẳng, mép dưới vỏ sò. Lật dọc để dùng làm
+   *  viền che chỗ hoa bị mép section cắt ngang. */
+  "el-lace": { src: "/lace.webp", w: 1600, h: 205 },
 } as const;
 
 /** Mọi hình Decor có thể dùng — LAYERS chỉ khác ở chỗ có thêm toạ độ canvas. */

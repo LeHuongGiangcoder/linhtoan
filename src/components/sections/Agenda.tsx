@@ -1,29 +1,54 @@
 import { Fragment } from "react";
+import Image from "next/image";
 import { Cross } from "@/components/Cross";
 import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
 import { AGENDA } from "@/lib/content";
+import { ART } from "@/lib/layers";
 
 export function Agenda() {
   return (
-    <section id="agenda" className="section section--dense relative">
+    <section id="agenda" className="section section--dense relative pb-[16rem]">
       {/* Hai cột rèm đứng trước, dải cẩm tú cầu xanh vẽ đè lên chân cột —
-          thứ tự DOM quyết định lớp trên vì mọi .decor đều z-index 0. */}
-      <Decor id="el-43" width="52%" top="36%" left="-16%" />
-      <Decor id="el-44" width="46%" top="28%" right="-15%" />
-      <Decor id="el-45" width="126%" bottom="-5%" left="-24%" />
-      <Decor id="el-45" width="126%" bottom="-5%" right="-24%" flip />
+          thứ tự DOM quyết định lớp trên vì mọi .decor đều z-index 0.
+          Hai cột cùng bề rộng và đẩy hẳn ra mép để chừa chỗ cho nội dung. */}
+      <Decor id="el-43" width="46%" bottom="9%" left="-23%" />
+      <Decor id="el-44" width="46%" bottom="7%" right="-23%" />
 
-      {/* Chân section tan dần vào nền kem thay vì cắt ngang một đường thẳng */}
-      <div className="section-fade-bottom" aria-hidden />
+      {/* Gấu section: dải cẩm tú cầu ngồi ngay trên dải ren, mép dưới hoa và
+          mép trên ren khít nhau (bottom: 100% của .section-hem, trừ 1px cho
+          khỏi hở chỉ khi làm tròn). Hoa cũng trùm qua chân hai cột — cột đứng
+          lơ lửng giữa nền giấy thì lộ ngay là ảnh dán. */}
+      <div className="section-hem" aria-hidden>
+        <Decor
+          id="el-45"
+          width="92%"
+          left="-12%"
+          bottom="calc(100% - 1px)"
+        />
+        <Decor
+          id="el-45"
+          width="92%"
+          right="-12%"
+          bottom="calc(100% - 1px)"
+          flip
+        />
+        <Image
+          src={ART["el-lace"].src}
+          alt=""
+          width={ART["el-lace"].w}
+          height={ART["el-lace"].h}
+          sizes="(max-width: 640px) 100vw, 640px"
+          className="hem-lace"
+        />
+      </div>
 
       <div className="section-inner flex flex-col justify-center">
-        <Divider />
-
         <Reveal className="section-head">
           <p className="eyebrow">Chương trình</p>
           <h2 className="display-2">Agenda</h2>
+          <Divider />
         </Reveal>
 
         {/* Timeline canh giữa, các mốc nối nhau bằng dấu ✛ như phần tên couple */}

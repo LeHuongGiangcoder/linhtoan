@@ -6,16 +6,21 @@ import { COUPLE } from "@/lib/content";
 /** Thank you — chỉ giữ đôi bồ câu, phần còn lại để trống cho thoáng. */
 export function ThankYou() {
   return (
-    <section id="thank-you" className="section relative overflow-hidden">
+    <section
+      id="thank-you"
+      /* pb-28: chừa sẵn chỗ cho dải bụi hoa cao ~7rem ở chân section — không
+         có nó thì dải hoa đè lên dòng cuối khi section co theo nội dung. */
+      className="section section--fit relative overflow-hidden pb-28"
+    >
       {/* Bụi hoa trắng chân section: hai lớp lệch nhau cho dày, lớp sau lật
-          gương và tụt xuống để không lộ ra là cùng một dải lặp lại. */}
-      <Decor id="el-54-strip" width="152%" bottom="-7%" left="-31%" flip />
-      <Decor id="el-54-strip" width="118%" bottom="-2%" left="-9%" />
+          gương và tụt xuống để không lộ ra là cùng một dải lặp lại.
+          Hai đầu dải el-54-strip được vuốt trong suốt khoảng 4% mỗi bên, nên
+          mỗi lớp phải thò ra ngoài hai mép nhiều hơn thế. */}
+      <Decor id="el-54-strip" width="152%" bottom="-7%" left="-28%" flip />
+      <Decor id="el-54-strip" width="130%" bottom="-2%" left="-15%" />
       <Decor id="el-46" width="34%" bottom="16%" left="0%" />
 
       <div className="section-inner flex flex-col items-center text-center">
-        <Divider />
-
         <Reveal>
           <Decor
             id="19"
@@ -27,6 +32,7 @@ export function ThankYou() {
         <Reveal delay={1} className="section-head mt-5">
           <p className="eyebrow">Thank you</p>
           <h2 className="display-2">Cảm ơn bạn</h2>
+          <Divider />
         </Reveal>
 
         <Reveal delay={2}>

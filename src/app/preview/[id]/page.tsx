@@ -6,14 +6,19 @@ import { Agenda } from "@/components/sections/Agenda";
 import { Dresscode } from "@/components/sections/Dresscode";
 import { Rsvp } from "@/components/sections/Rsvp";
 import { ThankYou } from "@/components/sections/ThankYou";
+import { Party } from "@/components/sections/Party";
+import { PARTIES } from "@/lib/content";
 
 const SECTIONS: Record<string, () => React.ReactNode> = {
   hero: Hero,
   "time-venue": TimeVenue,
+  "time-venue-main": () => <TimeVenue party={PARTIES.main} />,
   agenda: Agenda,
   dresscode: Dresscode,
   rsvp: Rsvp,
   "thank-you": ThankYou,
+  /** Cả thân thiệp kèm nút chuyển tiệc */
+  party: Party,
 };
 
 export function generateStaticParams() {

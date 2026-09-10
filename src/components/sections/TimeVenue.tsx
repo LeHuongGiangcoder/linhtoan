@@ -1,16 +1,40 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
-import { LAYERS, PAINTING } from "@/lib/layers";
-import { COUPLE, VENUE } from "@/lib/content";
+import { ART, PAINTING } from "@/lib/layers";
+import { PARTIES, TICKET_STUB, type Party } from "@/lib/content";
+
+function Head({
+  eyebrow,
+  title,
+  className = "",
+}: {
+  eyebrow: string;
+  title: ReactNode;
+  className?: string;
+}) {
+  return (
+    <Reveal className={`section-head ${className}`}>
+      <p className="eyebrow">{eyebrow}</p>
+      <h2 className="display-2">{title}</h2>
+      <Divider />
+    </Reveal>
+  );
+}
 
 /**
- * Time & Venue — bố cục "thiệp trong phong bì":
- * phong bì (12) + dải ruy băng (13) nằm sau, tấm thiệp ren (9) ở giữa,
- * hai bông rum (10, 11) gác lên góc phải trên.
+ * Thời gian & Địa điểm — một section, hai phần trên cùng nền giấy.
+ *
+ * Phần Thời gian dựng lại kiểu ảnh ghép "thiệp trong phong bì": phong bì mở
+ * được tách sẵn thành hai lớp (lưng và túi trước), mọi thứ khác kẹp ở giữa
+ * nên trông đúng như vừa rút ra khỏi bì thư. Toàn bộ toạ độ tính theo % của
+ * `.collage` (tỉ lệ cố định), vì vậy bố cục không đổi theo bề ngang màn hình.
+ *
+ * Mặc định `intimate` để route xem thử từng section vẫn gọi được không tham số.
  */
-export function TimeVenue() {
+export function TimeVenue({ party = PARTIES.intimate }: { party?: Party } = {}) {
   return (
     <section id="time-venue" className="section relative">
       {/* Tranh sơn dầu mờ phía sau toàn bộ section — đôi thiên nga trên sông. */}
@@ -25,72 +49,182 @@ export function TimeVenue() {
       </div>
 
       <div className="section-inner">
-        <Divider />
-
-        <Reveal className="section-head">
-          <p className="eyebrow">Save the moment</p>
-          <h2 className="display-2">Thông tin</h2>
-        </Reveal>
+        <Head eyebrow="Save the date" title="Thời gian" />
 
         <Reveal delay={1}>
-          <div className="relative mx-auto w-full max-w-[24rem] pt-[7%] pb-[16%]">
-            {/* Ruy băng vắt qua chân thiệp */}
-            <Decor id="13" width="128%" left="-14%" bottom="0%" front />
+          <div className="collage">
+            {/* Lớp dưới cùng: hai mẩu báo cũ thò ra hai bên phong bì. Không
+                đặt zIndex nên chúng nằm ở z-0, dưới mọi thứ còn lại. */}
+            <Decor id="tv-news" width="19%" left="4%" top="44%" rotate={-9} />
+            <Decor
+              id="tv-news"
+              width="17%"
+              right="4%"
+              top="46%"
+              rotate={8}
+              flip
+            />
 
-            {/* Tấm thiệp ren. Ren màu trắng nên phần nhô ra khỏi phong bì
-                sẽ chìm vào nền giấy kem — .lace-card đổ bóng theo alpha
-                để đường ren nổi lên đủ. */}
-            <div className="relative z-[2] mx-auto w-[86%]">
+            {/* Nhành bạch diệp thò lên khỏi miệng phong bì */}
+            <Decor id="tv-sprig" width="31%" left="29%" top="12%" />
+
+            {/* Lưng phong bì — nắp mở, thấy lòng bì */}
+            <Decor
+              id="tv-envelope-back"
+              width="82%"
+              left="9%"
+              top="40%"
+              style={{ zIndex: 1 }}
+            />
+
+            {/* Tấm biển chạm nổi khắc tên buổi tiệc — mỗi tiệc một kiểu biển */}
+            <div
+              className="plaque"
+              style={{
+                left: "26%",
+                top: "18%",
+                width: "46%",
+                zIndex: 3,
+                transform: "rotate(-3deg)",
+              }}
+            >
               <Image
-                src={LAYERS["9"].src}
+                key={party.plaque}
+                src={ART[party.plaque].src}
                 alt=""
                 aria-hidden
-                width={LAYERS["9"].w}
-                height={LAYERS["9"].h}
-                sizes="(max-width: 640px) 74vw, 320px"
-                className="lace-card block h-auto w-full"
+                width={ART[party.plaque].w}
+                height={ART[party.plaque].h}
+                sizes="(max-width: 640px) 46vw, 180px"
               />
-
-              {/* Nội dung nằm trên mặt giấy */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center px-[13%] py-[12%] text-center">
-                <p className="eyebrow eyebrow--tight">Trân trọng kính mời</p>
-
-                <span className="rule my-2 !h-6" />
-
-                <h3 className="display-3">{VENUE.event}</h3>
-
-                <p className="date-text date-text--sm mt-3">
-                  {COUPLE.dateDisplay}
-                </p>
-
-                <p className="label mt-2">{VENUE.time}</p>
-
-                <span className="rule my-3 !h-6" />
-
-                <p className="body-text body-text--sm !text-[var(--color-olive)]">
-                  {VENUE.hall}
-                  <br />
-                  {VENUE.name}
-                </p>
-
-                <p className="body-text body-text--sm mt-1 text-balance">
-                  {VENUE.address}
-                </p>
+              <div
+                className="plaque-text"
+                style={{ padding: party.plaqueInset }}
+              >
+                <span className="plaque-title">{party.plaqueTitle}</span>
+                <span className="plaque-note">{party.plaqueNote}</span>
               </div>
             </div>
 
-            {/* Đôi thiên nga đậu dưới chân thiệp */}
-            <Decor id="el-swans" width="46%" bottom="0%" left="27%" front />
+            {/* Tấm vé — nơi ghi ngày giờ. zIndex cao nhất trong ảnh ghép: vé
+                nằm trên cả túi trước phong bì nên vắt hẳn ra ngoài miệng bì,
+                đúng kiểu vừa rút vé ra khỏi thiệp. */}
+            <div
+              className="ticket"
+              style={{
+                left: "30%",
+                top: "46%",
+                width: "52%",
+                zIndex: 9,
+                transform: "rotate(-11deg)",
+              }}
+            >
+              <Image
+                src={ART["tv-ticket"].src}
+                alt=""
+                aria-hidden
+                width={ART["tv-ticket"].w}
+                height={ART["tv-ticket"].h}
+                sizes="(max-width: 640px) 52vw, 200px"
+              />
+              <div className="ticket-face">
+                <p className="ticket-line">{party.weekday}</p>
+                <p className="ticket-script">{party.dateScript}</p>
+                <p className="ticket-line">{party.dateShort}</p>
+                <p className="ticket-line">
+                  {party.time} · {party.city}
+                </p>
+              </div>
+              <div className="ticket-stub">
+                <span>{TICKET_STUB}</span>
+              </div>
+            </div>
 
-            {/* Hai bông hoa rum gác góc phải trên của tấm thiệp */}
-            <Decor id="10" width="30%" top="6%" right="-2%" rotate={8} front />
+            {/* Hai bông rum gác lên mép vé */}
             <Decor
-              id="11"
-              width="27%"
-              top="26%"
-              right="-8%"
-              rotate={22}
-              front
+              id="tv-calla"
+              width="19%"
+              left="20%"
+              top="50%"
+              rotate={-8}
+              style={{ zIndex: 10 }}
+            />
+
+            {/* Túi trước của phong bì — trùng khít lớp lưng, phủ lên chân thiệp */}
+            <Decor
+              id="tv-envelope-front"
+              width="82%"
+              left="9%"
+              top="40%"
+              style={{ zIndex: 6 }}
+            />
+
+            {/* Hoa gác hai chân phong bì, nằm trên cùng */}
+            <Decor
+              id="tv-peony"
+              width="29%"
+              left="1%"
+              bottom="0%"
+              style={{ zIndex: 7 }}
+            />
+            <Decor
+              id="tv-blossoms"
+              width="20%"
+              right="1%"
+              bottom="3%"
+              style={{ zIndex: 7 }}
+            />
+
+            {/* Dấu xi gắn giữa mặt phong bì, thay cho chữ lồng */}
+            <Decor
+              id="tv-seal"
+              width="15%"
+              left="43%"
+              bottom="12%"
+              rotate={-6}
+              style={{ zIndex: 8 }}
+            />
+          </div>
+        </Reveal>
+
+        <Head eyebrow="Nơi gặp nhau" title="Địa điểm" className="mt-14" />
+
+        <Reveal delay={1}>
+          <div className="letter">
+            <Image
+              src={ART["tv-letter"].src}
+              alt=""
+              aria-hidden
+              width={ART["tv-letter"].w}
+              height={ART["tv-letter"].h}
+              sizes="(max-width: 640px) 92vw, 352px"
+            />
+
+            <div className="letter-text">
+              <p className="eyebrow eyebrow--tight">{party.event}</p>
+              {/* Tên địa điểm dài (2 dòng) nên hạ cỡ chữ để nằm gọn trong
+                  khung ren của tờ giấy */}
+              <h3 className="display-3 text-balance !text-[1.2rem]">
+                {party.venue}
+              </h3>
+              {party.hall ? (
+                <p className="body-text body-text--sm !text-[var(--color-olive)]">
+                  {party.hall}
+                </p>
+              ) : null}
+              <p className="body-text body-text--sm text-balance">
+                {party.address}
+              </p>
+            </div>
+
+            {/* Dấu xi niêm phong góc trên phải lá thư */}
+            <Decor
+              id="tv-seal"
+              width="17%"
+              right="6%"
+              top="-9%"
+              rotate={7}
+              style={{ zIndex: 3 }}
             />
           </div>
         </Reveal>
@@ -98,7 +232,7 @@ export function TimeVenue() {
         <Reveal delay={2} className="btn-row mt-8">
           <a
             className="btn btn--outline"
-            href={VENUE.mapUrl}
+            href={party.mapUrl}
             target="_blank"
             rel="noreferrer noopener"
           >

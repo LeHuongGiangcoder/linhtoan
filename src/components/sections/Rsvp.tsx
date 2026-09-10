@@ -4,10 +4,11 @@ import { useState, type FormEvent } from "react";
 import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
+import { PARTIES, type Party } from "@/lib/content";
 
 type Attending = "yes" | "no";
 
-export function Rsvp() {
+export function Rsvp({ party = PARTIES.intimate }: { party?: Party } = {}) {
   const [attending, setAttending] = useState<Attending>("yes");
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
@@ -22,25 +23,22 @@ export function Rsvp() {
   }
 
   return (
-    <section id="rsvp" className="section section--bleed relative">
-      {/* Một chùm cẩm tú cầu bên trái. Đặt sát mép trái (-3%) chứ không âm sâu:
-          màu kem nằm ngoài cùng bên trái nên lùi thêm là mất một trong ba màu.
-          Section để overflow dọc nên chùm hoa tràn lên section trên, không bị
-          cắt ngang ở ranh giới. */}
-      <Decor id="el-hydrangea" width="46%" top="-11%" left="-3%" />
-      <Decor id="el-18" width="36%" bottom="0%" left="-10%" />
-      <Decor id="el-18" width="36%" bottom="0%" right="-10%" flip />
+    <section id="rsvp" className="section section--fit section--bleed relative">
+      {/* `front` để hai đài hoa nằm trên tấm giấy của form (z-3 > .section-inner
+          z-2) — không có nó thì tấm giấy che mất chân hoa. */}
+      <Decor id="el-18" width="36%" bottom="0%" left="-10%" front />
+      <Decor id="el-18" width="36%" bottom="0%" right="-10%" flip front />
 
       <div className="section-inner">
-        <Divider />
-
         <Reveal className="section-head">
           <p className="eyebrow">Xác nhận tham dự</p>
           <h2 className="display-2">R.S.V.P</h2>
+          <p className="eyebrow eyebrow--tight">{party.tab}</p>
+          <Divider />
         </Reveal>
 
         {sent ? (
-          <Reveal className="card-soft center stack">
+          <Reveal className="paper-panel center stack">
             <h3 className="display-3">Đã nhận được rồi!</h3>
             <p className="body-text">
               Cảm ơn bạn đã dành thời gian phản hồi. Chúng mình mong sớm được
@@ -58,7 +56,9 @@ export function Rsvp() {
           </Reveal>
         ) : (
           <Reveal delay={1}>
-            <form className="stack" onSubmit={handleSubmit}>
+            {/* Form nằm trên một tấm giấy riêng: mắt bám ngay vào khối cần
+                điền thay vì trôi giữa nền giấy chung của cả section. */}
+            <form className="paper-panel stack" onSubmit={handleSubmit}>
               <div className="field">
                 <label className="field-label" htmlFor="rsvp-name">
                   Họ và tên
@@ -124,6 +124,8 @@ export function Rsvp() {
               </div>
 
               <input type="hidden" name="attending" value={attending} />
+              {/* Ghi kèm buổi tiệc khách đang xem để phản hồi không bị lẫn */}
+              <input type="hidden" name="party" value={party.id} />
 
               <div className="btn-row pt-2">
                 <button

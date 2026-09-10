@@ -35,6 +35,8 @@
   /* Nhịp dọc của section */
   --spacing-section: 3rem;
   --spacing-section-lg: 7rem;
+  /* Dùng cho .section--fit: đây là toàn bộ khoảng cách giữa hai section ngắn */
+  --spacing-section-fit: 3.5rem;
   --spacing-gutter: 1.5rem;
 
   /* Bo góc & đổ bóng mềm */
@@ -139,6 +141,17 @@
   .section--auto {
     min-height: 0;
     padding-block: 3rem;
+  }
+
+  /* Section cao theo nội dung.
+     `.section` mặc định cao đúng 1 viewport và canh giữa theo chiều dọc; với
+     section ngắn (dresscode, rsvp, thank you) phần dư bị chia đôi thành hai
+     khoảng trống trên/dưới, hai section cạnh nhau cộng lại thành một mảng
+     trắng rất lớn. Bỏ sàn 100svh thì khoảng cách giữa chúng chỉ còn đúng
+     padding — cố định và đọc được. */
+  .section--fit {
+    min-height: 0;
+    padding-block: var(--spacing-section-fit);
   }
 
   /* Nội dung bên trong section — luôn nằm trên decor */
@@ -321,10 +334,38 @@
     opacity: 1;
     filter: none;
     mix-blend-mode: normal;
+    /* Preflight của Tailwind đặt `img { max-width: 100% }`, nên mọi decor khai
+       báo rộng hơn 100% đều bị ép về đúng bề ngang section — dải hoa dài vẫn
+       hụt hai mép dù đã tăng width. Decor phải được phép tràn ra ngoài. */
+    max-width: none;
   }
 
   .decor--front {
     z-index: 3;
+  }
+
+  /**
+   * Gấu section: dải ren nằm trong luồng nên chính nó quyết định chiều cao của
+   * khối này, còn hoa được neo bằng `bottom: 100%` — tức mép dưới hoa luôn
+   * trùng đúng mép trên dải ren, ở mọi bề ngang màn hình. Nếu để ren và hoa là
+   * hai lớp absolute riêng thì một bên tính theo bề ngang, một bên theo chiều
+   * cao section, và chúng lệch nhau ngay khi đổi kích thước màn hình.
+   */
+  .section-hem {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .section-hem > .hem-lace {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: auto;
   }
 
   /* Vuốt mờ chân section: nằm trên decor (z-0) nhưng dưới nội dung (z-2), nên
@@ -379,8 +420,8 @@
       linear-gradient(
         to bottom,
         var(--color-cream) 0%,
-        rgba(246, 244, 240, 0.34) 22%,
-        rgba(246, 244, 240, 0.34) 78%,
+        rgba(246, 244, 240, 0.55) 18%,
+        rgba(246, 244, 240, 0.55) 82%,
         var(--color-cream) 100%
       );
   }
@@ -409,13 +450,16 @@
     );
   }
 
-  /* Dải hoa văn ngăn cách — đặt ngay đầu section, cách heading 1.25rem */
+  /* Dải hoa văn ngăn cách — phần tử CUỐI của .section-head, tức nằm dưới cả
+     eyebrow lẫn heading. Khoảng cách tới heading do `gap` của .section-head
+     lo, nên ở đây không đặt margin dọc. */
   .section-divider {
     display: block;
     width: 100%;
     max-width: 13rem;
     height: auto;
-    margin: 0 auto 1.25rem;
+    margin-inline: auto;
+    margin-block: 0.25rem 0;
     opacity: 0.85;
   }
 
@@ -598,13 +642,16 @@
     align-items: center;
     justify-content: center;
     min-height: 3rem;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 0.5rem;
     border: 1px solid var(--color-line);
     border-radius: 999px;
     background: transparent;
     font-family: var(--font-body);
-    font-size: 0.75rem;
-    letter-spacing: 0.18em;
+    /* Vừa đủ để nhãn dài nhất nằm gọn một dòng khi form đã lùi vào trong
+       .paper-panel — hai nút xuống dòng lệch nhau trông rất lệch. */
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
     text-transform: uppercase;
     color: var(--color-olive-soft);
     cursor: pointer;
@@ -683,6 +730,253 @@
     background: rgba(255, 253, 249, 0.55);
     padding: 1.5rem 1.25rem;
   }
+
+  /* Tấm giấy đặt dưới nội dung để mắt bám vào một khối duy nhất.
+     Dùng cho form RSVP: nền giấy thật (paper-tile) + đường viền vàng kép,
+     đúng bộ chất liệu đang dùng cho phong bì / thiệp ở các section khác. */
+  .paper-panel {
+    position: relative;
+    padding: 1.75rem 1.15rem 1.6rem;
+    background:
+      linear-gradient(rgba(255, 253, 249, 0.72), rgba(255, 253, 249, 0.72)),
+      url("/assets/paper-tile.webp") center / 62% auto repeat;
+    box-shadow: var(--shadow-paper);
+  }
+
+  /* Viền vàng mảnh thụt vào trong, kiểu khung thiệp letterpress */
+  .paper-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0.5rem;
+    border: 1px solid rgba(196, 162, 86, 0.42);
+    pointer-events: none;
+  }
+
+  /* ─────────── 9b. COLLAGE THỜI GIAN & ĐỊA ĐIỂM ─────────── */
+  /* Khung dựng ảnh ghép: tỉ lệ cố định nên mọi element định vị bằng % đều
+     giữ nguyên bố cục ở mọi bề ngang màn hình. */
+  .collage {
+    position: relative;
+    width: 100%;
+    max-width: 23rem;
+    margin-inline: auto;
+    aspect-ratio: 736 / 890;
+  }
+
+  /* Tấm biển chạm nổi khắc tên buổi tiệc.
+     Ảnh biển là giấy dập nổi trắng trơn; chữ được đặt đè lên phần mặt phẳng
+     giữa biển, lề trong lấy từ `party.plaqueInset` vì hai tấm khác hình. */
+  .plaque {
+    position: absolute;
+    filter: drop-shadow(0 8px 16px rgba(84, 78, 48, 0.28));
+  }
+
+  .plaque > img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .plaque-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25em;
+    text-align: center;
+    /* Chữ co theo bề ngang màn hình cùng nhịp với tấm biển */
+    font-size: clamp(0.5rem, 2.6vw, 0.78rem);
+  }
+
+  .plaque-title {
+    font-family: var(--font-display);
+    font-size: 1.75em;
+    line-height: 1;
+    color: var(--color-olive);
+    white-space: nowrap;
+  }
+
+  .plaque-note {
+    font-family: var(--font-body);
+    font-size: 0.72em;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.3;
+    color: var(--color-olive-soft);
+    white-space: nowrap;
+  }
+
+  /* ─────────── 9c. NÚT CHUYỂN BUỔI TIỆC ─────────── */
+  .party-tabs {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    background-color: var(--color-cream);
+  }
+
+  .party-tabs--top {
+    padding-block: 2.5rem 0.5rem;
+  }
+
+  .party-tabs--bottom {
+    padding-block: 2.75rem 0.5rem;
+  }
+
+  /* Viền bao ngoài để hai nút đọc như một công tắc hai nấc, không phải hai
+     nút rời — trạng thái đang chọn nhờ vậy thấy ngay. */
+  .party-tabs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+    width: 100%;
+    max-width: 21rem;
+    padding: 0.25rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: rgba(255, 253, 249, 0.6);
+  }
+
+  .party-tab {
+    min-height: 2.75rem;
+    padding-inline: 0.5rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--color-olive-soft);
+    cursor: pointer;
+    transition:
+      background-color 0.35s var(--ease-soft),
+      color 0.35s var(--ease-soft);
+  }
+
+  .party-tab[aria-selected="true"] {
+    background: var(--color-olive);
+    color: var(--color-cream);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .party-tab:focus-visible {
+    outline: 1px solid var(--color-olive);
+    outline-offset: 2px;
+  }
+
+  /* Tấm vé đen — ảnh vé đã dựng thẳng, chữ đặt đè lên bằng %.
+     Vạch răng cưa nằm ở 72.2% bề ngang, cuống vé là phần còn lại. */
+  .ticket {
+    position: absolute;
+    color: var(--color-cream);
+  }
+
+  .ticket > img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .ticket-face {
+    position: absolute;
+    /* Mép trái chừa 4%: ảnh vé có viền trang trí, chữ sát mép sẽ đè lên viền */
+    inset: 0 27.8% 0 4%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25em;
+    gap: 0.3em;
+    padding-inline: 5%;
+    text-align: center;
+    /* Cỡ chữ ăn theo bề ngang màn hình vì tấm vé cũng vậy — mọi dòng bên
+       trong tính bằng `em` nên co giãn cùng nhau, không bao giờ tràn vé. */
+    font-size: clamp(0.44rem, 2.3vw, 0.66rem);
+  }
+
+  .ticket-script {
+    font-family: var(--font-date);
+    font-size: 1.6em;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: var(--color-cream);
+    margin: 0;
+  }
+
+  .ticket-line {
+    font-family: var(--font-body);
+    font-size: 0.95em;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.3;
+    white-space: nowrap;
+    color: rgba(246, 244, 240, 0.82);
+    margin: 0;
+  }
+
+  /* Cuống vé: chữ dựng đứng như vé mời thật */
+  .ticket-stub {
+    position: absolute;
+    inset: 0 0 0 72.2%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(0.44rem, 2.3vw, 0.66rem);
+  }
+
+  .ticket-stub span {
+    font-family: var(--font-body);
+    font-size: 0.88em;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(246, 244, 240, 0.78);
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+  }
+
+  /* Lá thư địa điểm: tờ giấy nằm ngang, chữ viết đè lên mặt giấy */
+  .letter {
+    position: relative;
+    width: 100%;
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+
+  .letter > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 10px 20px rgba(84, 78, 48, 0.22));
+  }
+
+  .letter-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    /* Lề đều bốn phía: khối chữ nằm đúng tâm tờ giấy. Tấm ảnh ghim ở góc
+       được đẩy hẳn lên trên mép giấy nên không cần lệch lề để né nữa. */
+    padding: 15% 15%;
+    text-align: center;
+  }
+
+
 
 
   /* ─────────── 11. INTRO — CỔNG HOA ─────────── */

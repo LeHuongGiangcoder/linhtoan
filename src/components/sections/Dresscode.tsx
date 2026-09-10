@@ -5,13 +5,12 @@ import { DRESSCODE } from "@/lib/content";
 
 export function Dresscode() {
   return (
-    <section id="dresscode" className="section relative">
+    <section id="dresscode" className="section section--fit relative">
       <div className="section-inner">
-        <Divider />
-
         <Reveal className="section-head">
           <p className="eyebrow">Cùng nhau đồng điệu</p>
           <h2 className="display-2">Dresscode</h2>
+          <Divider />
         </Reveal>
 
         <Reveal delay={1}>
