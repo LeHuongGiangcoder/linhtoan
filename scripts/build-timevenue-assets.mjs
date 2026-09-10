@@ -193,6 +193,85 @@ async function blossoms() {
   await save(await trimAlpha(await largestComponent(cut)), "tv-blossoms");
 }
 
+/* ── 2b. Mẩu báo cũ: xé lại cạnh phải ────────────────────────────────────
+   Ba cạnh kia đều là mép giấy rách thật, riêng cạnh phải là đường cắt thẳng
+   băng của lúc tách khỏi sheet — đặt cạnh phong bì là lộ ngay ra đây là ảnh
+   dán. Chỗ này xé lại cạnh đó bằng một đường biên răng cưa không đều, có cả
+   vết khuyết to lẫn nhỏ như giấy rách thật, rồi vuốt mềm 2px cho ra thớ giấy.
+
+   PRNG gieo hạt cố định: chạy lại script bao nhiêu lần cũng ra đúng một mẩu
+   giấy, không phải mỗi lần build một hình. */
+function seededRandom(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+
+async function news() {
+  const src = await largestComponent(await region("news").png().toBuffer());
+  const { data, info } = await sharp(src)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const { width: w, height: h, channels: c } = info;
+
+  // Mép phải hiện tại của từng hàng
+  const right = new Int32Array(h).fill(-1);
+  for (let y = 0; y < h; y++)
+    for (let x = w - 1; x >= 0; x--)
+      if (data[(y * w + x) * c + 3] > 8) {
+        right[y] = x;
+        break;
+      }
+
+  const rnd = seededRandom(20261121);
+  const amp = w * 0.09; // độ sâu vết xé lớn nhất
+
+  // Ba sóng sin lệch pha, tần số tính bằng SỐ CHU KỲ trên cả chiều dài mẩu
+  // giấy. Đường xé thật lượn dài chứ không rung từng dòng pixel — nhiễu vì
+  // thế phải trôi rất chậm (hệ số nhớ 0.99), nếu không sẽ thành răng cưa.
+  const phase = [rnd(), rnd(), rnd()].map((v) => v * Math.PI * 2);
+  const drift = new Float64Array(h);
+  let d = 0;
+  for (let y = 0; y < h; y++) {
+    d = d * 0.99 + (rnd() - 0.5) * 0.06;
+    drift[y] = d;
+  }
+
+  const tear = new Float64Array(h);
+  const TAU = Math.PI * 2;
+  for (let y = 0; y < h; y++) {
+    const t = y / h;
+    const wave =
+      0.45 * Math.sin(TAU * 3.2 * t + phase[0]) +
+      0.32 * Math.sin(TAU * 7.5 * t + phase[1]) +
+      0.23 * Math.sin(TAU * 13 * t + phase[2]);
+    // jitter ±0.75px cho thớ giấy lởm chởm rất nhẹ ở sát mép
+    const jitter = (rnd() - 0.5) * 1.5;
+    tear[y] = Math.max(0, (wave * 0.5 + 0.5 + drift[y]) * amp + jitter);
+  }
+
+  const feather = Math.max(2, Math.round(w * 0.012));
+  for (let y = 0; y < h; y++) {
+    if (right[y] < 0) continue;
+    const edge = right[y] - tear[y];
+    for (let x = 0; x <= right[y]; x++) {
+      const i = (y * w + x) * c + 3;
+      if (data[i] === 0) continue;
+      if (x > edge) data[i] = 0;
+      else if (x > edge - feather)
+        data[i] = Math.round(data[i] * ((edge - x) / feather));
+    }
+  }
+
+  const torn = await sharp(data, { raw: { width: w, height: h, channels: c } })
+    .png()
+    .toBuffer();
+  await save(await trimAlpha(torn), "tv-news");
+}
+
 /* ── 3. Tấm vé: xoay ngược 11° cho nằm ngang ─────────────────────────────
    Trên sheet tấm vé đã nghiêng sẵn. Giữ nguyên độ nghiêng đó thì mọi dòng
    chữ đặt lên vé cũng phải nghiêng theo — dựng thẳng ở đây rồi để CSS xoay
@@ -210,11 +289,11 @@ async function main() {
   await envelope();
   await blossoms();
   await ticket();
+  await news();
   for (const [name, file] of [
     ["sprig", "tv-sprig"],
     ["calla", "tv-calla"],
     ["peony", "tv-peony"],
-    ["news", "tv-news"],
   ]) {
     const cut = await largestComponent(await region(name).png().toBuffer());
     await save(await trimAlpha(cut), file);

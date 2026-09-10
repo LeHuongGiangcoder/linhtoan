@@ -55,13 +55,13 @@ export function TimeVenue({ party = PARTIES.intimate }: { party?: Party } = {}) 
           <div className="collage">
             {/* Lớp dưới cùng: hai mẩu báo cũ thò ra hai bên phong bì. Không
                 đặt zIndex nên chúng nằm ở z-0, dưới mọi thứ còn lại. */}
-            <Decor id="tv-news" width="19%" left="4%" top="44%" rotate={-9} />
+            <Decor id="tv-news" width="17%" left="3%" top="47%" rotate={-16} />
             <Decor
               id="tv-news"
-              width="17%"
-              right="4%"
-              top="46%"
-              rotate={8}
+              width="15%"
+              right="3%"
+              top="49%"
+              rotate={14}
               flip
             />
 
