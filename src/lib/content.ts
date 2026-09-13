@@ -8,7 +8,7 @@
  * PHẢI khớp với `SITE_ORIGIN` trong docs/apps-script.gs, nếu không link riêng
  * gửi cho khách sẽ trỏ sang một domain khác.
  */
-export const SITE_URL = "https://khanhlinhtoanpham.gloweb.site";
+export const SITE_URL = "https://linhtoan.gloweb.site";
 
 export const COUPLE = {
   groom: "Khánh Toàn",

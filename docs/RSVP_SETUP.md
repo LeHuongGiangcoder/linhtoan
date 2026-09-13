@@ -32,8 +32,8 @@ vào cuối khi script chạy lần đầu.
 ```
 SITE_ORIGIN / main / <slug của khách>
 
-https://khanhlinhtoanpham.gloweb.site/main/anh-chi-nguyen-van-a
-https://khanhlinhtoanpham.gloweb.site/main/ms-tran-thi-bao-ngoc
+https://linhtoan.gloweb.site/main/anh-chi-nguyen-van-a
+https://linhtoan.gloweb.site/main/ms-tran-thi-bao-ngoc
 ```
 
 - `Slug` sinh ra một lần rồi **không bao giờ tự đổi** — link đã gửi cho khách

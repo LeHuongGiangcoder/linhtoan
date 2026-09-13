@@ -30,7 +30,7 @@ const SHEET_NAME = 'RSVP';
 const SECRET = 'CHANGE-ME-to-a-long-random-string';
 
 /** Domain thật của thiệp — chỉ dùng để dựng cột Link. */
-const SITE_ORIGIN = 'https://khanhlinhtoanpham.gloweb.site';
+const SITE_ORIGIN = 'https://linhtoan.gloweb.site';
 
 /**
  * Đoạn đường dẫn của buổi tiệc trong link riêng: SITE_ORIGIN/main/<slug>.
