@@ -1,6 +1,5 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { Countdown } from "@/components/Countdown";
 import { Cross } from "@/components/Cross";
 import { Divider } from "@/components/Divider";
 import { MiniCalendar } from "@/components/MiniCalendar";
@@ -66,12 +65,12 @@ export function TimeVenue({ party = PARTIES.main }: { party?: Party } = {}) {
             </p>
             <MiniCalendar startsAt={party.startsAt} />
             <p className="time-when">
-              {party.weekday} · {party.time}
+              <span className="time-when-day">{party.weekday}</span>
+              <span className="time-when-sep" aria-hidden>
+                ·
+              </span>
+              <span className="time-when-hour">{party.time}</span>
             </p>
-          </Reveal>
-
-          <Reveal delay={2} className="time-frame-count">
-            <Countdown to={party.startsAt} />
           </Reveal>
         </div>
       </div>

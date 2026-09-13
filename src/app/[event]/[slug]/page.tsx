@@ -50,7 +50,9 @@ export default async function GuestInvitation({
       <Intro />
       <main>
         <Hero guestName={guest?.name} />
-        <Party />
+        {/* Slug lấy từ đường dẫn kể cả khi chưa tra được Sheet: Apps Script
+            khớp slug thì ghi đúng hàng, không khớp thì nối hàng mới. */}
+        <Party guest={{ slug, name: guest?.name }} />
         <ThankYou />
       </main>
     </>

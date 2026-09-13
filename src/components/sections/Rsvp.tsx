@@ -8,18 +8,51 @@ import { PARTIES, type Party } from "@/lib/content";
 
 type Attending = "yes" | "no";
 
-export function Rsvp({ party = PARTIES.main }: { party?: Party } = {}) {
+/** Khách mở thiệp bằng link riêng /main/<slug>. */
+export type RsvpGuest = { slug: string; name?: string };
+
+type RsvpProps = { party?: Party; guest?: RsvpGuest };
+
+export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
   const [attending, setAttending] = useState<Attending>("yes");
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (sending) return;
+
+    const form = new FormData(e.currentTarget);
+    const isComing = attending === "yes";
     setSending(true);
-    // TODO: nối endpoint thật (Google Sheet / n8n / API route) tại đây.
-    await new Promise((r) => setTimeout(r, 600));
-    setSending(false);
-    setSent(true);
+    setError(null);
+
+    try {
+      // Gửi qua route của chính site (src/app/api/rsvp) — route đó mới giữ
+      // secret của Apps Script, trình duyệt không bao giờ thấy.
+      const res = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug: guest?.slug ?? "",
+          name: String(form.get("name") ?? ""),
+          attending: isComing,
+          guestCount: isComing ? Number(form.get("guests") ?? 1) : 0,
+          message: String(form.get("message") ?? ""),
+          website: String(form.get("website") ?? ""),
+        }),
+      });
+      const data: { ok?: boolean } | null = await res.json().catch(() => null);
+      if (!res.ok || !data?.ok) throw new Error(String(res.status));
+      setSent(true);
+    } catch {
+      setError(
+        "Chưa gửi được phản hồi, bạn thử lại giúp chúng mình nhé. Nếu vẫn không được, hãy nhắn trực tiếp cho cô dâu chú rể.",
+      );
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -73,6 +106,9 @@ export function Rsvp({ party = PARTIES.main }: { party?: Party } = {}) {
                   name="name"
                   className="input"
                   placeholder="Nguyễn Văn A"
+                  defaultValue={guest?.name ?? ""}
+                  maxLength={120}
+                  autoComplete="name"
                   required
                 />
               </div>
@@ -125,12 +161,28 @@ export function Rsvp({ party = PARTIES.main }: { party?: Party } = {}) {
                   name="message"
                   className="input"
                   placeholder="Chúc hai bạn trăm năm hạnh phúc…"
+                  maxLength={1000}
                 />
               </div>
 
-              <input type="hidden" name="attending" value={attending} />
-              {/* Ghi kèm buổi tiệc khách đang xem để phản hồi không bị lẫn */}
-              <input type="hidden" name="party" value={party.id} />
+              {/* Ô bẫy chống spam: ẩn khỏi người dùng và trình đọc màn hình,
+                  chỉ bot điền vào. Route /api/rsvp bỏ qua mọi phản hồi có ô này. */}
+              <div className="rsvp-trap" aria-hidden>
+                <label htmlFor="rsvp-website">Website</label>
+                <input
+                  id="rsvp-website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
+
+              {error ? (
+                <p className="rsvp-error" role="alert">
+                  {error}
+                </p>
+              ) : null}
 
               <div className="btn-row pt-2">
                 <button

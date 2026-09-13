@@ -1,18 +1,16 @@
 # Google Sheet = nguồn duy nhất
 
-Một spreadsheet, một tab `RSVP`. Cô dâu chú rể gõ **tên khách** và **sự kiện**;
-script dựng link riêng cho từng người, và website ghi phản hồi RSVP ngược lại
-đúng hàng của người đó.
+Một spreadsheet, một tab `RSVP`. Cô dâu chú rể chỉ gõ **tên khách**; script
+dựng link riêng cho từng người, và website ghi phản hồi RSVP ngược lại đúng
+hàng của người đó.
 
-Đám cưới hiện chỉ có **một sự kiện — `Tiệc chính`**. Cột `Event` vẫn quyết
-định link riêng của khách trỏ vào sự kiện nào, để thêm buổi nữa về sau chỉ là
-thêm một mục vào `EVENTS`.
+Đám cưới chỉ có một buổi — Tiệc chính — nên sheet không có cột `Event`: mọi
+link riêng đều trỏ vào `/main/<slug>`.
 
 | Cột | Ai điền | Ý nghĩa |
 |-----|---------|---------|
 | `No` | tự sinh | số thứ tự **và là mã khách** — 3 chữ số (`001`, `002`…) |
 | `Name` | **bạn gõ** | tên hiện trên thiệp — có dấu tiếng Việt thoải mái |
-| `Event` | **bạn chọn** | `Tiệc chính`. **Bỏ trống = `Tiệc chính`** |
 | `Slug` | tự sinh | phần đuôi URL, sinh từ tên |
 | `Link` | tự sinh | link để gửi cho khách — copy thẳng từ đây |
 | `Attending` | website ghi | `YES` / `NO` |
@@ -32,7 +30,7 @@ vào cuối khi script chạy lần đầu.
 ## Link riêng được dựng thế nào
 
 ```
-SITE_ORIGIN / <đường dẫn của sự kiện> / <slug của khách>
+SITE_ORIGIN / main / <slug của khách>
 
 https://khanhlinhtoanpham.gloweb.site/main/anh-chi-nguyen-van-a
 https://khanhlinhtoanpham.gloweb.site/main/ms-tran-thi-bao-ngoc
@@ -41,41 +39,12 @@ https://khanhlinhtoanpham.gloweb.site/main/ms-tran-thi-bao-ngoc
 - `Slug` sinh ra một lần rồi **không bao giờ tự đổi** — link đã gửi cho khách
   sống mãi, kể cả khi sau này sửa lại chính tả cái tên. Muốn tự đặt link, cứ gõ
   tay vào cột `Slug` trước.
-- `Link` thì **có** đổi: sửa ô `Event` là link được dựng lại sang đường dẫn của
-  sự kiện mới, slug giữ nguyên. Nhớ gửi lại link mới cho khách đó.
-- Slug là duy nhất trên toàn sheet, không phải trong từng sự kiện. Nhờ vậy
-  website tra khách chỉ bằng slug là đủ.
+- Slug là duy nhất trên toàn sheet, nên website tra khách chỉ bằng slug là đủ.
 
-### Đổi tên sự kiện
-
-Sửa mảng `EVENTS` ở đầu [`apps-script.gs`](apps-script.gs) — nó là nguồn duy
-nhất cho cả link, cả dropdown trong sheet:
-
-```js
-const EVENTS = [
-  { key: 'main', path: 'main', label: 'Tiệc chính',
-    alias: [...], sees: ['main'] },
-];
-```
-
-`alias` là các cách gõ khác vẫn hiểu là sự kiện đó — ô `Event` là dropdown,
-nhưng người ta vẫn dán đè hoặc gõ tay. Giá trị lạ hoàn toàn thì rơi về sự kiện
-đầu tiên — dùng menu **Kiểm tra dữ
-liệu** để soát trước khi gửi thiệp.
-
-> **Chốt `path` trước khi gửi thiệp đầu tiên.** Đổi `path` sau đó là hỏng toàn
-> bộ link đã gửi. `key` và `label` thì đổi lúc nào cũng được.
-
-### Ai xem được buổi nào
-
-| `Event` trong sheet | Link mở ra | Thiệp hiện |
-|---|---|---|
-| `Tiệc chính` | `/main/<slug>` | tiệc chính |
-
-Chỉ còn một buổi nên thiệp không có nút chuyển buổi nữa. Đường dẫn hợp lệ nằm ở
-hai chỗ và phải khớp nhau: `path` trong `EVENTS` của
-[`apps-script.gs`](apps-script.gs), và `partyFromPath` trong
-`src/lib/guests.ts`. Sửa một bên nhớ sửa bên kia.
+> **Chốt đường dẫn `main` trước khi gửi thiệp đầu tiên.** Nó nằm ở hằng số
+> `EVENT_KEY` trong [`apps-script.gs`](apps-script.gs) và phải khớp
+> `partyFromPath` trong `src/lib/guests.ts` — đổi sau khi đã gửi link là hỏng
+> toàn bộ link cũ.
 
 
 ---
@@ -89,9 +58,8 @@ hai chỗ và phải khớp nhau: `path` trong `EVENTS` của
    - `SECRET` — chuỗi ngẫu nhiên thật dài. Giữ lại, bước 3 cần đến.
    - `SITE_ORIGIN` — domain thật của site, dùng để dựng cột `Link`.
    - `SHEET_NAME` — tên tab, phải khớp chính xác tên dưới đáy sheet.
-   - `EVENTS` — danh sách sự kiện, xem phần trên.
 5. Lưu, chọn hàm `setupSheet` rồi bấm **Run** một lần (cấp quyền khi Google hỏi).
-   Header, định dạng và dropdown `Event` được tạo xong.
+   Header và định dạng được tạo xong.
 
 ## 2. Deploy Web App
 
@@ -115,20 +83,28 @@ RSVP_WEBHOOK_URL="https://script.google.com/macros/s/AKfy…/exec"
 RSVP_SHARED_SECRET="đúng chuỗi SECRET ở bước 1"
 ```
 
+Form RSVP trên thiệp gửi về route `/api/rsvp` của chính site (`src/app/api/rsvp/route.ts`),
+route đó mới gắn `RSVP_SHARED_SECRET` rồi chuyển sang Apps Script — trình duyệt của khách không
+bao giờ thấy secret. Thiếu một trong hai biến trên thì form báo "Chưa gửi được phản hồi" thay vì
+giả vờ thành công. Khách mở bằng link riêng thì phản hồi ghi đè đúng hàng của họ; mở trang chủ
+thì thành hàng mới.
+
+> Đổi biến môi trường trên Vercel xong phải **Redeploy** thì site mới đọc giá trị mới.
+
 ## 4. Menu Wedding trong sheet
 
 | Mục | Làm gì |
 |-----|--------|
 | Tạo link cho khách mới | điền `No` / `Slug` / `Link` cho mọi hàng đã có tên |
-| Dựng lại sheet | chạy 1 lần lúc mới dựng: header, định dạng, dropdown |
-| Kiểm tra dữ liệu gửi cho website | hiện đúng thứ website nhận được, kèm số khách mỗi sự kiện |
+| Dựng lại sheet | chạy 1 lần lúc mới dựng: header, định dạng, độ rộng cột |
+| Kiểm tra dữ liệu gửi cho website | hiện đúng thứ website nhận được, kèm số khách đã trả lời / sẽ đến |
 
 ## 5. Hai chiều của endpoint
 
 ```jsonc
 // website đọc danh sách khách
 { "secret": "…", "action": "guests" }
-// → { ok: true, events: [...], guests: [{ slug, name, code, event, eventPath, … }] }
+// → { ok: true, guests: [{ slug, name, code, event: "main", attending, guestCount, … }] }
 
 // website ghi phản hồi
 { "secret": "…", "slug": "anh-chi-nguyen-van-a", "attending": true,
@@ -136,7 +112,6 @@ RSVP_SHARED_SECRET="đúng chuỗi SECRET ở bước 1"
 // → { ok: true, row: 4 }
 ```
 
-Ghi RSVP **không đụng vào ô `Event`** — sự kiện là do nhà trai nhà gái quyết,
-không phải do khách chọn trong form. Khách vào thẳng trang RSVP không qua link
-riêng thì được nối thành hàng mới, và `body.event` (nếu có) quyết định ô `Event`
-của hàng đó.
+Khách đổi ý thì phản hồi mới ghi đè lên đúng hàng cũ. Khách vào thẳng trang
+chủ không qua link riêng thì được nối thành hàng mới, và script cấp luôn
+`No` / `Slug` / `Link` cho hàng đó.

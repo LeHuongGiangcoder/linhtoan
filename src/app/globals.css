@@ -164,6 +164,29 @@
     padding-top: max(var(--spacing-section-fit), calc(min(100vw, 40rem) * 0.2 + 1.5rem));
   }
 
+  /* Ô bẫy chống spam của form RSVP: đưa hẳn ra ngoài màn hình thay vì
+     display:none — một số bot bỏ qua ô bị display:none. */
+  .rsvp-trap {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .rsvp-error {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(150, 60, 50, 0.25);
+    border-radius: 0.5rem;
+    background: rgba(150, 60, 50, 0.06);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #7a3a30;
+    text-align: center;
+  }
+
   .section--after-ribbon {
     padding-top: max(var(--spacing-section-fit), calc(min(100vw, 40rem) * 0.29));
   }
@@ -796,7 +819,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: clamp(0.5rem, 2.5cqw, 1rem);
+    font-size: clamp(0.5625rem, 2.85cqw, 1.125rem);
     color: var(--color-olive);
     /* Alegreya mặc định dùng số kiểu cũ (lên xuống so với dòng chữ) — trong
        lịch và giờ giấc, số phải đứng thẳng hàng mới dễ đọc. */
@@ -804,9 +827,10 @@
     /* Quầng giấy mờ sau chữ: chữ nằm trên màu nước loang nên nét mảnh dễ
        chìm — quầng sáng tách chữ khỏi nền mà không cần khung chữ nhật. */
     text-shadow:
-      0 0 0.35em var(--color-ivory),
-      0 0 0.9em var(--color-ivory),
-      0 0 1.6em rgba(255, 253, 249, 0.85);
+      0 0 0.3em var(--color-ivory),
+      0 0 0.7em var(--color-ivory),
+      0 0 1.2em var(--color-ivory),
+      0 0 2em rgba(255, 253, 249, 0.9);
   }
 
   .time-frame-head,
@@ -816,9 +840,9 @@
     align-items: center;
   }
 
-  /* Nhịp dọc chia ba khối rõ ràng: tiêu đề · ngày (hoa văn, tháng, lịch, giờ)
-     · đếm ngược. Khoảng giữa các khối lớn hơn khoảng trong khối, để mắt đọc
-     ra ba cụm thay vì một cột chữ đều tăm tắp. */
+  /* Nhịp dọc chia hai khối rõ ràng: tiêu đề · ngày (hoa văn, tháng, lịch, giờ).
+     Khoảng giữa hai khối lớn hơn khoảng trong khối, để mắt đọc ra hai cụm thay
+     vì một cột chữ đều tăm tắp. */
 
   /* Dấu thanh của "Thời" cao vượt dòng — chừa khoảng cho khỏi chạm eyebrow */
   .time-frame-head {
@@ -836,9 +860,6 @@
     margin-bottom: 0.6em;
   }
 
-  .time-frame-count {
-    margin-top: 1.25em;
-  }
 
   .time-eyebrow {
     font-family: var(--font-body);
@@ -853,7 +874,7 @@
 
   .time-title {
     font-family: var(--font-display);
-    font-size: 3.2em;
+    font-size: 3em;
     line-height: 1.05;
     font-weight: 400;
     color: var(--color-olive);
@@ -862,21 +883,40 @@
 
   .time-month {
     font-family: var(--font-display);
-    font-size: 1.7em;
+    font-size: 1.95em;
     line-height: 1.1;
     color: var(--color-olive);
-    margin: 0 0 0.75em;
+    margin: 0 0 0.7em;
   }
 
+  /* Thứ · giờ: giờ là thông tin khách cần nhất nên to và đậm hơn hẳn */
   .time-when {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5em;
+    margin: 0.8em 0 0;
     font-family: var(--font-body);
-    font-size: 1.05em;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    line-height: 1.3;
+    line-height: 1.2;
     color: var(--color-olive);
-    margin: 0.7em 0 0;
+  }
+
+  .time-when-day {
+    font-size: 1.1em;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .time-when-sep {
+    font-size: 1.1em;
+    color: var(--color-olive-soft);
+  }
+
+  .time-when-hour {
+    font-size: 1.6em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
   }
 
   /* Lịch nhỏ: đúng hai hàng — thứ và ngày. Số cột do component đặt.
@@ -885,25 +925,25 @@
   .mini-cal {
     display: grid;
     align-items: center;
-    row-gap: 0.35em;
+    row-gap: 0.3em;
     width: 100%;
-    max-width: 16em;
+    max-width: 17em;
   }
 
   .mini-cal-label {
     font-family: var(--font-body);
-    font-size: 1em;
+    font-size: 1.05em;
     font-weight: 600;
     letter-spacing: 0.04em;
     line-height: 1;
-    color: var(--color-olive-soft);
+    color: var(--color-olive);
   }
 
   .mini-cal-day {
     position: relative;
     display: grid;
     place-items: center;
-    height: 3em;
+    height: 3.2em;
   }
 
   /* Chữ số dùng font thân bài: font ngày tháng trang trí quá nhiều nét
@@ -911,8 +951,8 @@
   .mini-cal-num {
     position: relative;
     font-family: var(--font-body);
-    font-size: 1.5em;
-    font-weight: 500;
+    font-size: 1.7em;
+    font-weight: 600;
     line-height: 1;
     color: var(--color-olive);
   }
@@ -921,7 +961,7 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 3.2em;
+    width: 3.4em;
     height: auto;
     transform: translate(-50%, -46%);
     fill: var(--color-olive);
@@ -929,49 +969,11 @@
   }
 
   .mini-cal-day--target .mini-cal-num {
-    font-size: 1.4em;
-    font-weight: 600;
+    font-size: 1.5em;
+    font-weight: 700;
     color: var(--color-cream);
     /* Chữ trắng trên tim olive: bỏ quầng giấy, nếu không số bị nhoè */
     text-shadow: none;
-  }
-
-  /* Đếm ngược: một dòng, không bao giờ xuống dòng */
-  .countdown {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 0.45em;
-    white-space: nowrap;
-    margin: 0;
-    color: var(--color-olive);
-  }
-
-  .countdown-lead,
-  .countdown-unit {
-    font-family: var(--font-body);
-    font-size: 1.05em;
-    color: var(--color-olive-soft);
-  }
-
-  .countdown-part {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.2em;
-  }
-
-  .countdown-num {
-    font-family: var(--font-body);
-    font-size: 1.4em;
-    font-weight: 600;
-    line-height: 1;
-    /* Số nhảy mỗi giây: chữ số đều bề ngang để dòng không rung */
-    font-variant-numeric: lining-nums tabular-nums;
-  }
-
-  .countdown--done {
-    font-family: var(--font-display);
-    font-size: 1.6em;
   }
 
   /* Minh hoạ địa điểm: ảnh nền trong suốt, để tràn gần hết khung nội dung */

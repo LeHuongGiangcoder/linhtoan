@@ -42,8 +42,8 @@ export type Party = {
   /** TODO: giờ đãi tiệc chưa chốt, sửa lại khi có lịch chính thức. */
   time: string;
   /**
-   * Mốc giờ đầy đủ kèm múi giờ Việt Nam — lịch nhỏ và đồng hồ đếm ngược đều
-   * tính từ đây. Đổi `time` hay ngày cưới thì nhớ sửa cả dòng này.
+   * Mốc giờ đầy đủ kèm múi giờ Việt Nam — lịch nhỏ và dòng tháng/năm ở phần
+   * Thời gian tính từ đây. Đổi `time` hay ngày cưới thì nhớ sửa cả dòng này.
    */
   startsAt: string;
   hall: string;
