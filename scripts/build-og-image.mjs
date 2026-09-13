@@ -2,98 +2,144 @@
  * Dựng ảnh xem trước khi chia sẻ lên mạng xã hội → public/og.<mã băm>.jpg
  * (1200x630), rồi tự sửa đường dẫn trong src/app/layout.tsx.
  *
+ * Bố cục theo đúng thiệp: hai góc hoa của hero, chữ ký tên chú rể / cô dâu,
+ * ngày cưới và địa điểm. Chữ được dựng bằng satori (bộ dựng ảnh OG có sẵn
+ * trong Next) với chính các font của site, nên có dấu tiếng Việt đầy đủ.
+ *
  * Tên file kèm mã băm nội dung: Facebook / Zalo lưu đệm ảnh xem trước theo
- * đường dẫn rất lâu, giữ nguyên tên `og.jpg` thì đổi ảnh xong vẫn hiện ảnh cũ.
+ * đường dẫn rất lâu, giữ nguyên tên thì đổi ảnh xong vẫn hiện ảnh cũ.
  *
- * Ghép từ chính asset của thiệp chứ không chụp màn hình: chữ ký tên cô dâu
- * chú rể đã là ảnh sẵn (cắt từ bộ typography), nên không cần nạp font vào
- * trình dựng ảnh — thứ hay hỏng nhất khi sinh ảnh OG.
- *
- * Chạy lại khi đổi tên hoặc đổi nền:
+ * Chạy lại khi đổi tên, ngày, địa điểm hoặc tranh:
  *   npm i --no-save sharp && node scripts/build-og-image.mjs
  */
 import { createHash } from "node:crypto";
 import { readdir, readFile, unlink, writeFile } from "node:fs/promises";
+import { ImageResponse } from "next/dist/compiled/@vercel/og/index.node.js";
+import React from "react";
 import sharp from "sharp";
 
 const W = 1200;
 const H = 630;
 const OUT_DIR = "public";
 const LAYOUT = "src/app/layout.tsx";
+const LAYERS = "src/lib/layers.ts";
+const CONTENT = "src/lib/content.ts";
 
-/** Đưa một asset về đúng bề rộng mong muốn, giữ nguyên tỉ lệ. */
-async function layer(src, width) {
-  const buf = await sharp(src).resize({ width: Math.round(width) }).png().toBuffer();
-  const { height } = await sharp(buf).metadata();
-  return { buf, width: Math.round(width), height };
+const OLIVE = "#544e30";
+const OLIVE_SOFT = "#7a7458";
+
+const h = React.createElement;
+
+/** Đọc chuỗi `key: "value"` đầu tiên trong một file TS — đủ cho content/layers. */
+async function pick(file, key) {
+  const src = await readFile(file, "utf8");
+  const m = src.match(new RegExp(`${key}\\s*:\\s*\\{\\s*src:\\s*"([^"]+)"|${key}:\\s*"([^"]*)"`));
+  if (!m) throw new Error(`Không tìm thấy ${key} trong ${file}`);
+  return m[1] ?? m[2];
 }
 
+/** Asset trong public/ → data URL PNG (satori không đọc WebP). */
+async function asset(url, width) {
+  const png = await sharp(`public${url}`).resize({ width: Math.round(width) }).png().toBuffer();
+  const { height } = await sharp(png).metadata();
+  return { src: `data:image/png;base64,${png.toString("base64")}`, width: Math.round(width), height };
+}
+
+const font = async (path) => {
+  const buf = await readFile(path);
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+};
+
 const main = async () => {
-  // Nền giấy: cắt "cover" từ ảnh nền gốc của site.
-  const bg = await sharp("public/assets/background.webp")
-    .resize(W, H, { fit: "cover", position: "centre" })
-    .toBuffer();
+  const [dateDisplay, venue, hall] = await Promise.all([
+    pick(CONTENT, "dateDisplay"),
+    pick(CONTENT, "venue"),
+    pick(CONTENT, "hall"),
+  ]);
 
-  const bride = await layer("public/assets/couple-bride.webp", 560);
-  const groom = await layer("public/assets/couple-groom.79a90bad.webp", 561);
-  const doves = await layer("public/assets/19.webp", 200);
-  const divider = await layer("public/assets/divider.webp", 260);
-  // Dải bụi hoa phóng to hơn khổ ảnh rồi cắt lấy phần giữa: hai đầu dải được
-  // vuốt trong suốt, để nguyên là hụt mất một mảng ở hai mép ảnh.
-  const hemWide = await layer("public/assets/el-54-strip.webp", W * 1.2);
-  const hem = {
-    buf: await sharp(hemWide.buf)
-      .extract({
-        left: Math.round((hemWide.width - W) / 2),
-        top: 0,
+  const paper = await sharp("public/assets/background.webp").resize(W, H, { fit: "cover" }).png().toBuffer();
+
+  const [cornerL, cornerR, groom, bride, divider] = await Promise.all([
+    pick(LAYERS, `"hero-corner-left"`).then((u) => asset(u, 500)),
+    pick(LAYERS, `"hero-corner-right"`).then((u) => asset(u, 500)),
+    pick(LAYERS, "groom").then((u) => asset(u, 462)),
+    pick(LAYERS, "bride").then((u) => asset(u, 461)),
+    asset("/assets/divider.webp", 230),
+  ]);
+
+  const img = (a, style) => h("img", { src: a.src, width: a.width, height: a.height, style });
+
+  // Dấu ✛ nối hai tên, vẽ bằng hai vạch — font thân bài không có ký tự này.
+  const cross = h(
+    "div",
+    { style: { position: "relative", width: 18, height: 18, display: "flex", margin: "6px 0" } },
+    h("div", { style: { position: "absolute", left: 8, top: 0, width: 2, height: 18, background: OLIVE_SOFT } }),
+    h("div", { style: { position: "absolute", left: 0, top: 8, width: 18, height: 2, background: OLIVE_SOFT } }),
+  );
+
+  const tree = h(
+    "div",
+    {
+      style: {
         width: W,
-        height: hemWide.height,
-      })
-      .png()
-      .toBuffer(),
+        height: H,
+        display: "flex",
+        position: "relative",
+        backgroundImage: `url(data:image/png;base64,${paper.toString("base64")})`,
+        backgroundSize: `${W}px ${H}px`,
+      },
+    },
+    // Hai góc hoa: mép cắt thẳng nằm đúng mép ảnh, như trên hero.
+    img(cornerL, { position: "absolute", left: 0, top: 0 }),
+    img(cornerR, { position: "absolute", right: 0, top: 0 }),
+    h(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 104,
+          bottom: 40,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: OLIVE,
+        },
+      },
+      h(
+        "div",
+        { style: { fontFamily: "Body", fontWeight: 600, fontSize: 19, letterSpacing: 7, color: OLIVE_SOFT, marginBottom: 14 } },
+        "TRÂN TRỌNG KÍNH MỜI",
+      ),
+      img(groom, {}),
+      cross,
+      img(bride, {}),
+      h("div", { style: { fontFamily: "Date", fontSize: 54, letterSpacing: 4, marginTop: 30, lineHeight: 1 } }, dateDisplay),
+      img(divider, { marginTop: 14, marginBottom: 12 }),
+      h(
+        "div",
+        { style: { fontFamily: "Body", fontWeight: 600, fontSize: 21, letterSpacing: 6 } },
+        hall.toUpperCase(),
+      ),
+      h("div", { style: { fontFamily: "BodyItalic", fontSize: 22, color: OLIVE_SOFT, marginTop: 4 } }, `${venue} · Hà Nội`),
+    ),
+  );
+
+  const res = new ImageResponse(tree, {
     width: W,
-    height: hemWide.height,
-  };
-
-  // Xếp dọc quanh tâm: bồ câu · tên chú rể · hoa văn · tên cô dâu
-  const gapAfterDoves = 12;
-  const gapAroundDivider = 18;
-  const stack =
-    doves.height +
-    gapAfterDoves +
-    groom.height +
-    gapAroundDivider +
-    divider.height +
-    gapAroundDivider +
-    bride.height;
-
-  // Nhích lên một chút: dải hoa ở chân ảnh chiếm phần dưới.
-  let y = Math.round((H - stack) / 2) - 62;
-  const centre = (l) => Math.round((W - l.width) / 2);
-
-  const composite = [];
-  const put = (l, gap = 0) => {
-    composite.push({ input: l.buf, left: centre(l), top: y });
-    y += l.height + gap;
-  };
-
-  put(doves, gapAfterDoves);
-  put(groom, gapAroundDivider);
-  put(divider, gapAroundDivider);
-  put(bride);
-
-  // Dải bụi hoa trắng khép chân ảnh, thò ra ngoài hai mép cho khỏi hụt.
-  composite.push({
-    input: hem.buf,
-    left: Math.round((W - hem.width) / 2),
-    // Chỉ ló phần ngọn hoa lên khoảng 130px dưới đáy ảnh
-    top: H - 130,
+    height: H,
+    fonts: [
+      { name: "Date", data: await font("public/font/TAN-PEARL-Regular.otf") },
+      { name: "Body", data: await font("public/font/Alegreya/static/Alegreya-SemiBold.ttf"), weight: 600 },
+      { name: "BodyItalic", data: await font("public/font/Alegreya/static/Alegreya-Italic.ttf"), style: "italic" },
+    ],
   });
 
-  const { data, info } = await sharp(bg)
-    .composite(composite)
-    .jpeg({ quality: 86, chromaSubsampling: "4:4:4" })
-    .toBuffer({ resolveWithObject: true });
+  const data = await sharp(Buffer.from(await res.arrayBuffer()))
+    .jpeg({ quality: 88, chromaSubsampling: "4:4:4" })
+    .toBuffer();
 
   const file = `og.${createHash("sha256").update(data).digest("hex").slice(0, 8)}.jpg`;
   for (const old of await readdir(OUT_DIR)) {
@@ -106,7 +152,7 @@ const main = async () => {
   if (!ref.test(layout)) throw new Error(`${LAYOUT} không có đường dẫn /og*.jpg nào để cập nhật`);
   await writeFile(LAYOUT, layout.replace(ref, `/${file}`));
 
-  console.log(`public/${file}  ${info.width}x${info.height}  ${(info.size / 1024) | 0}KB → ${LAYOUT}`);
+  console.log(`public/${file}  ${W}x${H}  ${(data.length / 1024) | 0}KB → ${LAYOUT}`);
 };
 
 main();

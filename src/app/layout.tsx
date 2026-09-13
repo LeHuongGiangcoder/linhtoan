@@ -10,7 +10,8 @@ const compact = (date: string) => date.replace(/\s+/g, "");
 
 const DESCRIPTION =
   `Thiệp mời cưới của ${TITLE} — ` +
-  `${PARTIES.main.tab} ${compact(PARTIES.main.dateShort)} tại ${PARTIES.main.venue}.`;
+  `${PARTIES.main.tab} ${compact(PARTIES.main.dateShort)} tại ` +
+  `${PARTIES.main.hall ? `${PARTIES.main.hall}, ` : ""}${PARTIES.main.venue}.`;
 
 export const metadata: Metadata = {
   // Bắt buộc để Next dựng đường dẫn tuyệt đối cho ảnh og — thiếu nó thì thẻ
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/og.82db18af.jpg",
+        url: "/og.2f3777c6.jpg",
         width: 1200,
         height: 630,
         alt: `Thiệp mời cưới ${TITLE}`,
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${TITLE} — Lưu lại ngày này`,
     description: DESCRIPTION,
-    images: ["/og.82db18af.jpg"],
+    images: ["/og.2f3777c6.jpg"],
   },
   robots: {
     // Thiệp riêng: đừng để Google đánh chỉ mục rồi người lạ tìm ra được.
