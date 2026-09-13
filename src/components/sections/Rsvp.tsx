@@ -85,8 +85,10 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
           <Divider />
         </Reveal>
 
+        {/* key riêng cho hai tấm: không có key thì React dùng lại cùng một Reveal
+            cho cả form lẫn lời cảm ơn, tấm cảm ơn không có hiệu ứng hiện riêng. */}
         {sent ? (
-          <Reveal className="paper-panel center stack">
+          <Reveal key="sent" className="paper-panel center stack">
             <h3 className="display-3">Đã nhận được rồi!</h3>
             <p className="body-text">
               Cảm ơn bạn đã dành thời gian phản hồi. Chúng mình mong sớm được
@@ -103,7 +105,7 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
             </div>
           </Reveal>
         ) : (
-          <Reveal delay={1}>
+          <Reveal key="form" delay={1}>
             {/* Form nằm trên một tấm giấy riêng: mắt bám ngay vào khối cần
                 điền thay vì trôi giữa nền giấy chung của cả section. */}
             <form className="paper-panel stack" onSubmit={handleSubmit}>

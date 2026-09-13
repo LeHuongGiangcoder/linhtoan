@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, type ElementType, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ElementType,
+  type ReactNode,
+} from "react";
 
 type RevealProps = {
   children: ReactNode;
@@ -18,20 +24,23 @@ export function Reveal({
   className = "",
 }: RevealProps) {
   const ref = useRef<HTMLElement>(null);
+  // Trạng thái "đã hiện" nằm trong React chứ không gắn class thẳng vào DOM.
+  // Gắn bằng classList thì lần render sau React ghi đè lại className và xoá
+  // mất is-visible — phần tử mờ dần về 0 ngay trước mắt khách. Đó chính là lỗi
+  // thông báo "Đã nhận được rồi!" hiện lên rồi biến mất sau khi gửi RSVP.
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || visible) return;
 
     let reported = false;
     const io = new IntersectionObserver(
       (entries) => {
         reported = true;
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            io.unobserve(entry.target);
-          }
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setVisible(true);
+          io.disconnect();
         }
       },
       { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
@@ -42,11 +51,9 @@ export function Reveal({
     // Lưới an toàn: observer luôn báo một lần ngay sau observe(), kể cả khi
     // phần tử nằm ngoài màn hình. Chỉ khi không báo gì sau 1.5s (trình duyệt
     // lạ, observer hỏng) mới hiện thẳng nội dung.
-    // Trước đây mốc 1.5s hiện TẤT CẢ phần tử — kể cả những thứ còn cách cả
-    // chục màn hình — nên khách cuộn tới nơi thì hiệu ứng đã chạy xong từ lâu.
     const fallback = window.setTimeout(() => {
       if (reported) return;
-      el.classList.add("is-visible");
+      setVisible(true);
       io.disconnect();
     }, 1500);
 
@@ -54,12 +61,12 @@ export function Reveal({
       window.clearTimeout(fallback);
       io.disconnect();
     };
-  }, []);
+  }, [visible]);
 
   return (
     <Tag
       ref={ref}
-      className={`reveal ${delay ? `reveal-d${delay}` : ""} ${className}`}
+      className={`reveal ${delay ? `reveal-d${delay}` : ""} ${visible ? "is-visible" : ""} ${className}`}
     >
       {children}
     </Tag>
