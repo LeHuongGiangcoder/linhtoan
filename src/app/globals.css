@@ -1202,3 +1202,196 @@
     scroll-behavior: auto;
   }
 }
+
+/* ─────────── 10b. CHUYỂN ĐỘNG ─────────── */
+/*
+ * Mọi hiệu ứng nền dùng thuộc tính rời `scale` / `translate` / `rotate` chứ
+ * không dùng `transform`: Decor đặt `transform` inline cho flip/rotate, và
+ * animation trên `transform` sẽ đè mất chúng. Thuộc tính rời thì cộng dồn.
+ *
+ * Toàn bộ nằm trong prefers-reduced-motion: no-preference — khách đã tắt
+ * chuyển động trong máy thì thiệp đứng yên hoàn toàn.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  /* Hero chờ cổng hoa mở xong mới chạy chuỗi hiện chữ: không có luật này thì
+     chữ đã hiện xong từ lúc cổng còn đóng, khách chẳng thấy gì chuyển động. */
+  body.intro-locked #hero .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  /* Góc hoa hero đung đưa như tán lá trong gió. Hai lớp chuyển động, cả hai
+     đều giữ kín mép cắt thẳng (mép trên + mép ngoài) của ảnh:
+     - skewX neo ở mép trên: hàng trên cùng đứng yên, lá phía dưới lắc ngang,
+       và chỉ lắc RA NGOÀI (góc trái lệch sang trái, góc phải sang phải) — mép
+       ngoài trượt khuất khỏi màn hình chứ không bao giờ hở vào trong;
+     - phóng nhẹ neo đúng góc: ngọn lá phía giữa trang vươn ra rồi thu về.
+     Xoay (rotate) thì không dùng được: xoay chiều nào cũng hở một mép cắt.
+     Ảnh không có transform inline nên animation trên transform an toàn. */
+  .motion-breathe {
+    animation: motion-canopy-left 6s ease-in-out infinite alternate;
+  }
+  .motion-breathe--left {
+    transform-origin: top left;
+  }
+  .motion-breathe--right {
+    transform-origin: top right;
+    animation-name: motion-canopy-right;
+    animation-duration: 7.5s;
+    animation-delay: -3s;
+  }
+
+  /* Bồ câu lơ lửng */
+  .motion-float {
+    animation: motion-float 6s ease-in-out infinite alternate;
+  }
+
+  /* Cô dâu chú rể nhún nhẹ như đang bước trên lối đi */
+  .motion-stroll {
+    animation: motion-stroll 1.4s ease-in-out infinite alternate;
+  }
+
+  /* Hoa rum RSVP đung đưa quanh gốc thân ở góc dưới trái */
+  .motion-sway {
+    transform-origin: 12% 100%;
+    animation: motion-sway 7s ease-in-out infinite alternate;
+  }
+
+  /* Dải bụi hoa chân section Cảm ơn: gió lướt ngang, hai lớp lệch nhịp.
+     Dải rộng hơn section nhiều nên dịch ngang không lộ mép. */
+  .motion-breeze {
+    animation: motion-breeze 8s ease-in-out infinite alternate;
+  }
+  .motion-breeze--slow {
+    animation-duration: 11s;
+    animation-delay: -3s;
+  }
+
+  /* Xe hoa lăn nhẹ */
+  .motion-roll {
+    animation: motion-roll 3.2s ease-in-out infinite alternate;
+  }
+
+  /* Trái tim ngày cưới đập hai nhịp rồi nghỉ */
+  .mini-cal-heart {
+    animation: motion-heartbeat 2.6s ease-in-out infinite;
+  }
+
+  /* Hoa rum mở đầu Chương trình "mọc" từ gốc lên khi tiêu đề hiện ra */
+  .reveal .calla-divider {
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 1.8s var(--ease-soft) 0.15s;
+  }
+  .reveal.is-visible .calla-divider {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* Minh hoạ địa điểm lùi dần về đúng cỡ khi hiện ra */
+  .reveal .venue-art {
+    scale: 1.06;
+    transition: scale 2.6s var(--ease-soft);
+  }
+  .reveal.is-visible .venue-art {
+    scale: 1;
+  }
+
+  /* Ô màu dresscode nảy lên lần lượt */
+  .reveal .swatch-dot {
+    scale: 0.4;
+    opacity: 0;
+    transition:
+      scale 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.5s var(--ease-soft),
+      translate 0.35s var(--ease-soft);
+  }
+  .reveal.is-visible .swatch-dot {
+    scale: 1;
+    opacity: 1;
+  }
+  .reveal.is-visible .swatch:nth-child(1) .swatch-dot { transition-delay: 0.3s; }
+  .reveal.is-visible .swatch:nth-child(2) .swatch-dot { transition-delay: 0.4s; }
+  .reveal.is-visible .swatch:nth-child(3) .swatch-dot { transition-delay: 0.5s; }
+  .reveal.is-visible .swatch:nth-child(4) .swatch-dot { transition-delay: 0.6s; }
+  .reveal.is-visible .swatch:nth-child(5) .swatch-dot { transition-delay: 0.7s; }
+  .reveal.is-visible .swatch:nth-child(6) .swatch-dot { transition-delay: 0.8s; }
+
+  @media (hover: hover) {
+    .swatch:hover .swatch-dot {
+      translate: 0 -4px;
+    }
+  }
+
+  /* Hiệu ứng gắn theo vị trí cuộn — trình duyệt chưa hỗ trợ thì phần tử đứng
+     yên ở trạng thái cuối, không mất gì. */
+  @supports (animation-timeline: view()) {
+    /* Ruy băng được "trải" từ trái sang phải khi cuộn tới */
+    .section-hem > .hem-ribbon {
+      animation: motion-unfurl linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+
+    /* Đường nối giữa các mốc chương trình vẽ dần theo cuộn */
+    #agenda .rule {
+      transform-origin: top;
+      animation: motion-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+    #agenda li .cross-mark {
+      animation: motion-spin-in linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 45%;
+    }
+  }
+}
+
+/* Gộp skew + scale vào một transform: để `scale` rời đứng chung khung hình với
+   `transform` thì bộ tối ưu CSS lúc build lặng lẽ bỏ mất `scale`. Cả hai phép
+   đều giữ nguyên điểm gốc (góc neo), nên mép cắt vẫn kín. */
+@keyframes motion-canopy-left {
+  from { transform: skewX(0deg) scale(1); }
+  to { transform: skewX(-2.2deg) scale(1.045); }
+}
+@keyframes motion-canopy-right {
+  from { transform: skewX(0deg) scale(1); }
+  to { transform: skewX(2.2deg) scale(1.045); }
+}
+@keyframes motion-float {
+  from { translate: 0 0; }
+  to { translate: 0 -9px; }
+}
+@keyframes motion-stroll {
+  from { translate: 0 0; }
+  to { translate: 0 -1.5px; }
+}
+@keyframes motion-sway {
+  from { rotate: -1.4deg; }
+  to { rotate: 1.4deg; }
+}
+@keyframes motion-breeze {
+  from { translate: -6px 0; }
+  to { translate: 6px 0; }
+}
+@keyframes motion-roll {
+  from { translate: -3px 0; rotate: -0.4deg; }
+  to { translate: 3px 0; rotate: 0.4deg; }
+}
+@keyframes motion-heartbeat {
+  0%, 40%, 100% { scale: 1; }
+  12% { scale: 1.14; }
+  24% { scale: 1; }
+  32% { scale: 1.08; }
+}
+@keyframes motion-unfurl {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes motion-draw {
+  from { scale: 1 0; }
+  to { scale: 1 1; }
+}
+@keyframes motion-spin-in {
+  from { rotate: -90deg; opacity: 0; }
+  to { rotate: 0deg; opacity: 1; }
+}

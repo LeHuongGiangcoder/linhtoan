@@ -41,7 +41,7 @@ export function Dresscode() {
           <Decor
             id="18"
             width="58%"
-            className="!relative !top-auto !right-auto !bottom-auto !left-auto mx-auto"
+            className="motion-roll !relative !top-auto !right-auto !bottom-auto !left-auto mx-auto"
           />
         </Reveal>
       </div>

@@ -23,8 +23,10 @@ export function Reveal({
     const el = ref.current;
     if (!el) return;
 
+    let reported = false;
     const io = new IntersectionObserver(
       (entries) => {
+        reported = true;
         for (const entry of entries) {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
@@ -37,9 +39,13 @@ export function Reveal({
 
     io.observe(el);
 
-    // Lưới an toàn: nếu observer không bắn (tab ẩn, trình duyệt lạ…),
-    // vẫn hiện nội dung sau 1.5s.
+    // Lưới an toàn: observer luôn báo một lần ngay sau observe(), kể cả khi
+    // phần tử nằm ngoài màn hình. Chỉ khi không báo gì sau 1.5s (trình duyệt
+    // lạ, observer hỏng) mới hiện thẳng nội dung.
+    // Trước đây mốc 1.5s hiện TẤT CẢ phần tử — kể cả những thứ còn cách cả
+    // chục màn hình — nên khách cuộn tới nơi thì hiệu ứng đã chạy xong từ lâu.
     const fallback = window.setTimeout(() => {
+      if (reported) return;
       el.classList.add("is-visible");
       io.disconnect();
     }, 1500);

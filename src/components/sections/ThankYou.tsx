@@ -16,8 +16,8 @@ export function ThankYou() {
           gương và tụt xuống để không lộ ra là cùng một dải lặp lại.
           Hai đầu dải el-54-strip được vuốt trong suốt khoảng 4% mỗi bên, nên
           mỗi lớp phải thò ra ngoài hai mép nhiều hơn thế. */}
-      <Decor id="el-54-strip" width="152%" bottom="-7%" left="-28%" flip />
-      <Decor id="el-54-strip" width="130%" bottom="-2%" left="-15%" />
+      <Decor id="el-54-strip" width="152%" bottom="-7%" left="-28%" flip className="motion-breeze motion-breeze--slow" />
+      <Decor id="el-54-strip" width="130%" bottom="-2%" left="-15%" className="motion-breeze" />
       <Decor id="el-46" width="34%" bottom="16%" left="0%" />
 
       <div className="section-inner flex flex-col items-center text-center">
@@ -25,7 +25,7 @@ export function ThankYou() {
           <Decor
             id="19"
             width="9rem"
-            className="!relative !top-auto !right-auto !bottom-auto !left-auto mx-auto"
+            className="motion-float !relative !top-auto !right-auto !bottom-auto !left-auto mx-auto"
           />
         </Reveal>
 

@@ -20,8 +20,22 @@ export function Hero({ guestName }: HeroProps = {}) {
     >
       {/* Hai góc hoa. Mép trên và mép ngoài của ảnh bị cắt thẳng sẵn, nên neo
           đúng 0 vào góc section — lệch ra trong là lộ ngay đường cắt. */}
-      <Decor id="hero-corner-left" width="60%" top="0" left="0" priority />
-      <Decor id="hero-corner-right" width="60%" top="0" right="0" priority />
+      <Decor
+        id="hero-corner-left"
+        width="60%"
+        top="0"
+        left="0"
+        priority
+        className="motion-breathe motion-breathe--left"
+      />
+      <Decor
+        id="hero-corner-right"
+        width="60%"
+        top="0"
+        right="0"
+        priority
+        className="motion-breathe motion-breathe--right"
+      />
 
       {/* Khối chữ — chiếm phần trên, căn giữa khoảng trống còn lại */}
       <div className="section-inner flex flex-1 flex-col items-center justify-center pt-[14vh] pb-2 text-center">
@@ -76,7 +90,7 @@ export function Hero({ guestName }: HeroProps = {}) {
       {/* Tranh lễ đường — để nguyên bề cao thật, không cắt. Section vì thế cao
           hơn một viewport và tranh tràn sang phần cuộn tiếp theo, đúng ý đồ. */}
       <div className="relative w-full shrink-0">
-        <Decor id="7" width="38%" top="9%" right="4%" front />
+        <Decor id="7" width="38%" top="9%" right="4%" front className="motion-float" />
 
         {/* Tranh và lớp cô dâu chú rể nằm chung một khung đúng tỉ lệ canvas
             1108x1420, nên toạ độ % của lớp người luôn rơi đúng lối đi trong
@@ -100,7 +114,7 @@ export function Hero({ guestName }: HeroProps = {}) {
             height={COUPLE_WALKING.h}
             priority
             sizes="(max-width: 640px) 17vw, 110px"
-            className="absolute h-auto select-none"
+            className="motion-stroll absolute h-auto select-none"
             style={{
               left: `${COUPLE_WALKING.left * 100}%`,
               bottom: `${COUPLE_WALKING.bottom * 100}%`,

@@ -27,7 +27,7 @@ export function Rsvp({ party = PARTIES.main }: { party?: Party } = {}) {
       {/* Cành hoa rum ôm góc trên trái: hoa vắt ngang phía trên tiêu đề, thân
           thả dọc mép trái rồi lẩn sau tấm giấy của form (decor z-0 dưới nội
           dung z-2) — như họa tiết góc của một tấm menu in. */}
-      <Decor id="rsvp-lily" width="60%" top="1rem" left="0" />
+      <Decor id="rsvp-lily" width="60%" top="1rem" left="0" className="motion-sway" />
 
       {/* `front` để hai đài hoa nằm trên tấm giấy của form (z-3 > .section-inner
           z-2) — không có nó thì tấm giấy che mất chân hoa. */}
