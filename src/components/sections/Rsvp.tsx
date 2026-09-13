@@ -8,6 +8,13 @@ import { PARTIES, type Party } from "@/lib/content";
 
 type Attending = "yes" | "no";
 
+/**
+ * Số người đi — đúng hai lựa chọn, ghi nguyên chữ vào cột Guests của sheet.
+ * Chọn "Trên 1" thì phải điền tên người đi cùng (ghi vào cột Other).
+ */
+const PARTY_SIZES = ["1", "Trên 1"] as const;
+type PartySize = (typeof PARTY_SIZES)[number];
+
 /** Khách mở thiệp bằng link riêng /main/<slug>. */
 export type RsvpGuest = { slug: string; name?: string };
 
@@ -15,6 +22,7 @@ type RsvpProps = { party?: Party; guest?: RsvpGuest };
 
 export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
   const [attending, setAttending] = useState<Attending>("yes");
+  const [partySize, setPartySize] = useState<PartySize>("1");
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,6 +33,7 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
 
     const form = new FormData(e.currentTarget);
     const isComing = attending === "yes";
+    const withCompanions = isComing && partySize === "Trên 1";
     setSending(true);
     setError(null);
 
@@ -38,7 +47,8 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
           slug: guest?.slug ?? "",
           name: String(form.get("name") ?? ""),
           attending: isComing,
-          guestCount: isComing ? Number(form.get("guests") ?? 1) : 0,
+          guests: isComing ? partySize : "",
+          companions: withCompanions ? String(form.get("companions") ?? "") : "",
           message: String(form.get("message") ?? ""),
           website: String(form.get("website") ?? ""),
         }),
@@ -137,17 +147,42 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
 
               {attending === "yes" && (
                 <div className="field">
-                  <label className="field-label" htmlFor="rsvp-guests">
+                  <span className="field-label" id="rsvp-guests-label">
                     Số người tham dự
+                  </span>
+                  <div
+                    className="choice-group"
+                    role="group"
+                    aria-labelledby="rsvp-guests-label"
+                  >
+                    {PARTY_SIZES.map((size) => (
+                      <button
+                        key={size}
+                        type="button"
+                        className="choice"
+                        aria-pressed={partySize === size}
+                        onClick={() => setPartySize(size)}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {attending === "yes" && partySize === "Trên 1" && (
+                <div className="field">
+                  <label className="field-label" htmlFor="rsvp-companions">
+                    Điền tên người đi cùng
                   </label>
-                  <input
-                    id="rsvp-guests"
-                    name="guests"
-                    className="input"
-                    type="number"
-                    min={1}
-                    max={10}
-                    defaultValue={1}
+                  <textarea
+                    id="rsvp-companions"
+                    name="companions"
+                    className="input input--short"
+                    placeholder="VD: Nguyễn Văn B, Trần Thị C"
+                    maxLength={300}
+                    rows={2}
+                    required
                   />
                 </div>
               )}

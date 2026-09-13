@@ -12,7 +12,9 @@
 const MAX_BODY = 5_000;
 const MAX_NAME = 120;
 const MAX_MESSAGE = 1_000;
-const MAX_GUESTS = 10;
+const MAX_COMPANIONS = 300;
+/** Hai lựa chọn của form, ghi nguyên chữ vào cột Guests. */
+const PARTY_SIZES = ["1", "Trên 1"];
 const SLUG = /^[a-z0-9-]{1,80}$/;
 
 type Reply = { ok: true } | { ok: false; error: string };
@@ -54,14 +56,18 @@ export async function POST(request: Request) {
   }
   const attending = input.attending;
 
-  const count = Number(input.guestCount);
-  const guestCount = attending
-    ? Number.isInteger(count) && count >= 1 && count <= MAX_GUESTS
-      ? count
-      : null
-    : 0;
-  if (guestCount === null) {
+  // Không đến thì bỏ trống cả số người lẫn tên người đi cùng.
+  const guests = attending ? input.guests : "";
+  if (attending && (typeof guests !== "string" || !PARTY_SIZES.includes(guests))) {
     return reply({ ok: false, error: "invalid-guests" }, 400);
+  }
+
+  const companions =
+    attending && guests === "Trên 1" && typeof input.companions === "string"
+      ? input.companions.trim()
+      : "";
+  if (attending && guests === "Trên 1" && (!companions || companions.length > MAX_COMPANIONS)) {
+    return reply({ ok: false, error: "invalid-companions" }, 400);
   }
 
   const message = typeof input.message === "string" ? input.message.trim() : "";
@@ -83,9 +89,9 @@ export async function POST(request: Request) {
         slug,
         name,
         attending,
-        guestCount,
+        guests, // → cột Guests: "1" | "Trên 1"
+        other: companions, // → cột Other: tên người đi cùng
         message,
-        other: "",
         meal: "",
       }),
       // Apps Script chậm, lại xếp hàng các lượt ghi đồng thời (LockService

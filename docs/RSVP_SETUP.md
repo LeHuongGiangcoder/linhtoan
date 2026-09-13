@@ -104,11 +104,11 @@ thì thành hàng mới.
 ```jsonc
 // website đọc danh sách khách
 { "secret": "…", "action": "guests" }
-// → { ok: true, guests: [{ slug, name, code, event: "main", attending, guestCount, … }] }
+// → { ok: true, guests: [{ slug, name, code, event: "main", attending, guests, other, … }] }
 
 // website ghi phản hồi
 { "secret": "…", "slug": "anh-chi-nguyen-van-a", "attending": true,
-  "guestCount": 2, "other": "", "meal": "Chay", "message": "Chúc mừng!" }
+  "guests": "Trên 1", "other": "Nguyễn Văn B", "meal": "", "message": "Chúc mừng!" }
 // → { ok: true, row: 4 }
 ```
 

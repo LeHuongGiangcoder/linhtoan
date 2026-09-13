@@ -9,6 +9,13 @@
  *   No · Name · Slug · Link · Attending · Guests · Other · Meal Preferences ·
  *   Message · Updated
  *
+ * Form RSVP ghi:
+ *   Attending  YES / NO
+ *   Guests     "1" hoặc "Trên 1" (bỏ trống nếu không đến)
+ *   Other      tên người đi cùng — chỉ có khi chọn "Trên 1"
+ *   Message    lời chúc
+ *   Updated    lúc khách trả lời gần nhất
+ *
  * Cài đặt: xem docs/RSVP_SETUP.md.
  */
 
@@ -94,16 +101,17 @@ function checkData() {
 
   const replied = guests.filter(function (g) { return g.attending !== null; });
   const coming = replied.filter(function (g) { return g.attending; });
-  const seats = coming.reduce(function (sum, g) { return sum + g.guestCount; }, 0);
+  const withCompanions = coming.filter(function (g) { return g.guests === 'Trên 1'; });
 
   const lines = guests.slice(0, 12).map(function (g) {
-    const state = g.attending === null ? '—' : (g.attending ? 'YES ' + g.guestCount : 'NO');
+    const state = g.attending === null ? '—'
+      : (g.attending ? 'YES ' + (g.guests || '1') + (g.other ? ' + ' + g.other : '') : 'NO');
     return g.code + '  ' + g.slug + '   ' + g.name + '   [' + state + ']';
   });
 
   const message =
     guests.length + ' khách · ' + replied.length + ' đã trả lời · ' +
-    coming.length + ' đến (' + seats + ' người)\n\n' +
+    coming.length + ' đến (' + withCompanions.length + ' có người đi cùng)\n\n' +
     'mã  slug  tên  [trả lời]\n' + lines.join('\n') +
     (guests.length > 12 ? '\n… còn ' + (guests.length - 12) + ' dòng' : '');
 
@@ -326,7 +334,6 @@ function readGuests_(sheet, col) {
     .getValues()
     .map(function (row) {
       const attending = String(row[col.attending - 1]).trim().toUpperCase();
-      const guestCount = parseInt(row[col.guests - 1], 10);
       return {
         slug: String(row[col.slug - 1]).trim(),
         name: String(row[col.name - 1]).trim(),
@@ -336,7 +343,8 @@ function readGuests_(sheet, col) {
         // Phản hồi đã ghi trước đó, để khách quay lại thấy đúng trạng thái của
         // mình chứ không phải form trắng.
         attending: attending === 'YES' ? true : (attending === 'NO' ? false : null),
-        guestCount: guestCount > 0 ? guestCount : 0,
+        // "1" hoặc "Trên 1" — đúng chữ khách chọn trong form.
+        guests: String(row[col.guests - 1]).trim(),
         other: String(row[col.other - 1]).trim(),
         meal: String(row[col['meal preferences'] - 1]).trim(),
         message: String(row[col.message - 1]).trim(),
@@ -353,8 +361,9 @@ function writeRsvp_(sheet, col, body) {
   const slug = String(body.slug || '').trim();
   const answer = {};
   answer[col.attending] = body.attending ? 'YES' : 'NO';
-  answer[col.guests] = body.attending ? (body.guestCount || 1) : 0;
-  answer[col.other] = body.other || '';
+  // Không đến thì bỏ trống cả số người lẫn tên người đi cùng.
+  answer[col.guests] = body.attending ? String(body.guests || '1') : '';
+  answer[col.other] = body.attending ? String(body.other || '') : '';
   answer[col['meal preferences']] = body.meal || '';
   answer[col.message] = body.message || '';
   answer[col.updated] = new Date();

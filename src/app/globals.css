@@ -656,6 +656,10 @@
     resize: vertical;
     line-height: 1.7;
   }
+  /* Ô ghi tên người đi cùng: thường chỉ vài cái tên, không cần cao như ô lời chúc */
+  textarea.input--short {
+    min-height: 3.5rem;
+  }
 
   /* Nhóm chọn (Có / Không) */
   .choice-group {
