@@ -62,7 +62,7 @@ export const PARTIES: Record<PartyId, Party> = {
     dateShort: "29 . 11 . 2026",
     time: "10:30",
     startsAt: "2026-11-29T10:30:00+07:00",
-    hall: "",
+    hall: "Sảnh Khánh Tiết",
     venue: "Trung tâm Hội nghị Quốc gia",
     address: "57 Phạm Hùng, Mễ Trì, Nam Từ Liêm, Hà Nội",
     city: "Hà Nội",

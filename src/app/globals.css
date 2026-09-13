@@ -988,6 +988,18 @@
     margin-inline: auto;
   }
 
+  /* Tên sảnh: khách tới toà nhà rồi vẫn phải tìm đúng sảnh, nên in rõ */
+  .venue-hall {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    color: var(--color-olive);
+  }
+
   .venue-text {
     display: flex;
     flex-direction: column;

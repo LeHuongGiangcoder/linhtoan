@@ -93,9 +93,7 @@ export function TimeVenue({ party = PARTIES.main }: { party?: Party } = {}) {
           <p className="eyebrow eyebrow--tight">{party.event}</p>
           <h3 className="display-3 text-balance">{party.venue}</h3>
           {party.hall ? (
-            <p className="body-text body-text--sm !text-[var(--color-olive)]">
-              {party.hall}
-            </p>
+            <p className="venue-hall">{party.hall}</p>
           ) : null}
           <p className="body-text body-text--sm text-balance">
             {party.address}
