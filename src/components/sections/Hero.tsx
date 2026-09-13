@@ -18,12 +18,10 @@ export function Hero({ guestName }: HeroProps = {}) {
       id="hero"
       className="section section--flush relative flex min-h-[100svh] flex-col overflow-hidden"
     >
-      {/* Góc trên phải: lớp lá (5) nằm sau bông hoa (4) */}
-      <Decor id="5" width="46%" top="-9%" right="-13%" rotate={-8} priority />
-      <Decor id="4" width="35%" top="-6%" right="-5%" priority />
-
-      {/* Chim bồ câu đưa thư — bên trái */}
-      <Decor id="3" width="29%" top="7%" left="-8%" priority />
+      {/* Hai góc hoa. Mép trên và mép ngoài của ảnh bị cắt thẳng sẵn, nên neo
+          đúng 0 vào góc section — lệch ra trong là lộ ngay đường cắt. */}
+      <Decor id="hero-corner-left" width="60%" top="0" left="0" priority />
+      <Decor id="hero-corner-right" width="60%" top="0" right="0" priority />
 
       {/* Khối chữ — chiếm phần trên, căn giữa khoảng trống còn lại */}
       <div className="section-inner flex flex-1 flex-col items-center justify-center pt-[14vh] pb-2 text-center">
@@ -37,12 +35,13 @@ export function Hero({ guestName }: HeroProps = {}) {
           <p className="invite-line">{HERO.invite}</p>
         </Reveal>
 
+        {/* Chú rể trước, cô dâu sau */}
         <Reveal delay={2} className="mt-4 w-full">
           <Image
-            src={COUPLE_TYPO.bride.src}
-            alt={COUPLE.bride}
-            width={COUPLE_TYPO.bride.w}
-            height={COUPLE_TYPO.bride.h}
+            src={COUPLE_TYPO.groom.src}
+            alt={COUPLE.groom}
+            width={COUPLE_TYPO.groom.w}
+            height={COUPLE_TYPO.groom.h}
             priority
             sizes="(max-width: 640px) 74vw, 474px"
             className="mx-auto block h-auto w-[74%]"
@@ -55,13 +54,13 @@ export function Hero({ guestName }: HeroProps = {}) {
 
         <Reveal delay={3} className="w-full">
           <Image
-            src={COUPLE_TYPO.groom.src}
-            alt={COUPLE.groom}
-            width={COUPLE_TYPO.groom.w}
-            height={COUPLE_TYPO.groom.h}
+            src={COUPLE_TYPO.bride.src}
+            alt={COUPLE.bride}
+            width={COUPLE_TYPO.bride.w}
+            height={COUPLE_TYPO.bride.h}
             priority
-            sizes="(max-width: 640px) 71vw, 451px"
-            className="mx-auto block h-auto w-[70.5%]"
+            sizes="(max-width: 640px) 74vw, 474px"
+            className="mx-auto block h-auto w-[74%]"
           />
         </Reveal>
 

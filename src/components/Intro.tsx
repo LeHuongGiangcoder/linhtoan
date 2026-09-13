@@ -119,7 +119,7 @@ export function Intro() {
       </div>
 
       <button type="button" className="glass-btn" onClick={open}>
-        Join us
+        Mở thiệp
       </button>
     </div>
   );

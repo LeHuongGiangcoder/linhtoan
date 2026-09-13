@@ -3,14 +3,13 @@ import { alegreya, moncheri, tanPearl } from "./fonts";
 import { COUPLE, PARTIES, SITE_URL } from "@/lib/content";
 import "./globals.css";
 
-const TITLE = `${COUPLE.bride} & ${COUPLE.groom}`;
+const TITLE = `${COUPLE.groom} & ${COUPLE.bride}`;
 
-/** "21 . 11 . 2026" giãn chữ cho đẹp trên tấm vé, nhưng trong câu thì đọc rối. */
+/** "29 . 11 . 2026" giãn chữ cho đẹp trên tấm vé, nhưng trong câu thì đọc rối. */
 const compact = (date: string) => date.replace(/\s+/g, "");
 
 const DESCRIPTION =
   `Thiệp mời cưới của ${TITLE} — ` +
-  `${PARTIES.intimate.tab} ${compact(PARTIES.intimate.dateShort)} tại ${PARTIES.intimate.venue}, ` +
   `${PARTIES.main.tab} ${compact(PARTIES.main.dateShort)} tại ${PARTIES.main.venue}.`;
 
 export const metadata: Metadata = {
@@ -23,12 +22,12 @@ export const metadata: Metadata = {
     type: "website",
     locale: "vi_VN",
     siteName: TITLE,
-    title: `${TITLE} — Save the date`,
+    title: `${TITLE} — Lưu lại ngày này`,
     description: DESCRIPTION,
     url: "/",
     images: [
       {
-        url: "/og.jpg",
+        url: "/og.82db18af.jpg",
         width: 1200,
         height: 630,
         alt: `Thiệp mời cưới ${TITLE}`,
@@ -37,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${TITLE} — Save the date`,
+    title: `${TITLE} — Lưu lại ngày này`,
     description: DESCRIPTION,
-    images: ["/og.jpg"],
+    images: ["/og.82db18af.jpg"],
   },
   robots: {
     // Thiệp riêng: đừng để Google đánh chỉ mục rồi người lạ tìm ra được.

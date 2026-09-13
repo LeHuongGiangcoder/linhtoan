@@ -8,7 +8,7 @@ import { PARTIES, type Party } from "@/lib/content";
 
 type Attending = "yes" | "no";
 
-export function Rsvp({ party = PARTIES.intimate }: { party?: Party } = {}) {
+export function Rsvp({ party = PARTIES.main }: { party?: Party } = {}) {
   const [attending, setAttending] = useState<Attending>("yes");
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
@@ -23,7 +23,12 @@ export function Rsvp({ party = PARTIES.intimate }: { party?: Party } = {}) {
   }
 
   return (
-    <section id="rsvp" className="section section--fit section--bleed relative">
+    <section id="rsvp" className="section section--fit section--bleed section--lily relative">
+      {/* Cành hoa rum ôm góc trên trái: hoa vắt ngang phía trên tiêu đề, thân
+          thả dọc mép trái rồi lẩn sau tấm giấy của form (decor z-0 dưới nội
+          dung z-2) — như họa tiết góc của một tấm menu in. */}
+      <Decor id="rsvp-lily" width="60%" top="1rem" left="0" />
+
       {/* `front` để hai đài hoa nằm trên tấm giấy của form (z-3 > .section-inner
           z-2) — không có nó thì tấm giấy che mất chân hoa. */}
       <Decor id="el-18" width="36%" bottom="0%" left="-10%" front />
@@ -32,7 +37,7 @@ export function Rsvp({ party = PARTIES.intimate }: { party?: Party } = {}) {
       <div className="section-inner">
         <Reveal className="section-head">
           <p className="eyebrow">Xác nhận tham dự</p>
-          <h2 className="display-2">R.S.V.P</h2>
+          <h2 className="display-2">Hồi âm</h2>
           <p className="eyebrow eyebrow--tight">{party.tab}</p>
           <Divider />
         </Reveal>

@@ -30,7 +30,7 @@ export function ThankYou() {
         </Reveal>
 
         <Reveal delay={1} className="section-head mt-5">
-          <p className="eyebrow">Thank you</p>
+          <p className="eyebrow">Thay lời kết</p>
           <h2 className="display-2">Cảm ơn bạn</h2>
           <Divider />
         </Reveal>
@@ -44,7 +44,7 @@ export function ThankYou() {
 
         <Reveal delay={3} className="mt-8 flex flex-col items-center gap-3">
           <span className="rule !h-8" />
-          <p className="display-2">L &amp; T</p>
+          <p className="display-2">T &amp; L</p>
           <p className="date-text date-text--hero">{COUPLE.dateDisplay}</p>
           <p className="eyebrow">{COUPLE.city}</p>
         </Reveal>

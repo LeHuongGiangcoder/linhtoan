@@ -4,14 +4,15 @@ Một spreadsheet, một tab `RSVP`. Cô dâu chú rể gõ **tên khách** và 
 script dựng link riêng cho từng người, và website ghi phản hồi RSVP ngược lại
 đúng hàng của người đó.
 
-Điểm khác so với site Đức Anh & Diễm My: đám này có **hai sự kiện**, nên cột
-`Event` quyết định link riêng của khách trỏ vào sự kiện nào.
+Đám cưới hiện chỉ có **một sự kiện — `Tiệc chính`**. Cột `Event` vẫn quyết
+định link riêng của khách trỏ vào sự kiện nào, để thêm buổi nữa về sau chỉ là
+thêm một mục vào `EVENTS`.
 
 | Cột | Ai điền | Ý nghĩa |
 |-----|---------|---------|
 | `No` | tự sinh | số thứ tự **và là mã khách** — 3 chữ số (`001`, `002`…) |
 | `Name` | **bạn gõ** | tên hiện trên thiệp — có dấu tiếng Việt thoải mái |
-| `Event` | **bạn chọn** | `Tiệc thân mật` hoặc `Tiệc chính`. **Bỏ trống = `Tiệc thân mật`** |
+| `Event` | **bạn chọn** | `Tiệc chính`. **Bỏ trống = `Tiệc chính`** |
 | `Slug` | tự sinh | phần đuôi URL, sinh từ tên |
 | `Link` | tự sinh | link để gửi cho khách — copy thẳng từ đây |
 | `Attending` | website ghi | `YES` / `NO` |
@@ -33,7 +34,7 @@ vào cuối khi script chạy lần đầu.
 ```
 SITE_ORIGIN / <đường dẫn của sự kiện> / <slug của khách>
 
-https://khanhlinhtoanpham.gloweb.site/intimate/anh-chi-nguyen-van-a
+https://khanhlinhtoanpham.gloweb.site/main/anh-chi-nguyen-van-a
 https://khanhlinhtoanpham.gloweb.site/main/ms-tran-thi-bao-ngoc
 ```
 
@@ -41,29 +42,25 @@ https://khanhlinhtoanpham.gloweb.site/main/ms-tran-thi-bao-ngoc
   sống mãi, kể cả khi sau này sửa lại chính tả cái tên. Muốn tự đặt link, cứ gõ
   tay vào cột `Slug` trước.
 - `Link` thì **có** đổi: sửa ô `Event` là link được dựng lại sang đường dẫn của
-  sự kiện kia, slug giữ nguyên. Nhớ gửi lại link mới cho khách đó.
+  sự kiện mới, slug giữ nguyên. Nhớ gửi lại link mới cho khách đó.
 - Slug là duy nhất trên toàn sheet, không phải trong từng sự kiện. Nhờ vậy
-  website tra khách chỉ bằng slug là đủ, và khách bấm nhầm link của sự kiện kia
-  vẫn ra đúng hàng của họ.
+  website tra khách chỉ bằng slug là đủ.
 
-### Đổi tên hai sự kiện
+### Đổi tên sự kiện
 
 Sửa mảng `EVENTS` ở đầu [`apps-script.gs`](apps-script.gs) — nó là nguồn duy
 nhất cho cả link, cả dropdown trong sheet:
 
 ```js
 const EVENTS = [
-  { key: 'intimate', path: 'intimate', label: 'Tiệc thân mật',
-    alias: [...], sees: ['intimate', 'main'] },
-  { key: 'main',     path: 'main',     label: 'Tiệc chính',
+  { key: 'main', path: 'main', label: 'Tiệc chính',
     alias: [...], sees: ['main'] },
 ];
 ```
 
 `alias` là các cách gõ khác vẫn hiểu là sự kiện đó — ô `Event` là dropdown,
-nhưng người ta vẫn dán đè hoặc gõ tay, và một ô ghi `tiec` mà lặng lẽ ra link
-của tiệc thân mật là kiểu lỗi không ai phát hiện cho tới khi khách đã tới nhầm chỗ.
-Giá trị lạ hoàn toàn thì rơi về sự kiện đầu tiên — dùng menu **Kiểm tra dữ
+nhưng người ta vẫn dán đè hoặc gõ tay. Giá trị lạ hoàn toàn thì rơi về sự kiện
+đầu tiên — dùng menu **Kiểm tra dữ
 liệu** để soát trước khi gửi thiệp.
 
 > **Chốt `path` trước khi gửi thiệp đầu tiên.** Đổi `path` sau đó là hỏng toàn
@@ -73,14 +70,11 @@ liệu** để soát trước khi gửi thiệp.
 
 | `Event` trong sheet | Link mở ra | Thiệp hiện |
 |---|---|---|
-| `Tiệc thân mật` | `/intimate/<slug>` | **cả hai buổi**, có nút chuyển qua lại |
-| `Tiệc chính` | `/main/<slug>` | **chỉ tiệc chính**, không có nút chuyển |
+| `Tiệc chính` | `/main/<slug>` | tiệc chính |
 
-Khách chỉ được mời tiệc chính thì nút chuyển tự ẩn hẳn: để nút ở đó chỉ tổ
-cho họ biết còn một buổi nữa mà mình không được mời.
-
-Quy tắc này nằm ở hai chỗ và phải khớp nhau: `sees` trong `EVENTS` của
-[`apps-script.gs`](apps-script.gs), và `PARTY_ACCESS` trong
+Chỉ còn một buổi nên thiệp không có nút chuyển buổi nữa. Đường dẫn hợp lệ nằm ở
+hai chỗ và phải khớp nhau: `path` trong `EVENTS` của
+[`apps-script.gs`](apps-script.gs), và `partyFromPath` trong
 `src/lib/guests.ts`. Sửa một bên nhớ sửa bên kia.
 
 
@@ -95,7 +89,7 @@ Quy tắc này nằm ở hai chỗ và phải khớp nhau: `sees` trong `EVENTS`
    - `SECRET` — chuỗi ngẫu nhiên thật dài. Giữ lại, bước 3 cần đến.
    - `SITE_ORIGIN` — domain thật của site, dùng để dựng cột `Link`.
    - `SHEET_NAME` — tên tab, phải khớp chính xác tên dưới đáy sheet.
-   - `EVENTS` — hai sự kiện, xem phần trên.
+   - `EVENTS` — danh sách sự kiện, xem phần trên.
 5. Lưu, chọn hàm `setupSheet` rồi bấm **Run** một lần (cấp quyền khi Google hỏi).
    Header, định dạng và dropdown `Event` được tạo xong.
 
@@ -108,8 +102,8 @@ Quy tắc này nằm ở hai chỗ và phải khớp nhau: `sees` trong `EVENTS`
 4. **Deploy**, cấp quyền, copy **Web app URL**.
 
 > Mỗi lần sửa script phải **Deploy → Manage deployments → ✏️ → New version**,
-> không thì code cũ vẫn chạy. Nếu sheet ghi `Tiệc chính` mà link vẫn ra tiệc thân mật,
-> lỗi gần như chắc chắn nằm ở đây.
+> không thì code cũ vẫn chạy. Nếu sheet ghi một đằng mà link ra một nẻo, lỗi gần
+> như chắc chắn nằm ở đây.
 
 ## 3. Trỏ website vào đó
 

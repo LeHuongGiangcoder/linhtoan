@@ -1,21 +1,8 @@
-import { PARTY_ORDER, type PartyId } from "@/lib/content";
+import { type PartyId } from "@/lib/content";
 
-/**
- * Buổi tiệc nào thì xem được những gì.
- *
- * Khách tiệc thân mật được mời cả hai buổi nên thấy cả hai; khách tiệc chính
- * chỉ thấy tiệc chính. Quy tắc này phải khớp với `ACCESS` trong
- * docs/apps-script.gs — sửa một bên là phải sửa bên kia.
- */
-export const PARTY_ACCESS: Record<PartyId, PartyId[]> = {
-  intimate: PARTY_ORDER,
-  main: ["main"],
-};
-
-/** Đoạn đầu của link riêng: /intimate/<slug> hoặc /main/<slug>. */
+/** Đoạn đầu của link riêng: /main/<slug>. */
 export function partyFromPath(value: string): PartyId | null {
-  const key = value.trim().toLowerCase();
-  return key === "intimate" || key === "main" ? key : null;
+  return value.trim().toLowerCase() === "main" ? "main" : null;
 }
 
 type Guest = { name: string; party: PartyId | null };

@@ -5,7 +5,7 @@ import { Hero } from "@/components/sections/Hero";
 import { Party } from "@/components/sections/Party";
 import { ThankYou } from "@/components/sections/ThankYou";
 import { PARTIES } from "@/lib/content";
-import { PARTY_ACCESS, lookupGuest, partyFromPath } from "@/lib/guests";
+import { lookupGuest, partyFromPath } from "@/lib/guests";
 
 /**
  * Link riêng của từng khách: /<buổi tiệc>/<slug>, do Apps Script sinh ra từ
@@ -23,7 +23,7 @@ export async function generateMetadata({
 
   const guest = await lookupGuest(slug);
   const p = PARTIES[party];
-  // "21 . 11 . 2026" giãn chữ cho đẹp trên tấm vé, trong tiêu đề thì bỏ giãn.
+  // "29 . 11 . 2026" giãn chữ cho đẹp trên tấm vé, trong tiêu đề thì bỏ giãn.
   const date = p.dateShort.replace(/\s+/g, "");
 
   return {
@@ -41,20 +41,16 @@ export default async function GuestInvitation({
 }: PageProps<"/[event]/[slug]">) {
   const { event, slug } = await params;
 
-  const fromPath = partyFromPath(event);
-  if (!fromPath) notFound();
+  if (!partyFromPath(event)) notFound();
 
   const guest = await lookupGuest(slug);
-  // Sheet là nguồn đúng nếu tra được: khách sửa tay đường dẫn không tự cho
-  // mình xem thêm buổi tiệc khác.
-  const party = guest?.party ?? fromPath;
 
   return (
     <>
       <Intro />
       <main>
         <Hero guestName={guest?.name} />
-        <Party options={PARTY_ACCESS[party]} />
+        <Party />
         <ThankYou />
       </main>
     </>

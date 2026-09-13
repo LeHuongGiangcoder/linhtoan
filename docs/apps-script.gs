@@ -4,9 +4,9 @@
  * Sheet vừa là nguồn danh sách khách (website đọc lên), vừa là nơi RSVP đổ về
  * (website ghi xuống). Cô dâu chú rể chỉ gõ hai cột: Name và Event.
  *
- * Khác với bản của Đức Anh & Diễm My: đám này có HAI sự kiện, nên cột Event
- * quyết định link riêng của từng khách trỏ vào sự kiện nào —
- * mỗi sự kiện là một đường dẫn riêng trên site.
+ * Cột Event quyết định link riêng của từng khách trỏ vào sự kiện nào — mỗi sự
+ * kiện là một đường dẫn riêng trên site. Đám cưới hiện chỉ còn tiệc chính, nên
+ * EVENTS chỉ có một mục; thêm buổi nữa thì thêm một mục vào đó.
  *
  * Cài đặt: xem docs/RSVP_SETUP.md.
  */
@@ -27,29 +27,20 @@ const SITE_ORIGIN = 'https://khanhlinhtoanpham.gloweb.site';
 /* ------------------------------------------------------------------ events */
 
 /**
- * HAI SỰ KIỆN CỦA ĐÁM CƯỚI — sửa ở đây là đổi cả link lẫn dropdown.
+ * SỰ KIỆN CỦA ĐÁM CƯỚI — sửa ở đây là đổi cả link lẫn dropdown.
  *
  *   key    giá trị website nhận được, dùng để chọn nội dung sẽ hiển thị
  *   path   đoạn đường dẫn trong link riêng:  SITE_ORIGIN/<path>/<slug>
  *   label  chữ hiện trong ô dropdown của sheet
  *   alias  các cách gõ khác vẫn hiểu là sự kiện này (không dấu, viết thường)
- *   sees   khách của sự kiện này xem được những buổi nào trên thiệp — khách
- *          tiệc thân mật được mời cả hai buổi nên xem cả hai, khách tiệc
- *          chính chỉ xem tiệc chính. Phải khớp PARTY_ACCESS trong
- *          src/lib/guests.ts.
+ *   sees   khách của sự kiện này xem được những buổi nào trên thiệp — chỉ còn
+ *          một buổi nên ai cũng xem tiệc chính. Phải khớp `partyFromPath`
+ *          trong src/lib/guests.ts.
  *
- * ĐỔI `path` SAU KHI ĐÃ GỬI LINK CHO KHÁCH LÀ HỎNG HẾT LINK CŨ. Chốt hai đoạn
+ * ĐỔI `path` SAU KHI ĐÃ GỬI LINK CHO KHÁCH LÀ HỎNG HẾT LINK CŨ. Chốt đoạn
  * đường dẫn này trước khi gửi thiệp đầu tiên.
  */
 const EVENTS = [
-  {
-    key: 'intimate',
-    path: 'intimate',
-    label: 'Tiệc thân mật',
-    alias: ['tiec than mat', 'than mat', 'intimate', 'tiệc thân mật', '1'],
-    /** Khách của buổi này xem được những buổi nào trên thiệp. */
-    sees: ['intimate', 'main'],
-  },
   {
     key: 'main',
     path: 'main',
@@ -153,7 +144,7 @@ function setupSheet() {
   sheet.setColumnWidth(col['meal preferences'], 200);
   sheet.setColumnWidth(col.message, 320);
 
-  // Ô Event thành dropdown hai sự kiện để khỏi gõ sai.
+  // Ô Event thành dropdown để khỏi gõ sai.
   const labels = EVENTS.map(function (ev) { return ev.label; });
   const rule = SpreadsheetApp.newDataValidation()
     .requireValueInList(labels, true)

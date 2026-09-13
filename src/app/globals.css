@@ -154,6 +154,20 @@
     padding-block: var(--spacing-section-fit);
   }
 
+  /* Section nằm ngay dưới gấu ruy băng: dải nơ thả xuống sâu ~26% bề ngang
+     trang, nên đệm trên phải lớn hơn thế thì tiêu đề mới nằm dưới nơ. Tính
+     theo bề ngang trang (tối đa 40rem) vì ruy băng co giãn theo bề ngang. */
+  /* Section có cành hoa rum ôm góc trên trái: đẩy tiêu đề xuống dưới phần hoa
+     vắt ngang (~20% bề ngang trang tính từ mép trên). Tính theo bề ngang trang
+     vì ảnh hoa co giãn theo bề ngang. */
+  .section--lily {
+    padding-top: max(var(--spacing-section-fit), calc(min(100vw, 40rem) * 0.2 + 1.5rem));
+  }
+
+  .section--after-ribbon {
+    padding-top: max(var(--spacing-section-fit), calc(min(100vw, 40rem) * 0.29));
+  }
+
   /* Nội dung bên trong section — luôn nằm trên decor */
   .section-inner {
     position: relative;
@@ -345,11 +359,9 @@
   }
 
   /**
-   * Gấu section: dải ren nằm trong luồng nên chính nó quyết định chiều cao của
-   * khối này, còn hoa được neo bằng `bottom: 100%` — tức mép dưới hoa luôn
-   * trùng đúng mép trên dải ren, ở mọi bề ngang màn hình. Nếu để ren và hoa là
-   * hai lớp absolute riêng thì một bên tính theo bề ngang, một bên theo chiều
-   * cao section, và chúng lệch nhau ngay khi đổi kích thước màn hình.
+   * Gấu section: dải trang trí bám chân section. Chiều cao gấu tính theo bề
+   * ngang (aspect-ratio) nên mọi lớp neo bằng % bên trong — hoa, ruy băng —
+   * giữ nguyên tương quan với nhau ở mọi bề ngang màn hình.
    */
   .section-hem {
     position: absolute;
@@ -359,13 +371,30 @@
     pointer-events: none;
   }
 
-  .section-hem > .hem-lace {
-    position: relative;
+  /* Gấu ruy băng: cao ~13% bề ngang, vừa đúng dải băng ngang của ảnh ruy băng
+     (dải băng chiếm ~12% bề ngang ảnh khi ảnh rộng 105%). */
+  .section-hem--ribbon {
+    aspect-ratio: 100 / 13;
+  }
+
+  /* Vuốt mờ chân dải hoa: ảnh hoa cắt thẳng ở mép dưới, ruy băng lượn sóng
+     không tự che kín được đường cắt đó. */
+  .section-hem > .hem-flowers {
+    mask-image: linear-gradient(to bottom, #000 72%, transparent 97%);
+  }
+
+  /* Ruy băng trải hơn cả bề ngang: đầu mút bên trái thò ra ngoài mép, nơ và
+     đuôi dạt hẳn về mép phải (đuôi chỉ bị cắt ~1%) để không đè lên chữ của
+     section kế tiếp. */
+  .section-hem > .hem-ribbon {
+    position: absolute;
+    top: 0;
+    left: -4%;
     z-index: 2;
-    display: block;
-    width: 100%;
+    width: 105%;
     max-width: none;
     height: auto;
+    filter: drop-shadow(0 3px 5px rgba(84, 78, 48, 0.18));
   }
 
   /* Vuốt mờ chân section: nằm trên decor (z-0) nhưng dưới nội dung (z-2), nên
@@ -388,45 +417,20 @@
     overflow-y: visible;
   }
 
-  /* Nền tranh sơn dầu mờ, nằm dưới mọi thứ trong section.
-     Ảnh đã được blur sẵn khi build asset nên lúc chạy không tốn filter — trên
-     máy yếu một filter: blur() phủ cả màn hình là thứ làm cuộn trang giật.
-     z-index âm ăn theo isolation: isolate của .section, nên nó nằm trên nền
-     giấy của chính section mà vẫn dưới decor (z-0) và nội dung (z-2). */
-  .section-painting {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    overflow: hidden;
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .section-painting img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
-
-  /* Màn giấy kem phủ lên tranh: vừa giữ chữ olive đủ tương phản, vừa làm hai
-     mép trên/dưới tan hẳn vào các section kem liền kề — không để lộ đường cắt
-     ngang giữa hai section. */
-  .section-painting::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(
-        to bottom,
-        var(--color-cream) 0%,
-        rgba(246, 244, 240, 0.55) 18%,
-        rgba(246, 244, 240, 0.55) 82%,
-        var(--color-cream) 100%
-      );
-  }
-
   /* ─────────── 6. DIVIDER ─────────── */
+  /* Hoa rum vector dùng làm dải phân cách. File SVG gốc tô đỏ đô; dùng làm
+     mask rồi phủ màu olive của site, nên đổi bảng màu là hoa đổi theo mà
+     không phải sửa file. Tỉ lệ khung khớp viewBox đã cắt sát nét. */
+  .calla-divider {
+    display: block;
+    width: clamp(2.5rem, 10vw, 3.25rem);
+    aspect-ratio: 787 / 1376;
+    margin-bottom: 0.35rem;
+    background-color: var(--color-olive);
+    -webkit-mask: url("/assets/calla-lily.svg") center / contain no-repeat;
+    mask: url("/assets/calla-lily.svg") center / contain no-repeat;
+  }
+
   .rule {
     width: 1px;
     height: 3rem;
@@ -752,227 +756,238 @@
     pointer-events: none;
   }
 
-  /* ─────────── 9b. COLLAGE THỜI GIAN & ĐỊA ĐIỂM ─────────── */
-  /* Khung dựng ảnh ghép: tỉ lệ cố định nên mọi element định vị bằng % đều
-     giữ nguyên bố cục ở mọi bề ngang màn hình. */
-  .collage {
-    position: relative;
-    width: 100%;
-    max-width: 23rem;
-    margin-inline: auto;
-    aspect-ratio: 736 / 890;
+  /* ─────────── 9b. THỜI GIAN & ĐỊA ĐIỂM ─────────── */
+  /* Section bắt đầu ngay bằng khung tranh, không chừa đệm trên. */
+  .section--time {
+    padding-top: 0;
+    justify-content: flex-start;
   }
 
-  /* Tấm biển chạm nổi khắc tên buổi tiệc.
-     Ảnh biển là giấy dập nổi trắng trơn; chữ được đặt đè lên phần mặt phẳng
-     giữa biển, lề trong lấy từ `party.plaqueInset` vì hai tấm khác hình. */
-  .plaque {
-    position: absolute;
-    filter: drop-shadow(0 8px 16px rgba(84, 78, 48, 0.28));
-  }
-
-  .plaque > img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  .plaque-text {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25em;
-    text-align: center;
-    /* Chữ co theo bề ngang màn hình cùng nhịp với tấm biển */
-    font-size: clamp(0.5rem, 2.6vw, 0.78rem);
-  }
-
-  .plaque-title {
-    font-family: var(--font-display);
-    font-size: 1.75em;
-    line-height: 1;
-    color: var(--color-olive);
-    white-space: nowrap;
-  }
-
-  .plaque-note {
-    font-family: var(--font-body);
-    font-size: 0.72em;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    line-height: 1.3;
-    color: var(--color-olive-soft);
-    white-space: nowrap;
-  }
-
-  /* ─────────── 9c. NÚT CHUYỂN BUỔI TIỆC ─────────── */
-  .party-tabs {
+  /* Khung tranh vòm thiên nga, trải hết bề ngang trang.
+     container-type để chữ bên trong co giãn theo đúng bề ngang khung (cqw)
+     chứ không theo viewport — trang bị giới hạn 640px trên desktop. */
+  .time-frame {
     position: relative;
     z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.85rem;
     width: 100%;
-    max-width: var(--content-max);
-    margin-inline: auto;
-    padding-inline: var(--gutter);
-    background-color: var(--color-cream);
+    container-type: inline-size;
   }
 
-  .party-tabs--top {
-    padding-block: 2.5rem 0.5rem;
-  }
-
-  .party-tabs--bottom {
-    padding-block: 2.75rem 0.5rem;
-  }
-
-  /* Viền bao ngoài để hai nút đọc như một công tắc hai nấc, không phải hai
-     nút rời — trạng thái đang chọn nhờ vậy thấy ngay. */
-  .party-tabs-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.25rem;
-    width: 100%;
-    max-width: 21rem;
-    padding: 0.25rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    background: rgba(255, 253, 249, 0.6);
-  }
-
-  .party-tab {
-    min-height: 2.75rem;
-    padding-inline: 0.5rem;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    font-family: var(--font-body);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    line-height: 1.2;
-    white-space: nowrap;
-    color: var(--color-olive-soft);
-    cursor: pointer;
-    transition:
-      background-color 0.35s var(--ease-soft),
-      color 0.35s var(--ease-soft);
-  }
-
-  .party-tab[aria-selected="true"] {
-    background: var(--color-olive);
-    color: var(--color-cream);
-    box-shadow: var(--shadow-lift);
-  }
-
-  .party-tab:focus-visible {
-    outline: 1px solid var(--color-olive);
-    outline-offset: 2px;
-  }
-
-  /* Tấm vé đen — ảnh vé đã dựng thẳng, chữ đặt đè lên bằng %.
-     Vạch răng cưa nằm ở 72.2% bề ngang, cuống vé là phần còn lại. */
-  .ticket {
-    position: absolute;
-    color: var(--color-cream);
-  }
-
-  .ticket > img {
+  /* Vuốt mờ mép trên (giáp tranh hero) và mép dưới (giáp phần Địa điểm):
+     tranh kín cả tấm nên để nguyên sẽ lộ hai đường cắt ngang. */
+  .time-frame-art {
     display: block;
     width: 100%;
     height: auto;
+    mask-image: linear-gradient(to bottom, transparent 0, #000 7%, #000 88%, transparent 100%);
   }
 
-  .ticket-face {
+  /* Lòng vòm, đo trên tranh: viền trong hai bên ở ~19.5% và ~81% bề ngang;
+     dưới đỉnh vòm hoa văn (~18%) cho tới cây cầu (~63%) là trời trống. Chừa
+     thêm lề để chữ không chạm viền. */
+  .time-frame-content {
     position: absolute;
-    /* Mép trái chừa 4%: ảnh vé có viền trang trí, chữ sát mép sẽ đè lên viền */
-    inset: 0 27.8% 0 4%;
+    top: 21%;
+    bottom: 36%;
+    left: 24%;
+    right: 24%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.25em;
-    gap: 0.3em;
-    padding-inline: 5%;
     text-align: center;
-    /* Cỡ chữ ăn theo bề ngang màn hình vì tấm vé cũng vậy — mọi dòng bên
-       trong tính bằng `em` nên co giãn cùng nhau, không bao giờ tràn vé. */
-    font-size: clamp(0.44rem, 2.3vw, 0.66rem);
+    font-size: clamp(0.5rem, 2.5cqw, 1rem);
+    color: var(--color-olive);
+    /* Alegreya mặc định dùng số kiểu cũ (lên xuống so với dòng chữ) — trong
+       lịch và giờ giấc, số phải đứng thẳng hàng mới dễ đọc. */
+    font-variant-numeric: lining-nums;
+    /* Quầng giấy mờ sau chữ: chữ nằm trên màu nước loang nên nét mảnh dễ
+       chìm — quầng sáng tách chữ khỏi nền mà không cần khung chữ nhật. */
+    text-shadow:
+      0 0 0.35em var(--color-ivory),
+      0 0 0.9em var(--color-ivory),
+      0 0 1.6em rgba(255, 253, 249, 0.85);
   }
 
-  .ticket-script {
-    font-family: var(--font-date);
-    font-size: 1.6em;
+  .time-frame-head,
+  .time-frame-cal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Nhịp dọc chia ba khối rõ ràng: tiêu đề · ngày (hoa văn, tháng, lịch, giờ)
+     · đếm ngược. Khoảng giữa các khối lớn hơn khoảng trong khối, để mắt đọc
+     ra ba cụm thay vì một cột chữ đều tăm tắp. */
+
+  /* Dấu thanh của "Thời" cao vượt dòng — chừa khoảng cho khỏi chạm eyebrow */
+  .time-frame-head {
+    gap: 0.7em;
+  }
+
+  .time-frame-cal {
+    width: 100%;
+    margin-top: 1.25em;
+  }
+
+  /* Hoa văn nối tiêu đề với khối ngày: có khoảng thở cả trên lẫn dưới */
+  .time-frame-cal > .cross-mark {
     line-height: 1;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    color: var(--color-cream);
-    margin: 0;
+    margin-bottom: 0.6em;
   }
 
-  .ticket-line {
+  .time-frame-count {
+    margin-top: 1.25em;
+  }
+
+  .time-eyebrow {
     font-family: var(--font-body);
-    font-size: 0.95em;
-    letter-spacing: 0.2em;
+    font-size: 1em;
+    font-weight: 600;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     line-height: 1.3;
-    white-space: nowrap;
-    color: rgba(246, 244, 240, 0.82);
+    color: var(--color-olive);
     margin: 0;
   }
 
-  /* Cuống vé: chữ dựng đứng như vé mời thật */
-  .ticket-stub {
-    position: absolute;
-    inset: 0 0 0 72.2%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(0.44rem, 2.3vw, 0.66rem);
+  .time-title {
+    font-family: var(--font-display);
+    font-size: 3.2em;
+    line-height: 1.05;
+    font-weight: 400;
+    color: var(--color-olive);
+    margin: 0;
   }
 
-  .ticket-stub span {
+  .time-month {
+    font-family: var(--font-display);
+    font-size: 1.7em;
+    line-height: 1.1;
+    color: var(--color-olive);
+    margin: 0 0 0.75em;
+  }
+
+  .time-when {
     font-family: var(--font-body);
-    font-size: 0.88em;
-    letter-spacing: 0.2em;
+    font-size: 1.05em;
+    font-weight: 600;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: rgba(246, 244, 240, 0.78);
-    writing-mode: vertical-rl;
-    white-space: nowrap;
+    line-height: 1.3;
+    color: var(--color-olive);
+    margin: 0.7em 0 0;
   }
 
-  /* Lá thư địa điểm: tờ giấy nằm ngang, chữ viết đè lên mặt giấy */
-  .letter {
-    position: relative;
+  /* Lịch nhỏ: đúng hai hàng — thứ và ngày. Số cột do component đặt.
+     Giới hạn bề ngang để năm cột đứng thành một cụm giữa vòm, không dạt ra
+     sát hai trụ khung. */
+  .mini-cal {
+    display: grid;
+    align-items: center;
+    row-gap: 0.35em;
     width: 100%;
-    max-width: 22rem;
-    margin-inline: auto;
+    max-width: 16em;
   }
 
-  .letter > img {
+  .mini-cal-label {
+    font-family: var(--font-body);
+    font-size: 1em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--color-olive-soft);
+  }
+
+  .mini-cal-day {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 3em;
+  }
+
+  /* Chữ số dùng font thân bài: font ngày tháng trang trí quá nhiều nét
+     lượn, ở cỡ nhỏ khó phân biệt 2/3/5/6. */
+  .mini-cal-num {
+    position: relative;
+    font-family: var(--font-body);
+    font-size: 1.5em;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--color-olive);
+  }
+
+  .mini-cal-heart {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 3.2em;
+    height: auto;
+    transform: translate(-50%, -46%);
+    fill: var(--color-olive);
+    filter: drop-shadow(0 2px 4px rgba(84, 78, 48, 0.25));
+  }
+
+  .mini-cal-day--target .mini-cal-num {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: var(--color-cream);
+    /* Chữ trắng trên tim olive: bỏ quầng giấy, nếu không số bị nhoè */
+    text-shadow: none;
+  }
+
+  /* Đếm ngược: một dòng, không bao giờ xuống dòng */
+  .countdown {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.45em;
+    white-space: nowrap;
+    margin: 0;
+    color: var(--color-olive);
+  }
+
+  .countdown-lead,
+  .countdown-unit {
+    font-family: var(--font-body);
+    font-size: 1.05em;
+    color: var(--color-olive-soft);
+  }
+
+  .countdown-part {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.2em;
+  }
+
+  .countdown-num {
+    font-family: var(--font-body);
+    font-size: 1.4em;
+    font-weight: 600;
+    line-height: 1;
+    /* Số nhảy mỗi giây: chữ số đều bề ngang để dòng không rung */
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .countdown--done {
+    font-family: var(--font-display);
+    font-size: 1.6em;
+  }
+
+  /* Minh hoạ địa điểm: ảnh nền trong suốt, để tràn gần hết khung nội dung */
+  .venue-art {
     display: block;
     width: 100%;
     height: auto;
-    filter: drop-shadow(0 10px 20px rgba(84, 78, 48, 0.22));
+    margin-inline: auto;
   }
 
-  .letter-text {
-    position: absolute;
-    inset: 0;
+  .venue-text {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 0.4rem;
-    /* Lề đều bốn phía: khối chữ nằm đúng tâm tờ giấy. Tấm ảnh ghim ở góc
-       được đẩy hẳn lên trên mép giấy nên không cần lệch lề để né nữa. */
-    padding: 15% 15%;
+    margin-top: 1rem;
     text-align: center;
   }
 
