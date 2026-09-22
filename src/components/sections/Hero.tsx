@@ -1,8 +1,7 @@
 import Image from "next/image";
-import { Cross } from "@/components/Cross";
 import { Decor } from "@/components/Decor";
 import { Reveal } from "@/components/Reveal";
-import { COUPLE_TYPO, COUPLE_WALKING, LAYERS } from "@/lib/layers";
+import { COUPLE_NAMES, COUPLE_WALKING, LAYERS } from "@/lib/layers";
 import { COUPLE, HERO } from "@/lib/content";
 
 type HeroProps = {
@@ -49,32 +48,17 @@ export function Hero({ guestName }: HeroProps = {}) {
           <p className="invite-line">{HERO.invite}</p>
         </Reveal>
 
-        {/* Chú rể trước, cô dâu sau */}
-        <Reveal delay={2} className="mt-4 w-full">
+        {/* Chú rể trước, cô dâu sau — một khối chữ đã có sẵn chữ "and" nối
+            giữa hai tên, nên không cần dấu ✛ riêng như bản cũ. */}
+        <Reveal delay={2} className="mt-5 w-full">
           <Image
-            src={COUPLE_TYPO.groom.src}
-            alt={COUPLE.groom}
-            width={COUPLE_TYPO.groom.w}
-            height={COUPLE_TYPO.groom.h}
+            src={COUPLE_NAMES.src}
+            alt={`${COUPLE.groom} và ${COUPLE.bride}`}
+            width={COUPLE_NAMES.w}
+            height={COUPLE_NAMES.h}
             priority
-            sizes="(max-width: 640px) 74vw, 474px"
-            className="mx-auto block h-auto w-[74%]"
-          />
-        </Reveal>
-
-        <Reveal delay={3} className="my-1">
-          <Cross />
-        </Reveal>
-
-        <Reveal delay={3} className="w-full">
-          <Image
-            src={COUPLE_TYPO.bride.src}
-            alt={COUPLE.bride}
-            width={COUPLE_TYPO.bride.w}
-            height={COUPLE_TYPO.bride.h}
-            priority
-            sizes="(max-width: 640px) 74vw, 474px"
-            className="mx-auto block h-auto w-[74%]"
+            sizes="(max-width: 640px) 80vw, 512px"
+            className="mx-auto block h-auto w-[80%]"
           />
         </Reveal>
 

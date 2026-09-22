@@ -60,9 +60,18 @@ export const COUPLE_WALKING = {
   width: 0.1625,
 } as const;
 
-/** Chữ ký tên cô dâu / chú rể — cắt từ design/couple typo.png.
- *  `width` = bề rộng so với canvas gốc 3875px, giữ đúng tỉ lệ giữa hai dòng. */
-export const COUPLE_TYPO = {
-  bride: { src: "/assets/couple-bride.webp", w: 1400, h: 292, width: 0.8797 },
-  groom: { src: "/assets/couple-groom.79a90bad.webp", w: 1400, h: 282, width: 0.8813 },
+/** Khối tên chú rể "and" cô dâu ở hero — dựng từ design/couple name hero.png.
+ *
+ *  File gốc không dùng thẳng được: nét màu đen trong khi cả site dùng olive, và
+ *  sau chữ TOÀN có một mảng nền trắng đục (alpha 255) sẽ hiện thành ô trắng
+ *  trên giấy kem. Cách dựng: độ đậm nét = (255 − độ sáng) × alpha gốc, nên nền
+ *  trắng về trong suốt còn nét giữ nguyên khử răng cưa; tô lại bằng #544e30,
+ *  cắt sát nét, thu về 1400px, webp q92, tên kèm 8 ký tự sha256 của file xuất.
+ *
+ *  CHƯA có trong scripts/build-hero-time-assets.mjs — đổi file gốc thì phải
+ *  dựng lại tay theo đúng các bước trên. */
+export const COUPLE_NAMES = {
+  src: "/assets/couple-names.18863d19.webp",
+  w: 1400,
+  h: 894,
 } as const;
