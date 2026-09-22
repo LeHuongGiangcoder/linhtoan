@@ -62,11 +62,15 @@ export function Hero({ guestName }: HeroProps = {}) {
           />
         </Reveal>
 
-        <Reveal delay={4} className="mt-5">
+        {/* Ngày + nơi hạ xuống bằng `relative top` chứ không bằng margin: top
+            không đổi chiều cao khối chữ, nên tranh lễ đường bên dưới giữ đúng
+            vị trí. Tăng margin thì section (cao theo nội dung) dài ra và đẩy
+            tranh xuống theo. */}
+        <Reveal delay={4} className="relative top-6 mt-5">
           <p className="date-text date-text--hero">{COUPLE.dateDisplay}</p>
         </Reveal>
 
-        <Reveal delay={5} className="mt-3">
+        <Reveal delay={5} className="relative top-6 mt-3">
           <p className="eyebrow">{COUPLE.city}</p>
         </Reveal>
       </div>
