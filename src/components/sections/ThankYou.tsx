@@ -1,7 +1,7 @@
 import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
-import { COUPLE } from "@/lib/content";
+import { COUPLE, PARTIES } from "@/lib/content";
 
 /** Thank you — chỉ giữ đôi bồ câu, phần còn lại để trống cho thoáng. */
 export function ThankYou() {
@@ -31,14 +31,15 @@ export function ThankYou() {
 
         <Reveal delay={1} className="section-head mt-5">
           <p className="eyebrow">Thay lời kết</p>
-          <h2 className="display-2">Cảm ơn bạn</h2>
+          <h2 className="display-2">Thank you</h2>
           <Divider />
         </Reveal>
 
         <Reveal delay={2}>
           <p className="body-text center text-balance">
-            Sự hiện diện của bạn là món quà ý nghĩa nhất với chúng mình. Cảm ơn
-            vì đã đồng hành và chúc phúc cho chặng đường phía trước.
+            Sự hiện diện của quý khách là món quà ý nghĩa nhất với gia đình
+            chúng tôi. Cảm ơn vì đã đồng hành và chúc phúc cho chặng đường phía
+            trước.
           </p>
         </Reveal>
 
@@ -46,6 +47,9 @@ export function ThankYou() {
           <span className="rule !h-8" />
           <p className="display-2">T &amp; L</p>
           <p className="date-text date-text--hero">{COUPLE.dateDisplay}</p>
+          <p className="date-sub">
+            {PARTIES.main.weekday} · {PARTIES.main.time}
+          </p>
           <p className="eyebrow">{COUPLE.city}</p>
         </Reveal>
       </div>

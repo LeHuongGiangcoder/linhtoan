@@ -5,7 +5,22 @@ export function partyFromPath(value: string): PartyId | null {
   return value.trim().toLowerCase() === "main" ? "main" : null;
 }
 
-type Guest = { name: string; party: PartyId | null };
+/**
+ * Phản hồi khách đã gửi lần trước, đọc ngược từ Sheet.
+ *
+ * `attending: null` nghĩa là chưa trả lời lần nào — form mở ra ở trạng thái
+ * mặc định. Có giá trị thì form điền sẵn đúng câu trả lời cũ để khách sửa.
+ */
+export type GuestRsvp = {
+  attending: boolean | null;
+  /** "1" | "Trên 1" — đúng chữ khách đã chọn */
+  guests: string;
+  /** Tên người đi cùng */
+  companions: string;
+  message: string;
+};
+
+type Guest = { name: string; party: PartyId | null; rsvp: GuestRsvp };
 
 /**
  * Tra tên khách theo slug từ Google Sheet.
@@ -25,9 +40,10 @@ export async function lookupGuest(slug: string): Promise<Guest | null> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ secret, action: "guests" }),
-      // Danh sách khách đổi rất ít; cache 5 phút để mỗi lượt mở thiệp không
-      // phải chờ Apps Script trả lời.
-      next: { revalidate: 300 },
+      // Cache để mỗi lượt mở thiệp không phải chờ Apps Script trả lời. Một
+      // phút thôi chứ không lâu hơn: câu trả lời cũ của khách cũng đọc từ đây,
+      // cache dài là khách vừa sửa xong, tải lại trang vẫn thấy đáp án cũ.
+      next: { revalidate: 60 },
       signal: AbortSignal.timeout(6000),
     });
     if (!res.ok) return null;
@@ -41,11 +57,25 @@ export async function lookupGuest(slug: string): Promise<Guest | null> {
     const wanted = slug.toLowerCase();
     for (const raw of guests) {
       if (!raw || typeof raw !== "object") continue;
-      const g = raw as { slug?: unknown; name?: unknown; event?: unknown };
+      const g = raw as {
+        slug?: unknown;
+        name?: unknown;
+        event?: unknown;
+        attending?: unknown;
+        guests?: unknown;
+        other?: unknown;
+        message?: unknown;
+      };
       if (String(g.slug ?? "").toLowerCase() !== wanted) continue;
       return {
         name: String(g.name ?? "").trim(),
         party: partyFromPath(String(g.event ?? "")),
+        rsvp: {
+          attending: typeof g.attending === "boolean" ? g.attending : null,
+          guests: String(g.guests ?? "").trim(),
+          companions: String(g.other ?? "").trim(),
+          message: String(g.message ?? "").trim(),
+        },
       };
     }
     return null;

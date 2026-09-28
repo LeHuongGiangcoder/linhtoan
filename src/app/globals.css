@@ -174,6 +174,22 @@
     overflow: hidden;
   }
 
+  /* Dòng nhắc khi khách đã từng gửi phản hồi: cùng khuôn với .rsvp-error
+     nhưng màu olive của thiệp — đây là thông báo bình thường, không phải lỗi. */
+  .rsvp-note {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.5rem;
+    background: rgba(84, 78, 48, 0.05);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--color-olive-soft);
+    text-align: center;
+    text-wrap: pretty;
+  }
+
   .rsvp-error {
     margin: 0;
     padding: 0.75rem 1rem;
@@ -273,33 +289,63 @@
     margin: 0;
   }
 
-  /* Chỉ dùng cho ngày tháng */
+  /* Chỉ dùng cho ngày giờ.
+
+     Font ngày (Cormorant Garamond) thanh hơn hẳn font tiêu đề, nên chữ số phải
+     nặng hơn một bậc và giãn rộng hơn thì mới đứng ngang hàng được với khối
+     chữ tên cô dâu chú rể. */
   .date-text {
     font-family: var(--font-date);
-    font-size: clamp(1.85rem, 8.6vw, 2.6rem);
+    font-size: clamp(1.95rem, 9vw, 2.75rem);
     line-height: 1;
-    letter-spacing: 0.06em;
+    font-weight: 500;
+    /* Cormorant Garamond mặc định dùng chữ số cổ điển (3, 9 thò xuống dưới
+       dòng kẻ). Đẹp trong câu văn, nhưng một dãy ngày tháng đứng riêng thì
+       chữ số cao đều nhau mới dễ đọc. */
+    font-variant-numeric: lining-nums;
+    letter-spacing: 0.1em;
+    /* Giãn chữ đẩy cả cụm lệch trái đúng một khoảng giãn — thụt lại cho cân */
+    text-indent: 0.1em;
     color: var(--color-olive);
     margin: 0;
   }
 
   /* Ngày ở hero — nhỏ hơn --sm để không tranh chấp với tên cô dâu chú rể */
   .date-text--hero {
-    font-size: clamp(1.35rem, 5.8vw, 1.75rem);
-    letter-spacing: 0.09em;
+    font-size: clamp(1.5rem, 6.4vw, 1.95rem);
+    letter-spacing: 0.14em;
+    text-indent: 0.14em;
   }
 
   .date-text--sm {
-    font-size: clamp(1.5rem, 7vw, 2rem);
-    letter-spacing: 0.08em;
+    font-size: clamp(1.6rem, 7.4vw, 2.15rem);
+    letter-spacing: 0.12em;
+    text-indent: 0.12em;
   }
 
   .date-text--xs {
     font-family: var(--font-date);
-    font-size: 1.0625rem;
-    letter-spacing: 0.1em;
+    font-size: 1.1875rem;
+    font-weight: 600;
+    font-variant-numeric: lining-nums;
+    letter-spacing: 0.14em;
+    text-indent: 0.14em;
     line-height: 1;
     color: var(--color-olive);
+  }
+
+  /* Thứ + giờ ngay dưới ngày ở hero */
+  .date-sub {
+    font-family: var(--font-date);
+    font-size: clamp(0.95rem, 3.8vw, 1.15rem);
+    font-weight: 600;
+    font-variant-numeric: lining-nums;
+    letter-spacing: 0.24em;
+    text-indent: 0.24em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--color-olive-soft);
+    margin: 0;
   }
 
   /* Dòng "Dear, <tên khách>" và lời mời ngay trên tên cô dâu chú rể */
@@ -950,8 +996,8 @@
     height: 3.2em;
   }
 
-  /* Chữ số dùng font thân bài: font ngày tháng trang trí quá nhiều nét
-     lượn, ở cỡ nhỏ khó phân biệt 2/3/5/6. */
+  /* Chữ số dùng font thân bài: ở cỡ nhỏ trong ô lịch, nét dày đều của font
+     thân bài rõ hơn nét thanh đậm của font ngày. */
   .mini-cal-num {
     position: relative;
     font-family: var(--font-body);

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { alegreya, moncheri, tanPearl } from "./fonts";
+import { alegreya, dateFont, moncheri } from "./fonts";
 import { COUPLE, PARTIES, SITE_URL } from "@/lib/content";
 import "./globals.css";
 
@@ -58,7 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="vi"
-      className={`${moncheri.variable} ${tanPearl.variable} ${alegreya.variable}`}
+      className={`${moncheri.variable} ${dateFont.variable} ${alegreya.variable}`}
     >
       <head>
         {/* Không có JS thì bỏ hẳn hiệu ứng reveal để nội dung luôn hiển thị */}

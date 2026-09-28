@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Decor } from "@/components/Decor";
 import { Reveal } from "@/components/Reveal";
 import { COUPLE_NAMES, COUPLE_WALKING, LAYERS } from "@/lib/layers";
-import { COUPLE, HERO } from "@/lib/content";
+import { COUPLE, HERO, PARTIES } from "@/lib/content";
 
 type HeroProps = {
   /** Tên khách lấy từ link riêng; bỏ trống thì dùng lời chào chung. */
@@ -68,6 +68,11 @@ export function Hero({ guestName }: HeroProps = {}) {
             tranh xuống theo. */}
         <Reveal delay={4} className="relative top-6 mt-5">
           <p className="date-text date-text--hero">{COUPLE.dateDisplay}</p>
+          {/* Thứ và giờ làm lễ ngay dưới ngày: khách nhìn một lần là đủ biết
+              phải có mặt lúc nào, không phải cuộn xuống phần Thời gian. */}
+          <p className="date-sub mt-2">
+            {PARTIES.main.weekday} · {PARTIES.main.time}
+          </p>
         </Reveal>
 
         <Reveal delay={5} className="relative top-6 mt-3">

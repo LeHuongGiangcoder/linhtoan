@@ -14,6 +14,21 @@ const SECTIONS: Record<string, () => React.ReactNode> = {
   agenda: Agenda,
   dresscode: Dresscode,
   rsvp: Rsvp,
+  /** Form hồi âm của một khách đã trả lời rồi — kiểm tra phần điền sẵn/sửa */
+  "rsvp-edit": () => (
+    <Rsvp
+      guest={{
+        slug: "nguyen-van-a",
+        name: "Nguyễn Văn A",
+        rsvp: {
+          attending: true,
+          guests: "Trên 1",
+          companions: "Trần Thị B",
+          message: "Chúc hai em trăm năm hạnh phúc!",
+        },
+      }}
+    />
+  ),
   "thank-you": ThankYou,
   /** Cả thân thiệp */
   party: Party,

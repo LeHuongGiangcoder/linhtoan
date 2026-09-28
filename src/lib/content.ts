@@ -23,7 +23,8 @@ export const COUPLE = {
 export const HERO = {
   greeting: "Kính gửi",
   guest: "Quý khách",
-  invite: "Chúng mình trân trọng kính mời bạn đến chung vui trong ngày cưới",
+  invite:
+    "Gia đình chúng tôi trân trọng kính mời quý khách cùng gia đình đến chung vui trong ngày cưới",
 };
 
 /**
@@ -60,8 +61,8 @@ export const PARTIES: Record<PartyId, Party> = {
     event: "Tiệc cưới",
     weekday: "Chủ Nhật",
     dateShort: "29 . 11 . 2026",
-    time: "10:30",
-    startsAt: "2026-11-29T10:30:00+07:00",
+    time: "11:00",
+    startsAt: "2026-11-29T11:00:00+07:00",
     hall: "Sảnh Khánh Tiết",
     venue: "Trung tâm Hội nghị Quốc gia",
     address: "57 Phạm Hùng, Mễ Trì, Nam Từ Liêm, Hà Nội",
@@ -79,19 +80,19 @@ export const AGENDA = [
     desc: "Chụp ảnh check-in photobooth sảnh ballroom cùng khách mời",
   },
   {
-    time: "11:30",
+    time: "11:00",
     title: "Nghi thức lễ cưới",
     desc: "Cắt bánh, rót rượu — nghi thức làm lễ",
   },
   {
-    time: "11:45",
+    time: "11:30",
     title: "Khai tiệc",
     desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
   },
 ];
 
 export const DRESSCODE = {
-  note: "Kính mong quý khách lựa chọn trang phục theo tông pastel dịu nhẹ để cùng chúng mình hoàn thiện khung hình ngày trọng đại.",
+  note: "Trang phục: kính mong quý khách lựa chọn tông pastel dịu nhẹ để cùng gia đình chúng tôi hoàn thiện khung hình ngày trọng đại.",
   avoid: "Xin phép hạn chế tông trắng tinh và đen tuyền.",
   palette: [
     { name: "Trắng ngà", hex: "#f2ece0" },
