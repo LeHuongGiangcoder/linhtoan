@@ -860,8 +860,8 @@
      thêm lề để chữ không chạm viền. */
   .time-frame-content {
     position: absolute;
-    top: 21%;
-    bottom: 36%;
+    top: 24%;
+    bottom: 33%;
     left: 24%;
     right: 24%;
     display: flex;
@@ -901,13 +901,13 @@
 
   .time-frame-cal {
     width: 100%;
-    margin-top: 1.25em;
+    margin-top: 2.4em;
   }
 
   /* Hoa văn nối tiêu đề với khối ngày: có khoảng thở cả trên lẫn dưới */
   .time-frame-cal > .cross-mark {
     line-height: 1;
-    margin-bottom: 0.6em;
+    margin-bottom: 0.85em;
   }
 
 
