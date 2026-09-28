@@ -127,8 +127,7 @@ function checkData() {
  *   { secret, slug, attending, … }    → ghi RSVP vào đúng hàng của khách đó
  */
 function doPost(e) {
-  const lock = LockService.getScriptLock();
-  lock.waitLock(20000); // xếp hàng các phản hồi đồng thời
+  let lock = null;
 
   try {
     const body = JSON.parse(e.postData.contents);
@@ -139,11 +138,23 @@ function doPost(e) {
 
     const sheet = sheet_();
     const col = columns_(sheet);
-    // Khách mới gõ tay vào sheet chưa có slug — bù trước khi đọc hoặc ghi,
-    // để cô dâu chú rể không phải nhớ bấm menu.
-    syncGuests_(sheet, col);
+    const reading = body.action === 'guests';
 
-    if (body.action === 'guests') {
+    // Chỉ chiếm khoá khi thật sự phải ghi. Trước đây MỌI lượt gọi đều chờ khoá
+    // tới 20 giây, nên website đọc danh sách khách bị xếp hàng sau từng lượt
+    // RSVP — quá hạn chờ là khách mở link riêng mà bị chào chung "Quý khách".
+    //
+    // Lượt đọc cũng chỉ bù No / Slug / Link khi thật sự thiếu: hàm bù ghi vào
+    // sheet, mà ghi thì lại cần khoá.
+    if (!reading || needsSync_(sheet, col)) {
+      lock = LockService.getScriptLock();
+      lock.waitLock(20000);
+      // Khách mới gõ tay vào sheet chưa có slug — bù trước khi đọc hoặc ghi,
+      // để cô dâu chú rể không phải nhớ bấm menu.
+      syncGuests_(sheet, col);
+    }
+
+    if (reading) {
       return json({ ok: true, guests: readGuests_(sheet, col) });
     }
 
@@ -151,8 +162,21 @@ function doPost(e) {
   } catch (err) {
     return json({ ok: false, error: String(err) });
   } finally {
-    lock.releaseLock();
+    if (lock) lock.releaseLock();
   }
+}
+
+/** Có hàng nào đã có tên mà chưa có slug không? Chỉ đọc, không ghi. */
+function needsSync_(sheet, col) {
+  const rows = dataRows_(sheet, col);
+  if (rows === 0) return false;
+
+  const names = sheet.getRange(FIRST_ROW, col.name, rows, 1).getValues();
+  const slugs = sheet.getRange(FIRST_ROW, col.slug, rows, 1).getValues();
+  for (let i = 0; i < rows; i++) {
+    if (String(names[i][0]).trim() && !String(slugs[i][0]).trim()) return true;
+  }
+  return false;
 }
 
 /* ---------------------------------------------------------------- helpers */
@@ -358,7 +382,10 @@ function readGuests_(sheet, col) {
  * Khách vào thẳng trang chủ (không qua link riêng) thì nối thêm một hàng mới.
  */
 function writeRsvp_(sheet, col, body) {
-  const slug = String(body.slug || '').trim();
+  // Hạ về chữ thường: slug trong sheet có thể được sửa tay thành chữ hoa, còn
+  // website luôn gửi chữ thường — so thẳng bằng === là trượt, và phản hồi bị
+  // nối thành hàng mới thay vì ghi đè đúng hàng của khách.
+  const slug = String(body.slug || '').trim().toLowerCase();
   const answer = {};
   answer[col.attending] = body.attending ? 'YES' : 'NO';
   // Không đến thì bỏ trống cả số người lẫn tên người đi cùng.
@@ -374,7 +401,7 @@ function writeRsvp_(sheet, col, body) {
     : [];
 
   for (let i = 0; i < slugs.length; i++) {
-    if (slug && String(slugs[i][0]).trim() === slug) {
+    if (slug && String(slugs[i][0]).trim().toLowerCase() === slug) {
       const at = FIRST_ROW + i;
       // Từng ô một: các cột trả lời không nhất thiết nằm cạnh nhau.
       Object.keys(answer).forEach(function (c) {

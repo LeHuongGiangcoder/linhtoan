@@ -40,6 +40,9 @@ https://linhtoan.gloweb.site/main/ms-tran-thi-bao-ngoc
   sống mãi, kể cả khi sau này sửa lại chính tả cái tên. Muốn tự đặt link, cứ gõ
   tay vào cột `Slug` trước.
 - Slug là duy nhất trên toàn sheet, nên website tra khách chỉ bằng slug là đủ.
+- **Chữ hoa hay chữ thường đều mở đúng thiệp.** Website hạ slug về chữ thường
+  trước khi tra, nên `/main/Trang-va-Duy-Anh` và `/main/trang-va-duy-anh` là
+  cùng một khách — kể cả khi slug trong sheet được sửa tay thành chữ hoa.
 
 > **Chốt đường dẫn `main` trước khi gửi thiệp đầu tiên.** Nó nằm ở hằng số
 > `EVENT_KEY` trong [`apps-script.gs`](apps-script.gs) và phải khớp

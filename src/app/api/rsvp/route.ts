@@ -9,6 +9,9 @@
  * Xem docs/RSVP_SETUP.md và hàm doPost / writeRsvp_ trong docs/apps-script.gs.
  */
 
+import { revalidateTag } from "next/cache";
+import { GUESTS_TAG } from "@/lib/guests";
+
 const MAX_BODY = 5_000;
 const MAX_NAME = 120;
 const MAX_MESSAGE = 1_000;
@@ -77,8 +80,13 @@ export async function POST(request: Request) {
 
   // Slug lấy từ link riêng — có thì Apps Script ghi đè đúng hàng của khách đó,
   // không có (khách mở trang chủ) thì nối thành hàng mới.
-  const slug =
-    typeof input.slug === "string" && SLUG.test(input.slug) ? input.slug : "";
+  //
+  // Hạ về chữ thường TRƯỚC khi kiểm: link gửi cho khách có thể mang chữ hoa
+  // ("/main/Trang-va-Duy-Anh"), mà so với khuôn chữ thường thì trượt, slug
+  // thành rỗng và phản hồi bị ghi thành một hàng mới thay vì cập nhật đúng
+  // hàng của khách đó.
+  const rawSlug = typeof input.slug === "string" ? input.slug.trim().toLowerCase() : "";
+  const slug = SLUG.test(rawSlug) ? rawSlug : "";
 
   try {
     const res = await fetch(url, {
@@ -108,6 +116,11 @@ export async function POST(request: Request) {
       console.error("RSVP: Apps Script từ chối", res.status, detail ?? "(không phải JSON)");
       return reply({ ok: false, error: "upstream" }, 502);
     }
+
+    // Danh sách khách trong cache vừa cũ đi: khách tải lại trang phải thấy
+    // ngay câu trả lời mình vừa sửa. `expire: 0` nên lượt sau đọc lại thật,
+    // không phục vụ bản cũ.
+    revalidateTag(GUESTS_TAG, { expire: 0 });
 
     return reply({ ok: true });
   } catch (err) {
