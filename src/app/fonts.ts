@@ -1,4 +1,5 @@
 import localFont from "next/font/local";
+import { Cormorant_Garamond } from "next/font/google";
 
 /** Heading — DFVN TAN Mon Cheri (Việt hoá, có dấu đầy đủ) */
 export const moncheri = localFont({
@@ -9,13 +10,21 @@ export const moncheri = localFont({
   fallback: ["Didot", "Cormorant Garamond", "Georgia", "serif"],
 });
 
-/** Chỉ dùng cho ngày tháng — TAN Pearl */
-export const tanPearl = localFont({
-  src: "../../public/font/TAN-PEARL-Regular.otf",
+/**
+ * Chỉ dùng cho ngày giờ — Cormorant Garamond.
+ *
+ * Thay cho TAN Pearl: chữ số của TAN Pearl là dạng trang trí, số 6 và số 0 gần
+ * như một nét nên "2026" hay bị đọc nhầm thành "2020". Cormorant Garamond giữ
+ * đúng chất serif thanh mảnh, tương phản cao của khối chữ tên cô dâu chú rể,
+ * nhưng chữ số là dạng lining rõ ràng — giãn chữ rộng là đọc được ngay.
+ */
+export const dateFont = Cormorant_Garamond({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600"],
   variable: "--font-date",
   display: "swap",
   adjustFontFallback: false,
-  fallback: ["Didot", "Georgia", "serif"],
+  fallback: ["Didot", "Cormorant Garamond", "Georgia", "serif"],
 });
 
 /** Body — Alegreya */

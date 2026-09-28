@@ -5,6 +5,7 @@ import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
 import { PARTIES, type Party } from "@/lib/content";
+import { type GuestRsvp } from "@/lib/guests";
 
 type Attending = "yes" | "no";
 
@@ -15,17 +16,47 @@ type Attending = "yes" | "no";
 const PARTY_SIZES = ["1", "Trên 1"] as const;
 type PartySize = (typeof PARTY_SIZES)[number];
 
+/** Lời chúc điền sẵn — khách chỉ cần gửi là đã có một câu tử tế. */
+const DEFAULT_MESSAGE = "Trăm năm hạnh phúc";
+
 /** Khách mở thiệp bằng link riêng /main/<slug>. */
-export type RsvpGuest = { slug: string; name?: string };
+export type RsvpGuest = {
+  slug: string;
+  name?: string;
+  /** Phản hồi lần trước, đọc từ Google Sheet. */
+  rsvp?: GuestRsvp;
+};
 
 type RsvpProps = { party?: Party; guest?: RsvpGuest };
 
+function isPartySize(value: string): value is PartySize {
+  return (PARTY_SIZES as readonly string[]).includes(value);
+}
+
 export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
-  const [attending, setAttending] = useState<Attending>("yes");
-  const [partySize, setPartySize] = useState<PartySize>("1");
+  // Phản hồi cũ của khách (nếu có link riêng và đã từng gửi) là giá trị khởi
+  // tạo của form — khách vào lại thấy đúng câu trả lời của mình và sửa trực
+  // tiếp, thay vì phải điền lại từ đầu.
+  const previous = guest?.rsvp;
+  const answered = previous?.attending !== null && previous?.attending !== undefined;
+
+  const [name, setName] = useState(guest?.name ?? "");
+  const [attending, setAttending] = useState<Attending>(
+    previous?.attending === false ? "no" : "yes",
+  );
+  const [partySize, setPartySize] = useState<PartySize>(
+    previous?.guests && isPartySize(previous.guests) ? previous.guests : "1",
+  );
+  const [companions, setCompanions] = useState(previous?.companions ?? "");
+  const [message, setMessage] = useState(previous?.message || DEFAULT_MESSAGE);
+
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Đã gửi ít nhất một lần — lúc mở trang (đọc từ Sheet) hoặc ngay trong lượt
+  // này. Quyết định chữ trên nút và dòng nhắc phía trên form.
+  const [editing, setEditing] = useState(answered);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,20 +76,21 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           slug: guest?.slug ?? "",
-          name: String(form.get("name") ?? ""),
+          name,
           attending: isComing,
           guests: isComing ? partySize : "",
-          companions: withCompanions ? String(form.get("companions") ?? "") : "",
-          message: String(form.get("message") ?? ""),
+          companions: withCompanions ? companions : "",
+          message,
           website: String(form.get("website") ?? ""),
         }),
       });
       const data: { ok?: boolean } | null = await res.json().catch(() => null);
       if (!res.ok || !data?.ok) throw new Error(String(res.status));
       setSent(true);
+      setEditing(true);
     } catch {
       setError(
-        "Chưa gửi được phản hồi, bạn thử lại giúp chúng mình nhé. Nếu vẫn không được, hãy nhắn trực tiếp cho cô dâu chú rể.",
+        "Chưa gửi được phản hồi, quý khách thử lại giúp gia đình chúng tôi nhé. Nếu vẫn không được, xin nhắn trực tiếp cho cô dâu chú rể.",
       );
     } finally {
       setSending(false);
@@ -91,8 +123,8 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
           <Reveal key="sent" className="paper-panel center stack">
             <h3 className="display-3">Đã nhận được rồi!</h3>
             <p className="body-text">
-              Cảm ơn bạn đã dành thời gian phản hồi. Chúng mình mong sớm được
-              gặp bạn trong ngày trọng đại.
+              Cảm ơn quý khách đã dành thời gian phản hồi. Gia đình chúng tôi
+              mong sớm được gặp quý khách trong ngày trọng đại.
             </p>
             <div className="btn-row">
               <button
@@ -100,7 +132,7 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
                 className="btn btn--ghost btn--sm"
                 onClick={() => setSent(false)}
               >
-                Gửi phản hồi khác
+                Sửa lại phản hồi
               </button>
             </div>
           </Reveal>
@@ -109,6 +141,14 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
             {/* Form nằm trên một tấm giấy riêng: mắt bám ngay vào khối cần
                 điền thay vì trôi giữa nền giấy chung của cả section. */}
             <form className="paper-panel stack" onSubmit={handleSubmit}>
+              {editing ? (
+                <p className="rsvp-note">
+                  Quý khách đã gửi phản hồi trước đó. Câu trả lời cũ được điền
+                  sẵn bên dưới — sửa lại rồi gửi là gia đình chúng tôi ghi nhận
+                  câu mới.
+                </p>
+              ) : null}
+
               <div className="field">
                 <label className="field-label" htmlFor="rsvp-name">
                   Họ và tên
@@ -118,7 +158,8 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
                   name="name"
                   className="input"
                   placeholder="Nguyễn Văn A"
-                  defaultValue={guest?.name ?? ""}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   maxLength={120}
                   autoComplete="name"
                   required
@@ -126,7 +167,7 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
               </div>
 
               <div className="field">
-                <span className="field-label">Bạn sẽ tham dự chứ?</span>
+                <span className="field-label">Quý khách sẽ tham dự chứ?</span>
                 <div className="choice-group">
                   <button
                     type="button"
@@ -182,6 +223,8 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
                     name="companions"
                     className="input input--short"
                     placeholder="VD: Nguyễn Văn B, Trần Thị C"
+                    value={companions}
+                    onChange={(e) => setCompanions(e.target.value)}
                     maxLength={300}
                     rows={2}
                     required
@@ -197,7 +240,9 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
                   id="rsvp-message"
                   name="message"
                   className="input"
-                  placeholder="Chúc hai bạn trăm năm hạnh phúc…"
+                  placeholder={DEFAULT_MESSAGE}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   maxLength={1000}
                 />
               </div>
@@ -227,7 +272,11 @@ export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
                   className="btn btn--primary"
                   disabled={sending}
                 >
-                  {sending ? "Đang gửi…" : "Gửi xác nhận"}
+                  {sending
+                    ? "Đang gửi…"
+                    : editing
+                      ? "Cập nhật phản hồi"
+                      : "Gửi xác nhận"}
                 </button>
               </div>
             </form>
