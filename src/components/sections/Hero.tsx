@@ -40,7 +40,7 @@ export function Hero({ guestName }: HeroProps = {}) {
       <div className="section-inner flex flex-1 flex-col items-center justify-center pt-[14vh] pb-2 text-center">
         <Reveal className="max-w-[17.5rem]">
           <p className="guest-line">
-            {HERO.greeting}, {guestName?.trim() || HERO.guest}
+            {HERO.greeting} {guestName?.trim() || HERO.guest}
           </p>
         </Reveal>
 
