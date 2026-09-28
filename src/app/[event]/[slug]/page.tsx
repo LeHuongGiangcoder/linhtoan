@@ -53,7 +53,15 @@ export default async function GuestInvitation({
         {/* Slug lấy từ đường dẫn kể cả khi chưa tra được Sheet: Apps Script
             khớp slug thì ghi đúng hàng, không khớp thì nối hàng mới.
             `rsvp` là câu trả lời lần trước — form điền sẵn để khách sửa. */}
-        <Party guest={{ slug, name: guest?.name, rsvp: guest?.rsvp }} />
+        <Party
+          guest={{
+            // Slug chuẩn của khách nếu tra được, còn không thì lấy từ đường
+            // dẫn — hạ về chữ thường cho khớp với slug lưu trong Sheet.
+            slug: guest?.slug ?? slug.trim().toLowerCase(),
+            name: guest?.name,
+            rsvp: guest?.rsvp,
+          }}
+        />
         <ThankYou />
       </main>
     </>
