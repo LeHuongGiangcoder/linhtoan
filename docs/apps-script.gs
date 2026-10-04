@@ -6,8 +6,13 @@
  * No / Slug / Link.
  *
  * Cột của tab RSVP (tra theo TÊN ở hàng 1, không theo vị trí):
- *   No · Name · Slug · Link · Attending · Guests · Other · Meal Preferences ·
- *   Message · Updated
+ *   No · Name · Nhà · Slug · Link · Attending · Guests · Other ·
+ *   Meal Preferences · Message · Updated
+ *
+ * Cột "Nhà" quyết định khách thấy tấm thiệp nào: "Nhà trai" hay "Nhà gái" —
+ * hai bên chỉ khác giờ và địa điểm. Bỏ trống thì khách thấy thiệp nhà trai.
+ * Link riêng của cả hai nhà đều là /main/<slug>, nên đổi cột Nhà cho một
+ * khách KHÔNG làm hỏng link đã gửi cho họ.
  *
  * Form RSVP ghi:
  *   Attending  YES / NO
@@ -34,14 +39,20 @@ const SITE_ORIGIN = 'https://linhtoan.gloweb.site';
 
 /**
  * Đoạn đường dẫn của buổi tiệc trong link riêng: SITE_ORIGIN/main/<slug>.
- * Phải khớp `partyFromPath` trong src/lib/guests.ts.
+ * Phải khớp `EVENT_KEY` trong src/lib/guests.ts.
+ *
+ * Dùng chung cho cả hai nhà — nhà nào là do cột "Nhà" quyết định, không phải
+ * đường dẫn.
  *
  * ĐỔI SAU KHI ĐÃ GỬI LINK CHO KHÁCH LÀ HỎNG HẾT LINK CŨ.
  */
 const EVENT_KEY = 'main';
 
+/** Hai cách viết được chấp nhận ở cột Nhà — dropdown trong setupSheet. */
+const SIDES = ['Nhà trai', 'Nhà gái'];
+
 const HEADERS = [
-  'No', 'Name', 'Slug', 'Link',
+  'No', 'Name', 'Nhà', 'Slug', 'Link',
   'Attending', 'Guests', 'Other', 'Meal Preferences', 'Message', 'Updated',
 ];
 
@@ -79,6 +90,16 @@ function setupSheet() {
   // Cột No là mã khách, phải là text — để dạng số thì 001 rút thành 1.
   sheet.getRange(FIRST_ROW, col.no, rows, 1).setNumberFormat('@');
   sheet.setColumnWidth(col.name, 220);
+  sheet.setColumnWidth(col['nhà'], 90);
+
+  // Cột Nhà gõ tay thì dễ sai chính tả, mà sai là khách thấy nhầm địa điểm —
+  // ép thành dropdown hai lựa chọn.
+  sheet.getRange(FIRST_ROW, col['nhà'], rows, 1).setDataValidation(
+    SpreadsheetApp.newDataValidation()
+      .requireValueInList(SIDES, true)
+      .setAllowInvalid(true) // dữ liệu cũ gõ tay vẫn giữ, chỉ cảnh báo
+      .build());
+
   sheet.setColumnWidth(col.link, 340);
   sheet.setColumnWidth(col['meal preferences'], 200);
   sheet.setColumnWidth(col.message, 320);
@@ -106,13 +127,14 @@ function checkData() {
   const lines = guests.slice(0, 12).map(function (g) {
     const state = g.attending === null ? '—'
       : (g.attending ? 'YES ' + (g.guests || '1') + (g.other ? ' + ' + g.other : '') : 'NO');
-    return g.code + '  ' + g.slug + '   ' + g.name + '   [' + state + ']';
+    return g.code + '  ' + g.slug + '   ' + g.name +
+      '   (' + (g.side || 'nhà trai — mặc định') + ')   [' + state + ']';
   });
 
   const message =
     guests.length + ' khách · ' + replied.length + ' đã trả lời · ' +
     coming.length + ' đến (' + withCompanions.length + ' có người đi cùng)\n\n' +
-    'mã  slug  tên  [trả lời]\n' + lines.join('\n') +
+    'mã  slug  tên  (nhà)  [trả lời]\n' + lines.join('\n') +
     (guests.length > 12 ? '\n… còn ' + (guests.length - 12) + ' dòng' : '');
 
   SpreadsheetApp.getUi().alert('Dữ liệu gửi cho website', message,
@@ -362,8 +384,8 @@ function readGuests_(sheet, col) {
         slug: String(row[col.slug - 1]).trim(),
         name: String(row[col.name - 1]).trim(),
         code: code_(String(row[col.no - 1]).trim().replace(/\D/g, '')),
-        // Website đọc trường này để kiểm tra buổi tiệc trong link riêng.
-        event: EVENT_KEY,
+        // "Nhà trai" / "Nhà gái" — website đọc để chọn giờ và địa điểm.
+        side: String(row[col['nhà'] - 1]).trim(),
         // Phản hồi đã ghi trước đó, để khách quay lại thấy đúng trạng thái của
         // mình chứ không phải form trắng.
         attending: attending === 'YES' ? true : (attending === 'NO' ? false : null),

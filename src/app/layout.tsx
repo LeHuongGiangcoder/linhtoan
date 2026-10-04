@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { alegreya, dateFont, moncheri } from "./fonts";
-import { COUPLE, PARTIES, SITE_URL } from "@/lib/content";
+import { COUPLE, DEFAULT_PARTY, PARTIES, SITE_URL } from "@/lib/content";
 import "./globals.css";
 
 const TITLE = `${COUPLE.groom} & ${COUPLE.bride}`;
@@ -8,10 +8,16 @@ const TITLE = `${COUPLE.groom} & ${COUPLE.bride}`;
 /** "29 . 11 . 2026" giãn chữ cho đẹp trên tấm vé, nhưng trong câu thì đọc rối. */
 const compact = (date: string) => date.replace(/\s+/g, "");
 
+/**
+ * Mô tả dùng chung cho mọi link, kể cả link của nhà gái: thẻ xem trước nằm ở
+ * layout gốc nên không biết khách là nhà nào. Thiệp mặc định là nhà trai.
+ */
+const DEFAULT = PARTIES[DEFAULT_PARTY];
+
 const DESCRIPTION =
   `Thiệp mời cưới của ${TITLE} — ` +
-  `${PARTIES.main.tab} ${compact(PARTIES.main.dateShort)} tại ` +
-  `${PARTIES.main.hall ? `${PARTIES.main.hall}, ` : ""}${PARTIES.main.venue}.`;
+  `${DEFAULT.tab} ${compact(DEFAULT.dateShort)} tại ` +
+  `${DEFAULT.hall ? `${DEFAULT.hall}, ` : ""}${DEFAULT.venue}.`;
 
 export const metadata: Metadata = {
   // Bắt buộc để Next dựng đường dẫn tuyệt đối cho ảnh og — thiếu nó thì thẻ

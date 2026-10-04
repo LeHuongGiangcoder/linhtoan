@@ -4,10 +4,17 @@ import { Cross } from "@/components/Cross";
 import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
-import { AGENDA } from "@/lib/content";
+import { DEFAULT_PARTY, PARTIES, type AgendaItem } from "@/lib/content";
 import { ART } from "@/lib/layers";
 
-export function Agenda() {
+/**
+ * Chương trình buổi tiệc. Hai nhà hai khung giờ, nên các mốc được truyền vào
+ * chứ không lấy cố định; mặc định là nhà trai để route xem thử từng section
+ * vẫn gọi được không tham số.
+ */
+export function Agenda({
+  agenda = PARTIES[DEFAULT_PARTY].agenda,
+}: { agenda?: AgendaItem[] } = {}) {
   return (
     <section
       id="agenda"
@@ -58,7 +65,7 @@ export function Agenda() {
 
         {/* Timeline canh giữa, các mốc nối nhau bằng dấu ✛ như phần tên couple */}
         <ol className="m-0 list-none p-0 text-center">
-          {AGENDA.map((item, i) => (
+          {agenda.map((item, i) => (
             <Fragment key={item.title}>
               {i > 0 && (
                 <li className="flex flex-col items-center gap-2.5">

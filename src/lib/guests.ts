@@ -1,8 +1,37 @@
-import { type PartyId } from "@/lib/content";
+import { DEFAULT_PARTY, type PartyId } from "@/lib/content";
 
-/** Đoạn đầu của link riêng: /main/<slug>. */
-export function partyFromPath(value: string): PartyId | null {
-  return value.trim().toLowerCase() === "main" ? "main" : null;
+/**
+ * Đoạn buổi tiệc trong link riêng: /main/<slug>.
+ *
+ * Giờ thiệp tách theo nhà, nhưng đoạn này vẫn là "main" cho MỌI khách — nhà
+ * trai hay nhà gái đều dùng chung một đường dẫn. Đổi nó là hỏng toàn bộ link
+ * đã gửi đi. Nhà nào thì đọc từ cột "Nhà" trong Sheet (xem `partyFromSide`).
+ */
+export const EVENT_KEY = "main";
+
+export function isEventPath(value: string): boolean {
+  return value.trim().toLowerCase() === EVENT_KEY;
+}
+
+/**
+ * Cột "Nhà" trong Google Sheet → tấm thiệp khách sẽ thấy.
+ *
+ * Cô dâu chú rể gõ tay cột này nên nhận mọi cách viết thường gặp: "Nhà gái",
+ * "gái", "Gai", "nữ", "bride"… Bỏ trống hoặc gõ gì không hiểu thì về thiệp
+ * mặc định, vì thà sai địa điểm cho vài người còn hơn vỡ cả trang.
+ */
+export function partyFromSide(value: string): PartyId {
+  const text = String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/gi, "d")
+    .trim()
+    .toLowerCase();
+  if (!text) return DEFAULT_PARTY;
+
+  if (/\b(gai|nu|co dau|bride)\b/.test(text)) return "bride";
+  if (/\b(trai|nam|chu re|groom)\b/.test(text)) return "groom";
+  return DEFAULT_PARTY;
 }
 
 /**
@@ -45,7 +74,8 @@ export type Guest = {
   /** Slug đã hạ về chữ thường — dùng để so khớp, không phân biệt hoa thường. */
   slug: string;
   name: string;
-  party: PartyId | null;
+  /** Nhà trai hay nhà gái — quyết định giờ và địa điểm trên thiệp. */
+  party: PartyId;
   rsvp: GuestRsvp;
 };
 
@@ -74,7 +104,7 @@ function parseGuests(data: unknown): Guest[] | null {
     out.push({
       slug,
       name: String(g.name ?? "").trim(),
-      party: partyFromPath(String(g.event ?? "")),
+      party: partyFromSide(String(g.side ?? "")),
       rsvp: {
         attending: typeof g.attending === "boolean" ? g.attending : null,
         guests: String(g.guests ?? "").trim(),

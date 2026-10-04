@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
-import { PARTIES, type Party } from "@/lib/content";
+import { DEFAULT_PARTY, PARTIES, type Party } from "@/lib/content";
 import { type GuestRsvp } from "@/lib/guests";
 
 type Attending = "yes" | "no";
@@ -33,7 +33,7 @@ function isPartySize(value: string): value is PartySize {
   return (PARTY_SIZES as readonly string[]).includes(value);
 }
 
-export function Rsvp({ party = PARTIES.main, guest }: RsvpProps = {}) {
+export function Rsvp({ party = PARTIES[DEFAULT_PARTY], guest }: RsvpProps = {}) {
   // Phản hồi cũ của khách (nếu có link riêng và đã từng gửi) là giá trị khởi
   // tạo của form — khách vào lại thấy đúng câu trả lời của mình và sửa trực
   // tiếp, thay vì phải điền lại từ đầu.

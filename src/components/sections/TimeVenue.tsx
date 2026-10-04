@@ -5,7 +5,7 @@ import { Divider } from "@/components/Divider";
 import { MiniCalendar } from "@/components/MiniCalendar";
 import { Reveal } from "@/components/Reveal";
 import { ART } from "@/lib/layers";
-import { PARTIES, type Party } from "@/lib/content";
+import { DEFAULT_PARTY, PARTIES, type Party } from "@/lib/content";
 
 function Head({
   eyebrow,
@@ -33,9 +33,12 @@ function Head({
  * tính theo bề ngang khung (cqw) — nên ở mọi màn hình chữ vẫn nằm gọn trong
  * vòm, không tràn ra viền hoa văn.
  *
- * Mặc định tiệc chính để route xem thử từng section vẫn gọi được không tham số.
+ * Mặc định thiệp nhà trai để route xem thử từng section vẫn gọi được không
+ * tham số.
  */
-export function TimeVenue({ party = PARTIES.main }: { party?: Party } = {}) {
+export function TimeVenue({
+  party = PARTIES[DEFAULT_PARTY],
+}: { party?: Party } = {}) {
   const month = party.startsAt.slice(5, 7).replace(/^0/, "");
   const year = party.startsAt.slice(0, 4);
 

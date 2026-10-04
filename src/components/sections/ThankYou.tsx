@@ -1,10 +1,19 @@
 import { Decor } from "@/components/Decor";
 import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
-import { COUPLE, PARTIES } from "@/lib/content";
+import { COUPLE, DEFAULT_PARTY, PARTIES, type PartyId } from "@/lib/content";
 
-/** Thank you — chỉ giữ đôi bồ câu, phần còn lại để trống cho thoáng. */
-export function ThankYou() {
+/**
+ * Thank you — chỉ giữ đôi bồ câu, phần còn lại để trống cho thoáng.
+ *
+ * Dòng ngày giờ ở cuối phải khớp với buổi tiệc của khách, nếu không khách nhà
+ * gái đọc hết thiệp 16:30 rồi lại thấy 11:00 ở chân trang.
+ */
+export function ThankYou({
+  party = DEFAULT_PARTY,
+}: { party?: PartyId } = {}) {
+  const p = PARTIES[party];
+
   return (
     <section
       id="thank-you"
@@ -48,7 +57,7 @@ export function ThankYou() {
           <p className="display-2">T &amp; L</p>
           <p className="date-text date-text--hero">{COUPLE.dateDisplay}</p>
           <p className="date-sub">
-            {PARTIES.main.weekday} · {PARTIES.main.time}
+            {p.weekday} · {p.time}
           </p>
           <p className="eyebrow">{COUPLE.city}</p>
         </Reveal>

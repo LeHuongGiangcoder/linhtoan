@@ -7,6 +7,7 @@ import { Dresscode } from "@/components/sections/Dresscode";
 import { Rsvp } from "@/components/sections/Rsvp";
 import { ThankYou } from "@/components/sections/ThankYou";
 import { Party } from "@/components/sections/Party";
+import { PARTIES } from "@/lib/content";
 
 const SECTIONS: Record<string, () => React.ReactNode> = {
   hero: Hero,
@@ -30,8 +31,12 @@ const SECTIONS: Record<string, () => React.ReactNode> = {
     />
   ),
   "thank-you": ThankYou,
-  /** Cả thân thiệp */
+  /** Cả thân thiệp — mặc định là thiệp nhà trai */
   party: Party,
+  /** Thiệp nhà gái: khác giờ, khác địa điểm, khác chương trình */
+  "party-bride": () => <Party party="bride" />,
+  "time-venue-bride": () => <TimeVenue party={PARTIES.bride} />,
+  "agenda-bride": () => <Agenda agenda={PARTIES.bride.agenda} />,
 };
 
 export function generateStaticParams() {

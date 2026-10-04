@@ -4,13 +4,16 @@ Một spreadsheet, một tab `RSVP`. Cô dâu chú rể chỉ gõ **tên khách*
 dựng link riêng cho từng người, và website ghi phản hồi RSVP ngược lại đúng
 hàng của người đó.
 
-Đám cưới chỉ có một buổi — Tiệc chính — nên sheet không có cột `Event`: mọi
-link riêng đều trỏ vào `/main/<slug>`.
+Thiệp tách làm hai theo **nhà** — nhà trai và nhà gái, chỉ khác giờ và địa
+điểm. Nhà nào là do cột `Nhà` quyết định, **không** phải do đường dẫn: link
+riêng của mọi khách, cả hai nhà, đều là `/main/<slug>`. Vì thế đổi cột `Nhà`
+cho một khách đã nhận link cũng không làm hỏng link của họ.
 
 | Cột | Ai điền | Ý nghĩa |
 |-----|---------|---------|
 | `No` | tự sinh | số thứ tự **và là mã khách** — 3 chữ số (`001`, `002`…) |
 | `Name` | **bạn gõ** | tên hiện trên thiệp — có dấu tiếng Việt thoải mái |
+| `Nhà` | **bạn chọn** | `Nhà trai` hoặc `Nhà gái` — quyết định giờ và địa điểm trên thiệp. Bỏ trống thì khách thấy thiệp **nhà trai** |
 | `Slug` | tự sinh | phần đuôi URL, sinh từ tên |
 | `Link` | tự sinh | link để gửi cho khách — copy thẳng từ đây |
 | `Attending` | website ghi | `YES` / `NO` |
@@ -45,9 +48,23 @@ https://linhtoan.gloweb.site/main/ms-tran-thi-bao-ngoc
   cùng một khách — kể cả khi slug trong sheet được sửa tay thành chữ hoa.
 
 > **Chốt đường dẫn `main` trước khi gửi thiệp đầu tiên.** Nó nằm ở hằng số
-> `EVENT_KEY` trong [`apps-script.gs`](apps-script.gs) và phải khớp
-> `partyFromPath` trong `src/lib/guests.ts` — đổi sau khi đã gửi link là hỏng
-> toàn bộ link cũ.
+> `EVENT_KEY` trong [`apps-script.gs`](apps-script.gs) và phải khớp `EVENT_KEY`
+> trong `src/lib/guests.ts` — đổi sau khi đã gửi link là hỏng toàn bộ link cũ.
+> Đoạn `main` này dùng chung cho cả hai nhà.
+
+## Hai tấm thiệp khác nhau ở đâu
+
+| | Nhà trai | Nhà gái |
+|---|---|---|
+| Giờ | 11:00 | 16:30 |
+| Địa điểm | Sảnh Khánh Tiết, Trung tâm Hội nghị Quốc gia | Nhà văn hoá Đồng Nanh |
+| Địa chỉ | 57 Phạm Hùng, Mễ Trì, Nam Từ Liêm, Hà Nội | Phường Chương Mỹ, Hà Nội |
+| Chương trình | 10:30 · 11:00 · 11:30 | 16:00 · 16:30 · 17:00 |
+
+Mọi phần còn lại — lời chào, dresscode, lời cảm ơn, form RSVP — dùng chung.
+Nội dung hai tấm nằm ở `PARTIES` trong `src/lib/content.ts`.
+
+Xem thử: `/preview/party` (nhà trai) và `/preview/party-bride` (nhà gái).
 
 
 ---

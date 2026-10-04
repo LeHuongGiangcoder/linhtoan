@@ -28,10 +28,20 @@ export const HERO = {
 };
 
 /**
- * Buổi tiệc của đám cưới. Chỉ còn tiệc chính — `PARTIES` vẫn là một `Record`
- * để thêm lại một buổi nữa chỉ là thêm một khoá.
+ * Hai bên nhà, hai tấm thiệp — chỉ khác giờ và địa điểm, mọi phần còn lại
+ * dùng chung.
+ *
+ * Khách thuộc nhà nào là do cột "Nhà" trong Google Sheet quyết định, KHÔNG
+ * phải do đường dẫn: link riêng của mọi khách vẫn là /main/<slug> như cũ, nên
+ * những link đã gửi đi trước khi tách thiệp vẫn sống nguyên.
  */
-export type PartyId = "main";
+export type PartyId = "groom" | "bride";
+
+/** Khách chưa ghi "Nhà", hoặc mở thẳng trang chủ, thì thấy tấm này. */
+export const DEFAULT_PARTY: PartyId = "groom";
+
+/** Một mốc trong phần Chương trình. */
+export type AgendaItem = { time: string; title: string; desc: string };
 
 export type Party = {
   id: PartyId;
@@ -40,7 +50,6 @@ export type Party = {
   event: string;
   weekday: string;
   dateShort: string;
-  /** TODO: giờ đãi tiệc chưa chốt, sửa lại khi có lịch chính thức. */
   time: string;
   /**
    * Mốc giờ đầy đủ kèm múi giờ Việt Nam — lịch nhỏ và dòng tháng/năm ở phần
@@ -52,11 +61,14 @@ export type Party = {
   address: string;
   city: string;
   mapUrl: string;
+  /** Chương trình của riêng buổi tiệc này — giờ phải khớp với `time`. */
+  agenda: AgendaItem[];
 };
 
 export const PARTIES: Record<PartyId, Party> = {
-  main: {
-    id: "main",
+  /** Nhà trai — giữ nguyên như tấm thiệp trước khi tách. */
+  groom: {
+    id: "groom",
     tab: "Tiệc chính",
     event: "Tiệc cưới",
     weekday: "Chủ Nhật",
@@ -69,27 +81,58 @@ export const PARTIES: Record<PartyId, Party> = {
     city: "Hà Nội",
     mapUrl:
       "https://www.google.com/maps/search/?api=1&query=Trung+tam+Hoi+nghi+Quoc+gia+57+Pham+Hung+Ha+Noi",
+    agenda: [
+      {
+        time: "10:30",
+        title: "Chào đón khách mời",
+        desc: "Chụp ảnh check-in photobooth sảnh ballroom cùng khách mời",
+      },
+      {
+        time: "11:00",
+        title: "Nghi thức lễ cưới",
+        desc: "Cắt bánh, rót rượu — nghi thức làm lễ",
+      },
+      {
+        time: "11:30",
+        title: "Khai tiệc",
+        desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
+      },
+    ],
+  },
+
+  /** Nhà gái — cùng ngày, khác giờ và khác địa điểm. */
+  bride: {
+    id: "bride",
+    tab: "Tiệc cưới",
+    event: "Tiệc cưới",
+    weekday: "Chủ Nhật",
+    dateShort: "29 . 11 . 2026",
+    time: "16:30",
+    startsAt: "2026-11-29T16:30:00+07:00",
+    hall: "",
+    venue: "Nhà văn hoá Đồng Nanh",
+    address: "Phường Chương Mỹ, Hà Nội",
+    city: "Hà Nội",
+    mapUrl: "https://maps.app.goo.gl/UdrFTAAeXmVhBWzz5",
+    agenda: [
+      {
+        time: "16:00",
+        title: "Chào đón khách mời",
+        desc: "Chụp ảnh check-in cùng khách mời tại khu vực đón khách",
+      },
+      {
+        time: "16:30",
+        title: "Nghi thức lễ cưới",
+        desc: "Cắt bánh, rót rượu — nghi thức làm lễ",
+      },
+      {
+        time: "17:00",
+        title: "Khai tiệc",
+        desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
+      },
+    ],
   },
 };
-
-/** Chương trình buổi tiệc. */
-export const AGENDA = [
-  {
-    time: "10:30",
-    title: "Chào đón khách mời",
-    desc: "Chụp ảnh check-in photobooth sảnh ballroom cùng khách mời",
-  },
-  {
-    time: "11:00",
-    title: "Nghi thức lễ cưới",
-    desc: "Cắt bánh, rót rượu — nghi thức làm lễ",
-  },
-  {
-    time: "11:30",
-    title: "Khai tiệc",
-    desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
-  },
-];
 
 export const DRESSCODE = {
   note: "Trang phục: kính mong quý khách lựa chọn tông pastel dịu nhẹ để cùng gia đình chúng tôi hoàn thiện khung hình ngày trọng đại.",
