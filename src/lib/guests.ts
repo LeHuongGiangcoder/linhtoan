@@ -116,14 +116,26 @@ function parseGuests(data: unknown): Guest[] | null {
   return out;
 }
 
+/** Rút lý do Apps Script trả về, để log nói đúng chuyện gì đã xảy ra. */
+function describe(payload: unknown): string {
+  if (typeof payload !== "object" || payload === null) {
+    return `kiểu dữ liệu lạ (${typeof payload})`;
+  }
+  const error = (payload as { error?: unknown }).error;
+  if (typeof error === "string" && error) return `lỗi "${error}"`;
+  return `thiếu mảng guests (các khoá: ${Object.keys(payload).join(", ") || "rỗng"})`;
+}
+
 /**
  * Cả danh sách khách từ Google Sheet.
  *
  * Chỉ chạy khi đã cấu hình RSVP_WEBHOOK_URL + RSVP_SHARED_SECRET. Chưa cấu
  * hình — hoặc Sheet lỗi, hoặc mạng chậm — thì trả về bản đọc được gần nhất,
- * và nếu chưa từng đọc được lần nào thì trả về null: thiệp dùng lời chào
- * chung, link riêng vẫn mở đúng buổi tiệc vì buổi tiệc nằm ngay trong đường
- * dẫn, không phụ thuộc vào Sheet.
+ * và nếu chưa từng đọc được lần nào thì trả về null.
+ *
+ * Lúc đó thiệp chào chung "Quý khách" VÀ hiện buổi tiệc mặc định (nhà trai),
+ * vì cả tên lẫn nhà đều nằm trong Sheet. Mất Sheet là khách nhà gái thấy sai
+ * địa điểm, nên hỏng ở đây nghiêm trọng hơn trước khi tách thiệp.
  */
 async function loadGuests(): Promise<Guest[] | null> {
   const url = process.env.RSVP_WEBHOOK_URL;
@@ -143,11 +155,19 @@ async function loadGuests(): Promise<Guest[] | null> {
       return lastGood;
     }
 
-    const guests = parseGuests(await res.json());
+    const payload: unknown = await res.json();
+    const guests = parseGuests(payload);
     if (!guests || guests.length === 0) {
       // Sheet trống thì đúng là không có khách nào; nhưng gặp trang HTML đăng
       // nhập (deploy sai quyền) cũng ra đây — giữ bản cũ cho chắc.
-      console.error("Danh sách khách: Apps Script trả về dữ liệu không dùng được");
+      //
+      // In kèm lý do Apps Script tự khai: "unauthorized" là secret hai bên
+      // lệch nhau, còn lỗi khác là script văng giữa chừng. Không có dòng này
+      // thì log chỉ nói "không dùng được" và phải ngồi đoán.
+      console.error(
+        "Danh sách khách: Apps Script trả về dữ liệu không dùng được —",
+        describe(payload),
+      );
       return lastGood;
     }
 

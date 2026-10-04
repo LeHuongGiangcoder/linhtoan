@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 /** Toàn bộ nội dung hardcode — sửa ở đây là đổi cả site. */
 
 /**
@@ -133,6 +135,60 @@ export const PARTIES: Record<PartyId, Party> = {
     ],
   },
 };
+
+/** Tên đôi uyên ương, dùng ở tiêu đề và thẻ xem trước. */
+export const COUPLE_TITLE = `${COUPLE.groom} & ${COUPLE.bride}`;
+
+/**
+ * Dòng mô tả trong thẻ xem trước khi khách gửi link cho nhau qua Zalo /
+ * Messenger / iMessage.
+ *
+ * Nhận `party` chứ không lấy cố định: khách nhà gái chia sẻ link mà ô preview
+ * ghi địa điểm nhà trai thì chẳng khác gì mời sai chỗ.
+ */
+export function partyDescription(party: Party): string {
+  // "29 . 11 . 2026" giãn chữ cho đẹp trên tấm vé, nhưng trong câu thì đọc rối.
+  const date = party.dateShort.replace(/\s+/g, "");
+  const place = party.hall ? `${party.hall}, ${party.venue}` : party.venue;
+  return `Thiệp mời cưới của ${COUPLE_TITLE} — ${party.tab} ${date} tại ${place}.`;
+}
+
+/** Ảnh trong thẻ xem trước. Tên có hash nên đổi ảnh là phải sửa cả ở đây. */
+const OG_IMAGE = {
+  url: "/og.2f3777c6.jpg",
+  width: 1200,
+  height: 630,
+  alt: `Thiệp mời cưới ${COUPLE_TITLE}`,
+};
+
+/**
+ * Nguyên khối thẻ xem trước cho một buổi tiệc.
+ *
+ * Phải dựng CẢ KHỐI ở một chỗ: Next ghi đè `openGraph` theo nguyên khối chứ
+ * không trộn từng trường, nên trang con chỉ khai `description` là mất sạch
+ * ảnh, url, siteName của layout gốc — ô preview hiện trắng trơn.
+ */
+export function openGraphFor(party: Party): Metadata["openGraph"] {
+  return {
+    type: "website",
+    locale: "vi_VN",
+    siteName: COUPLE_TITLE,
+    title: `${COUPLE_TITLE} — Lưu lại ngày này`,
+    description: partyDescription(party),
+    url: "/",
+    images: [OG_IMAGE],
+  };
+}
+
+/** Cùng lý do với `openGraphFor`: khai thiếu trường là mất cả thẻ. */
+export function twitterFor(party: Party): Metadata["twitter"] {
+  return {
+    card: "summary_large_image",
+    title: `${COUPLE_TITLE} — Lưu lại ngày này`,
+    description: partyDescription(party),
+    images: [OG_IMAGE.url],
+  };
+}
 
 export const DRESSCODE = {
   note: "Trang phục: kính mong quý khách lựa chọn tông pastel dịu nhẹ để cùng gia đình chúng tôi hoàn thiện khung hình ngày trọng đại.",

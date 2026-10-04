@@ -1,23 +1,26 @@
 import type { Metadata, Viewport } from "next";
 import { alegreya, dateFont, moncheri } from "./fonts";
-import { COUPLE, DEFAULT_PARTY, PARTIES, SITE_URL } from "@/lib/content";
+import {
+  COUPLE,
+  COUPLE_TITLE,
+  DEFAULT_PARTY,
+  openGraphFor,
+  PARTIES,
+  partyDescription,
+  SITE_URL,
+  twitterFor,
+} from "@/lib/content";
 import "./globals.css";
 
-const TITLE = `${COUPLE.groom} & ${COUPLE.bride}`;
-
-/** "29 . 11 . 2026" giãn chữ cho đẹp trên tấm vé, nhưng trong câu thì đọc rối. */
-const compact = (date: string) => date.replace(/\s+/g, "");
+const TITLE = COUPLE_TITLE;
 
 /**
- * Mô tả dùng chung cho mọi link, kể cả link của nhà gái: thẻ xem trước nằm ở
- * layout gốc nên không biết khách là nhà nào. Thiệp mặc định là nhà trai.
+ * Mô tả mặc định, cho trang chủ và cho link nào chưa tra được khách. Link
+ * riêng ghi đè bằng mô tả đúng nhà của khách — xem `generateMetadata` trong
+ * app/[event]/[slug]/page.tsx.
  */
 const DEFAULT = PARTIES[DEFAULT_PARTY];
-
-const DESCRIPTION =
-  `Thiệp mời cưới của ${TITLE} — ` +
-  `${DEFAULT.tab} ${compact(DEFAULT.dateShort)} tại ` +
-  `${DEFAULT.hall ? `${DEFAULT.hall}, ` : ""}${DEFAULT.venue}.`;
+const DESCRIPTION = partyDescription(DEFAULT);
 
 export const metadata: Metadata = {
   // Bắt buộc để Next dựng đường dẫn tuyệt đối cho ảnh og — thiếu nó thì thẻ
@@ -25,28 +28,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: `${TITLE} — ${COUPLE.dateFull}`,
   description: DESCRIPTION,
-  openGraph: {
-    type: "website",
-    locale: "vi_VN",
-    siteName: TITLE,
-    title: `${TITLE} — Lưu lại ngày này`,
-    description: DESCRIPTION,
-    url: "/",
-    images: [
-      {
-        url: "/og.2f3777c6.jpg",
-        width: 1200,
-        height: 630,
-        alt: `Thiệp mời cưới ${TITLE}`,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${TITLE} — Lưu lại ngày này`,
-    description: DESCRIPTION,
-    images: ["/og.2f3777c6.jpg"],
-  },
+  openGraph: openGraphFor(DEFAULT),
+  twitter: twitterFor(DEFAULT),
   robots: {
     // Thiệp riêng: đừng để Google đánh chỉ mục rồi người lạ tìm ra được.
     index: false,

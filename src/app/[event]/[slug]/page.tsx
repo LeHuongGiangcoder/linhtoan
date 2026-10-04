@@ -4,7 +4,13 @@ import { Intro } from "@/components/Intro";
 import { Hero } from "@/components/sections/Hero";
 import { Party } from "@/components/sections/Party";
 import { ThankYou } from "@/components/sections/ThankYou";
-import { DEFAULT_PARTY, PARTIES } from "@/lib/content";
+import {
+  DEFAULT_PARTY,
+  openGraphFor,
+  PARTIES,
+  partyDescription,
+  twitterFor,
+} from "@/lib/content";
 import { isEventPath, lookupGuest } from "@/lib/guests";
 
 /**
@@ -26,10 +32,18 @@ export async function generateMetadata({
   // "29 . 11 . 2026" giãn chữ cho đẹp trên tấm vé, trong tiêu đề thì bỏ giãn.
   const date = p.dateShort.replace(/\s+/g, "");
 
+  // Mô tả phải theo nhà của khách, nếu không khách nhà gái gửi link cho nhau
+  // mà ô xem trước lại ghi địa điểm nhà trai. Layout gốc không biết nhà nào
+  // nên chỉ có chỗ này ghi đè được.
+  const description = partyDescription(p);
+
   return {
     title: guest?.name
       ? `${guest.name} — ${p.tab} ${date}`
       : `${p.tab} — ${date}`,
+    description,
+    openGraph: openGraphFor(p),
+    twitter: twitterFor(p),
     // Link riêng không nên lọt ra ngoài; thẻ xem trước vẫn hiện bình thường
     // khi khách gửi cho nhau qua Zalo/Messenger.
     robots: { index: false, follow: false },
