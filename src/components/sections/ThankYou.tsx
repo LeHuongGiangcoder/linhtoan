@@ -55,7 +55,7 @@ export function ThankYou({
         <Reveal delay={3} className="mt-8 flex flex-col items-center gap-3">
           <span className="rule !h-8" />
           <p className="display-2">T &amp; L</p>
-          <p className="date-text date-text--hero">{COUPLE.dateDisplay}</p>
+          <p className="date-text date-text--hero">{p.dateDisplay}</p>
           <p className="date-sub">
             {p.weekday} · {p.time}
           </p>

@@ -2,16 +2,18 @@ import Image from "next/image";
 import { Decor } from "@/components/Decor";
 import { Reveal } from "@/components/Reveal";
 import { COUPLE_NAMES, COUPLE_WALKING, LAYERS } from "@/lib/layers";
-import { COUPLE, HERO } from "@/lib/content";
+import { COUPLE, DEFAULT_PARTY, HERO, PARTIES, type PartyId } from "@/lib/content";
 
 type HeroProps = {
   /** Tên khách lấy từ link riêng; bỏ trống thì dùng lời chào chung. */
   guestName?: string;
+  /** Nhà của khách — quyết định ngày in dưới tên đôi uyên ương. */
+  party?: PartyId;
 };
 
 // Mặc định `{}` để Hero vẫn gọi được không tham số — route /preview/[id] gom
 // các section vào một map `() => ReactNode`, thiếu nó là build TS đứt.
-export function Hero({ guestName }: HeroProps = {}) {
+export function Hero({ guestName, party = DEFAULT_PARTY }: HeroProps = {}) {
   return (
     <section
       id="hero"
@@ -67,7 +69,7 @@ export function Hero({ guestName }: HeroProps = {}) {
             vị trí. Tăng margin thì section (cao theo nội dung) dài ra và đẩy
             tranh xuống theo. */}
         <Reveal delay={4} className="relative top-6 mt-5">
-          <p className="date-text date-text--hero">{COUPLE.dateDisplay}</p>
+          <p className="date-text date-text--hero">{PARTIES[party].dateDisplay}</p>
         </Reveal>
 
         <Reveal delay={5} className="relative top-6 mt-3">

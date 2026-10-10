@@ -12,12 +12,14 @@ import type { Metadata } from "next";
  */
 export const SITE_URL = "https://linhtoan.gloweb.site";
 
+/**
+ * Ngày cưới KHÔNG nằm ở đây: hai nhà tổ chức hai ngày khác nhau, nên mọi mốc
+ * ngày giờ đều thuộc về từng `Party`. Để sót một ngày dùng chung là khách một
+ * bên đọc được ngày của bên kia.
+ */
 export const COUPLE = {
   groom: "Khánh Toàn",
   bride: "Khánh Linh",
-  dateDisplay: "29.11.2026",
-  dateFull: "Chủ Nhật, ngày 29 tháng 11 năm 2026",
-  lunar: "Nhằm ngày 21 tháng 10 năm Bính Ngọ",
   city: "Hà Nội",
 };
 
@@ -51,7 +53,12 @@ export type Party = {
   tab: string;
   event: string;
   weekday: string;
+  /** "29 . 11 . 2026" — giãn chữ, dùng trên tấm vé ở phần Thời gian */
   dateShort: string;
+  /** "29.11.2026" — không giãn, dùng ở hero và chân thiệp */
+  dateDisplay: string;
+  /** "Chủ Nhật, ngày 29 tháng 11 năm 2026" — dùng ở tiêu đề trang */
+  dateFull: string;
   time: string;
   /**
    * Mốc giờ đầy đủ kèm múi giờ Việt Nam — lịch nhỏ và dòng tháng/năm ở phần
@@ -75,6 +82,8 @@ export const PARTIES: Record<PartyId, Party> = {
     event: "Tiệc cưới",
     weekday: "Chủ Nhật",
     dateShort: "29 . 11 . 2026",
+    dateDisplay: "29.11.2026",
+    dateFull: "Chủ Nhật, ngày 29 tháng 11 năm 2026",
     time: "11:00",
     startsAt: "2026-11-29T11:00:00+07:00",
     hall: "Sảnh Khánh Tiết",
@@ -102,15 +111,17 @@ export const PARTIES: Record<PartyId, Party> = {
     ],
   },
 
-  /** Nhà gái — cùng ngày, khác giờ và khác địa điểm. */
+  /** Nhà gái — trước nhà trai một ngày, khác cả giờ lẫn địa điểm. */
   bride: {
     id: "bride",
     tab: "Tiệc cưới",
     event: "Tiệc cưới",
-    weekday: "Chủ Nhật",
-    dateShort: "29 . 11 . 2026",
-    time: "16:30",
-    startsAt: "2026-11-29T16:30:00+07:00",
+    weekday: "Thứ Bảy",
+    dateShort: "28 . 11 . 2026",
+    dateDisplay: "28.11.2026",
+    dateFull: "Thứ Bảy, ngày 28 tháng 11 năm 2026",
+    time: "16:00",
+    startsAt: "2026-11-28T16:00:00+07:00",
     hall: "",
     venue: "Nhà văn hoá Đồng Nanh",
     address: "Phường Chương Mỹ, Hà Nội",
@@ -118,17 +129,17 @@ export const PARTIES: Record<PartyId, Party> = {
     mapUrl: "https://maps.app.goo.gl/UdrFTAAeXmVhBWzz5",
     agenda: [
       {
-        time: "16:00",
+        time: "15:30",
         title: "Chào đón khách mời",
         desc: "Chụp ảnh check-in cùng khách mời tại khu vực đón khách",
       },
       {
-        time: "16:30",
+        time: "16:00",
         title: "Nghi thức lễ cưới",
         desc: "Cắt bánh, rót rượu — nghi thức làm lễ",
       },
       {
-        time: "17:00",
+        time: "16:30",
         title: "Khai tiệc",
         desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
       },

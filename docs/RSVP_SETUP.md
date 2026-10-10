@@ -56,15 +56,22 @@ https://linhtoan.gloweb.site/main/ms-tran-thi-bao-ngoc
 
 | | Nhà trai | Nhà gái |
 |---|---|---|
-| Giờ | 11:00 | 16:30 |
+| Ngày | Chủ Nhật 29.11.2026 | **Thứ Bảy 28.11.2026** |
+| Giờ | 11:00 | 16:00 |
 | Địa điểm | Sảnh Khánh Tiết, Trung tâm Hội nghị Quốc gia | Nhà văn hoá Đồng Nanh |
 | Địa chỉ | 57 Phạm Hùng, Mễ Trì, Nam Từ Liêm, Hà Nội | Phường Chương Mỹ, Hà Nội |
-| Chương trình | 10:30 · 11:00 · 11:30 | 16:00 · 16:30 · 17:00 |
+| Chương trình | 10:30 · 11:00 · 11:30 | 15:30 · 16:00 · 16:30 |
+
+**Hai nhà hai NGÀY khác nhau**, nên ngày tháng không còn là hằng số dùng chung
+— mọi mốc ngày giờ đều nằm trong `PARTIES`. Điền sai cột `Nhà` bây giờ là
+khách đến nhầm hẳn một ngày, không chỉ nhầm địa điểm.
 
 Mọi phần còn lại — lời chào, dresscode, lời cảm ơn, form RSVP — dùng chung.
 Nội dung hai tấm nằm ở `PARTIES` trong `src/lib/content.ts`.
 
 Xem thử: `/preview/party` (nhà trai) và `/preview/party-bride` (nhà gái).
+Từng phần riêng: `hero-bride`, `time-venue-bride`, `agenda-bride`,
+`thank-you-bride`.
 
 
 ---

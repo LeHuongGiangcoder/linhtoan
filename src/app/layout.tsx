@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { alegreya, dateFont, moncheri } from "./fonts";
 import {
-  COUPLE,
   COUPLE_TITLE,
   DEFAULT_PARTY,
   openGraphFor,
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
   // Bắt buộc để Next dựng đường dẫn tuyệt đối cho ảnh og — thiếu nó thì thẻ
   // xem trước trên Facebook / Zalo hiện trắng trơn.
   metadataBase: new URL(SITE_URL),
-  title: `${TITLE} — ${COUPLE.dateFull}`,
+  title: `${TITLE} — ${DEFAULT.dateFull}`,
   description: DESCRIPTION,
   openGraph: openGraphFor(DEFAULT),
   twitter: twitterFor(DEFAULT),

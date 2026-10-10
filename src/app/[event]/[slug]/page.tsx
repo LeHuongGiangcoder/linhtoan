@@ -63,7 +63,7 @@ export default async function GuestInvitation({
     <>
       <Intro />
       <main>
-        <Hero guestName={guest?.name} />
+        <Hero guestName={guest?.name} party={guest?.party ?? DEFAULT_PARTY} />
         {/* Slug lấy từ đường dẫn kể cả khi chưa tra được Sheet: Apps Script
             khớp slug thì ghi đúng hàng, không khớp thì nối hàng mới.
             `rsvp` là câu trả lời lần trước — form điền sẵn để khách sửa. */}
