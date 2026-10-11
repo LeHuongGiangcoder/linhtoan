@@ -7,6 +7,7 @@ import { Dresscode } from "@/components/sections/Dresscode";
 import { Rsvp } from "@/components/sections/Rsvp";
 import { ThankYou } from "@/components/sections/ThankYou";
 import { Party } from "@/components/sections/Party";
+import { GuestUnavailable } from "@/components/sections/GuestUnavailable";
 import { PARTIES } from "@/lib/content";
 
 const SECTIONS: Record<string, () => React.ReactNode> = {
@@ -31,6 +32,8 @@ const SECTIONS: Record<string, () => React.ReactNode> = {
     />
   ),
   "thank-you": ThankYou,
+  /** Tấm chắn khi không tra được danh sách khách */
+  unavailable: GuestUnavailable,
   /** Cả thân thiệp — mặc định là thiệp nhà trai */
   party: Party,
   /** Thiệp nhà gái: khác giờ, khác địa điểm, khác chương trình */

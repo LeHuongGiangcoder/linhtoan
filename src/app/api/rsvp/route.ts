@@ -117,10 +117,19 @@ export async function POST(request: Request) {
       return reply({ ok: false, error: "upstream" }, 502);
     }
 
-    // Danh sách khách trong cache vừa cũ đi: khách tải lại trang phải thấy
-    // ngay câu trả lời mình vừa sửa. `expire: 0` nên lượt sau đọc lại thật,
-    // không phục vụ bản cũ.
-    revalidateTag(GUESTS_TAG, { expire: 0 });
+    // Danh sách khách trong cache vừa cũ đi — nhưng đánh dấu kiểu "max", tức
+    // là vẫn phục vụ bản cũ trong lúc lặng lẽ đọc lại ở nền.
+    //
+    // KHÔNG dùng `{ expire: 0 }` như trước: nó bắt lượt đọc kế tiếp phải chờ
+    // Apps Script trả lời xong mới được render. Nghĩa là cứ một khách bấm gửi
+    // là khách TIẾP THEO mở thiệp phải gánh nguyên một lượt gọi Apps Script —
+    // gặp lúc script nguội (hay bị dồn) là quá hạn chờ, và khách đó bị chào
+    // chung "Quý khách" kèm luôn buổi tiệc mặc định.
+    //
+    // Đổi lại: chính người vừa gửi nếu tải lại trang ngay có thể còn thấy câu
+    // trả lời cũ một nhịp. Chấp nhận được — gửi xong form đã hiện tấm "Đã nhận
+    // được rồi!" ngay tại chỗ, không ai phải tải lại để kiểm tra.
+    revalidateTag(GUESTS_TAG, "max");
 
     return reply({ ok: true });
   } catch (err) {

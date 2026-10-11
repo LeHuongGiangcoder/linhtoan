@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Intro } from "@/components/Intro";
+import { GuestUnavailable } from "@/components/sections/GuestUnavailable";
 import { Hero } from "@/components/sections/Hero";
 import { Party } from "@/components/sections/Party";
 import { ThankYou } from "@/components/sections/ThankYou";
 import {
+  COUPLE_TITLE,
   DEFAULT_PARTY,
   openGraphFor,
   PARTIES,
@@ -18,8 +20,9 @@ import { isEventPath, lookupGuest } from "@/lib/guests";
  * Google Sheet (xem docs/RSVP_SETUP.md).
  *
  * Đoạn <buổi tiệc> luôn là "main" cho cả hai nhà. Nhà trai hay nhà gái là do
- * cột "Nhà" trong Sheet quyết định, nên khi Sheet lỗi thì thiệp lùi về bản mặc
- * định (nhà trai) thay vì hỏng.
+ * cột "Nhà" trong Sheet quyết định — nên khi KHÔNG đọc được Sheet, trang
+ * không dựng thiệp nữa mà mời khách tải lại (xem GuestUnavailable). Đoán nhà
+ * là đoán cả ngày lẫn địa điểm, đoán trượt thì khách đi sai chỗ.
  */
 export async function generateMetadata({
   params,
@@ -27,7 +30,33 @@ export async function generateMetadata({
   const { event, slug } = await params;
   if (!isEventPath(event)) return {};
 
-  const guest = await lookupGuest(slug);
+  const found = await lookupGuest(slug);
+
+  // Chưa tra được danh sách thì chưa biết nhà nào — đừng đi khoe ngày và địa
+  // điểm của nhà trai trong ô xem trước khi chia sẻ.
+  //
+  // Phải ghi đè CẢ KHỐI openGraph/twitter, không bỏ trống: Next thay nguyên
+  // khối chứ không trộn từng trường, nên khai thiếu là khối của layout gốc
+  // (dựng theo nhà mặc định) còn nguyên — đúng cái địa điểm đang muốn giấu.
+  if (found.status === "unavailable") {
+    const neutral = `Thiệp mời cưới của ${COUPLE_TITLE}.`;
+    return {
+      title: COUPLE_TITLE,
+      description: neutral,
+      openGraph: {
+        type: "website",
+        locale: "vi_VN",
+        siteName: COUPLE_TITLE,
+        title: COUPLE_TITLE,
+        description: neutral,
+        url: "/",
+      },
+      twitter: { card: "summary", title: COUPLE_TITLE, description: neutral },
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const guest = found.status === "found" ? found.guest : null;
   const p = PARTIES[guest?.party ?? DEFAULT_PARTY];
   // "29 . 11 . 2026" giãn chữ cho đẹp trên tấm vé, trong tiêu đề thì bỏ giãn.
   const date = p.dateShort.replace(/\s+/g, "");
@@ -57,7 +86,22 @@ export default async function GuestInvitation({
 
   if (!isEventPath(event)) notFound();
 
-  const guest = await lookupGuest(slug);
+  const found = await lookupGuest(slug);
+
+  // Không tra được danh sách: dừng lại và mời khách tải lại, KHÔNG dựng đại
+  // thiệp nhà trai. Xem GuestUnavailable để biết vì sao đoán nhà là nguy hiểm.
+  if (found.status === "unavailable") {
+    return (
+      <main>
+        <GuestUnavailable />
+      </main>
+    );
+  }
+
+  // Còn lại là `found` (có khách) hoặc `missing` (gõ sai link / hàng đã xoá).
+  // `missing` thì tải lại cũng thế, nên cứ cho xem thiệp chung như khi vào
+  // thẳng trang chủ.
+  const guest = found.status === "found" ? found.guest : null;
 
   return (
     <>
