@@ -105,9 +105,34 @@ export function Rsvp({ party = PARTIES[DEFAULT_PARTY], guest }: RsvpProps = {}) 
       <Decor id="rsvp-lily" width="60%" top="1rem" left="0" className="motion-sway" />
 
       {/* `front` để hai đài hoa nằm trên tấm giấy của form (z-3 > .section-inner
-          z-2) — không có nó thì tấm giấy che mất chân hoa. */}
-      <Decor id="el-18" width="36%" bottom="0%" left="-10%" front />
-      <Decor id="el-18" width="36%" bottom="0%" right="-10%" flip front />
+          z-2) — không có nó thì tấm giấy che mất chân hoa.
+
+          Bề ngang có TRẦN tính bằng rem, không thả tự do theo % màn hình: tấm
+          giấy của form bị chặn ở --content-max nên cao gần như cố định, còn
+          đài hoa tính theo % thì màn hình càng rộng hoa càng cao — đến khoảng
+          800px là ngọn hoa leo quá nút gửi, trùm lên nhãn "Lời chúc gửi cô dâu
+          chú rể" và dòng lời chúc.
+
+          Phần thò ra ngoài mép dùng translate (% của chính tấm ảnh) chứ không
+          dùng left/right âm (% của section): có trần bề ngang rồi thì -10% của
+          section là nguyên nửa bông hoa biến mất trên máy rộng. */}
+      <Decor
+        id="el-18"
+        width="min(36%, 10rem)"
+        bottom="0"
+        left="0"
+        front
+        style={{ translate: "-30% 0" }}
+      />
+      <Decor
+        id="el-18"
+        width="min(36%, 10rem)"
+        bottom="0"
+        right="0"
+        flip
+        front
+        style={{ translate: "30% 0" }}
+      />
 
       <div className="section-inner">
         <Reveal className="section-head">

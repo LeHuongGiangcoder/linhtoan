@@ -82,9 +82,11 @@ export function Agenda({
               >
                 <p className="date-text--xs">{item.time}</p>
                 <h3 className="display-3 mt-3 !text-[1.5rem]">{item.title}</h3>
-                <p className="body-text body-text--sm mt-2.5 max-w-[19rem] text-balance">
-                  {item.desc}
-                </p>
+                {item.desc ? (
+                  <p className="body-text body-text--sm mt-2.5 max-w-[19rem] text-balance">
+                    {item.desc}
+                  </p>
+                ) : null}
               </Reveal>
             </Fragment>
           ))}

@@ -44,8 +44,13 @@ export type PartyId = "groom" | "bride";
 /** Khách chưa ghi "Nhà", hoặc mở thẳng trang chủ, thì thấy tấm này. */
 export const DEFAULT_PARTY: PartyId = "groom";
 
-/** Một mốc trong phần Chương trình. */
-export type AgendaItem = { time: string; title: string; desc: string };
+/**
+ * Một mốc trong phần Chương trình.
+ *
+ * `desc` không bắt buộc: có bên chỉ muốn ghi đúng giờ và tên mốc, thêm một
+ * câu mô tả cho đủ bộ là tự bịa thay gia chủ.
+ */
+export type AgendaItem = { time: string; title: string; desc?: string };
 
 export type Party = {
   id: PartyId;
@@ -72,6 +77,11 @@ export type Party = {
   mapUrl: string;
   /** Chương trình của riêng buổi tiệc này — giờ phải khớp với `time`. */
   agenda: AgendaItem[];
+  /**
+   * Có hiện phần Trang phục hay không. Nhà gái không đặt dresscode, mà phần
+   * này nằm giữa thiệp nên không thể "để trống" — phải bỏ hẳn section.
+   */
+  dresscode: boolean;
 };
 
 export const PARTIES: Record<PartyId, Party> = {
@@ -90,8 +100,10 @@ export const PARTIES: Record<PartyId, Party> = {
     venue: "Trung tâm Hội nghị Quốc gia",
     address: "57 Phạm Hùng, Mễ Trì, Nam Từ Liêm, Hà Nội",
     city: "Hà Nội",
-    mapUrl:
-      "https://www.google.com/maps/search/?api=1&query=Trung+tam+Hoi+nghi+Quoc+gia+57+Pham+Hung+Ha+Noi",
+    // Ghim thẳng vào địa điểm bằng CID của chính nó trên Google Maps, không
+    // phải link tìm kiếm theo tên: tìm kiếm thì mỗi máy ra một kết quả đầu
+    // khác nhau, còn CID luôn mở đúng một ghim.
+    mapUrl: "https://maps.google.com/?cid=14669039340776990556",
     agenda: [
       {
         time: "10:30",
@@ -109,6 +121,7 @@ export const PARTIES: Record<PartyId, Party> = {
         desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
       },
     ],
+    dresscode: true,
   },
 
   /** Nhà gái — trước nhà trai một ngày, khác cả giờ lẫn địa điểm. */
@@ -126,24 +139,16 @@ export const PARTIES: Record<PartyId, Party> = {
     venue: "Nhà văn hoá Đồng Nanh",
     address: "Phường Chương Mỹ, Hà Nội",
     city: "Hà Nội",
-    mapUrl: "https://maps.app.goo.gl/UdrFTAAeXmVhBWzz5",
+    mapUrl: "https://maps.app.goo.gl/ikia7PvBUr7MQCbj8",
+    /* Nhà gái gộp đón khách và khai tiệc vào đúng một mốc 16h — không tách
+       nghi thức, nên chương trình chỉ có một dòng. */
     agenda: [
       {
-        time: "15:30",
-        title: "Chào đón khách mời",
-        desc: "Chụp ảnh check-in cùng khách mời tại khu vực đón khách",
-      },
-      {
         time: "16:00",
-        title: "Nghi thức lễ cưới",
-        desc: "Cắt bánh, rót rượu — nghi thức làm lễ",
-      },
-      {
-        time: "16:30",
-        title: "Khai tiệc",
-        desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
+        title: "Đón khách & Khai tiệc",
       },
     ],
+    dresscode: false,
   },
 };
 

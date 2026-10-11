@@ -207,6 +207,31 @@
     padding-top: max(var(--spacing-section-fit), calc(min(100vw, 40rem) * 0.29));
   }
 
+  /* Khi nhà gái bỏ phần Trang phục thì Hồi âm là section đứng ngay dưới gấu
+     ruy băng — phải mượn luôn đệm trên của .section--after-ribbon, nếu không
+     nơ sà thẳng xuống tiêu đề. Chọn theo thứ tự DOM thay vì thêm prop: cái
+     quyết định là "đứng ngay sau Chương trình", không phải nhà nào. */
+  #agenda + #rsvp {
+    padding-top: max(
+      var(--spacing-section-fit),
+      calc(min(100vw, 40rem) * 0.29),
+      calc(min(100vw, 40rem) * 0.2 + 1.5rem)
+    );
+  }
+
+  /* Hành lang chừa cho đuôi ruy băng.
+     Đệm trên của .section--after-ribbon chỉ đưa chữ xuống dưới DẢI BĂNG
+     ngang; nơ và đuôi thì còn thả tiếp xuống gần hết chiều cao bằng bề ngang
+     trang, bám mép phải từ khoảng 88% bề ngang trở ra. Dòng chữ chạy hết
+     gutter là chạm vào đó — trên máy chữ to hơn một nhịp thì chữ cuối dòng
+     nằm hẳn dưới dải băng và không đọc được nữa.
+
+     Chỉ thu những khối nằm trong tầm đuôi băng (tiêu đề + đoạn mở), không thu
+     cả section: bảng màu phía dưới đã sát nhau, thu thêm là nhãn vỡ dòng. */
+  .section--after-ribbon .ribbon-clear {
+    padding-inline: 8%;
+  }
+
   /* Nội dung bên trong section — luôn nằm trên decor */
   .section-inner {
     position: relative;

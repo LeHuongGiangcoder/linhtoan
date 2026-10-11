@@ -14,8 +14,9 @@ import { DEFAULT_PARTY, PARTIES, type PartyId } from "@/lib/content";
  * `guest` có khi thiệp mở bằng link riêng: form RSVP điền sẵn tên và ghi phản
  * hồi vào đúng hàng của khách đó trong Google Sheet.
  *
- * `party` là nhà của khách, đọc từ cột "Nhà" trong Sheet. Hai nhà chỉ khác
- * nhau ở phần Thời gian & Địa điểm và Chương trình; Dresscode dùng chung.
+ * `party` là nhà của khách, đọc từ cột "Nhà" trong Sheet. Hai nhà khác nhau ở
+ * phần Thời gian & Địa điểm, Chương trình, và việc có phần Trang phục hay
+ * không (nhà gái không đặt dresscode).
  */
 export function Party({
   party = DEFAULT_PARTY,
@@ -27,7 +28,7 @@ export function Party({
     <>
       <TimeVenue party={p} />
       <Agenda agenda={p.agenda} />
-      <Dresscode />
+      {p.dresscode ? <Dresscode /> : null}
       <Rsvp party={p} guest={guest} />
     </>
   );
