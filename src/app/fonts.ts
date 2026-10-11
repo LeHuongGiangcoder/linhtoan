@@ -1,5 +1,4 @@
 import localFont from "next/font/local";
-import { Cormorant_Garamond } from "next/font/google";
 
 /** Heading — DFVN TAN Mon Cheri (Việt hoá, có dấu đầy đủ) */
 export const moncheri = localFont({
@@ -17,13 +16,14 @@ export const moncheri = localFont({
  * như một nét nên "2026" hay bị đọc nhầm thành "2020". Cormorant Garamond giữ
  * đúng chất serif thanh mảnh, tương phản cao của khối chữ tên cô dâu chú rể,
  * nhưng chữ số là dạng lining rõ ràng — giãn chữ rộng là đọc được ngay.
+ *
+ * Tự host bằng localFont để không phụ thuộc vào Google Fonts API khi build,
+ * tránh lỗi Turbopack ("next/font/google queries have exactly one entry") trên Vercel.
  */
-export const dateFont = Cormorant_Garamond({
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600"],
+export const dateFont = localFont({
+  src: "../../public/font/Cormorant_Garamond/CormorantGaramond-VariableFont_wght.ttf",
   variable: "--font-date",
   display: "swap",
-  adjustFontFallback: false,
   fallback: ["Didot", "Cormorant Garamond", "Georgia", "serif"],
 });
 
