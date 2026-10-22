@@ -994,6 +994,19 @@
     letter-spacing: 0.02em;
   }
 
+  /* Ngày âm: dòng phụ dưới thứ và giờ, nhỏ và nhạt hơn để không tranh chỗ
+     với mốc giờ — chỉ hiện ở bên nào gia chủ có đưa ngày âm. */
+  .time-lunar {
+    margin: 0.35em 0 0;
+    font-family: var(--font-body);
+    font-size: 0.95em;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--color-olive-soft);
+  }
+
   /* Lịch nhỏ: đúng hai hàng — thứ và ngày. Số cột do component đặt.
      Giới hạn bề ngang để năm cột đứng thành một cụm giữa vòm, không dạt ra
      sát hai trụ khung. */

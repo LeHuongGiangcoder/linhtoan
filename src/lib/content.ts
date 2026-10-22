@@ -64,6 +64,13 @@ export type Party = {
   dateDisplay: string;
   /** "Chủ Nhật, ngày 29 tháng 11 năm 2026" — dùng ở tiêu đề trang */
   dateFull: string;
+  /**
+   * Ngày âm của buổi tiệc — "Tức ngày 21 tháng 10 năm Bính Ngọ".
+   *
+   * Không bắt buộc: chỉ bên nào gia chủ đưa ngày âm thì mới hiện dòng này,
+   * tự quy đổi cho bên còn lại là ghi hộ gia chủ một thứ họ không nhờ.
+   */
+  lunarDate?: string;
   time: string;
   /**
    * Mốc giờ đầy đủ kèm múi giờ Việt Nam — lịch nhỏ và dòng tháng/năm ở phần
@@ -94,6 +101,7 @@ export const PARTIES: Record<PartyId, Party> = {
     dateShort: "29 . 11 . 2026",
     dateDisplay: "29.11.2026",
     dateFull: "Chủ Nhật, ngày 29 tháng 11 năm 2026",
+    lunarDate: "Tức ngày 21 tháng 10 năm Bính Ngọ",
     time: "11:00",
     startsAt: "2026-11-29T11:00:00+07:00",
     hall: "Sảnh Khánh Tiết",
