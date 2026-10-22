@@ -74,9 +74,6 @@ export function TimeVenue({
               </span>
               <span className="time-when-hour">{party.time}</span>
             </p>
-            {party.lunarDate ? (
-              <p className="time-lunar">{party.lunarDate}</p>
-            ) : null}
           </Reveal>
         </div>
       </div>

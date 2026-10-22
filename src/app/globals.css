@@ -359,6 +359,21 @@
     color: var(--color-olive);
   }
 
+  /* Ngày âm ngay dưới ngày dương ở hero. Cùng họ chữ với .date-text nên hai
+     dòng đọc liền một mạch, nhỏ và nhạt hơn để ngày dương vẫn là dòng chính.
+     Không viết hoa như .date-sub: đây là một câu, không phải nhãn. */
+  .date-lunar {
+    margin: 0.55rem 0 0;
+    font-family: var(--font-date);
+    font-size: clamp(0.9rem, 3.6vw, 1.05rem);
+    font-weight: 500;
+    font-variant-numeric: lining-nums;
+    letter-spacing: 0.06em;
+    line-height: 1.35;
+    text-wrap: balance;
+    color: var(--color-olive-soft);
+  }
+
   /* Thứ + giờ ngay dưới ngày ở hero */
   .date-sub {
     font-family: var(--font-date);
@@ -994,18 +1009,6 @@
     letter-spacing: 0.02em;
   }
 
-  /* Ngày âm: dòng phụ dưới thứ và giờ, nhỏ và nhạt hơn để không tranh chỗ
-     với mốc giờ — chỉ hiện ở bên nào gia chủ có đưa ngày âm. */
-  .time-lunar {
-    margin: 0.35em 0 0;
-    font-family: var(--font-body);
-    font-size: 0.95em;
-    font-style: italic;
-    letter-spacing: 0.04em;
-    line-height: 1.3;
-    text-align: center;
-    color: var(--color-olive-soft);
-  }
 
   /* Lịch nhỏ: đúng hai hàng — thứ và ngày. Số cột do component đặt.
      Giới hạn bề ngang để năm cột đứng thành một cụm giữa vòm, không dạt ra

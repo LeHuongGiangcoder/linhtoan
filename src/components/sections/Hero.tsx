@@ -70,6 +70,12 @@ export function Hero({ guestName, party = DEFAULT_PARTY }: HeroProps = {}) {
             tranh xuống theo. */}
         <Reveal delay={4} className="relative top-6 mt-5">
           <p className="date-text date-text--hero">{PARTIES[party].dateDisplay}</p>
+          {/* Ngày âm đứng ngay dưới ngày dương, nơi nền hero còn trống. Trước
+              nó nằm trong khung vòm ở phần Thời gian — đúng chỗ tranh rậm chi
+              tiết nhất nên chữ chìm vào nền. */}
+          {PARTIES[party].lunarDate ? (
+            <p className="date-lunar">{PARTIES[party].lunarDate}</p>
+          ) : null}
         </Reveal>
 
         <Reveal delay={5} className="relative top-6 mt-3">
