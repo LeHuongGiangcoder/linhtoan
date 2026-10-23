@@ -77,10 +77,6 @@ export function Hero({ guestName, party = DEFAULT_PARTY }: HeroProps = {}) {
             <p className="date-lunar">{PARTIES[party].lunarDate}</p>
           ) : null}
         </Reveal>
-
-        <Reveal delay={5} className="relative top-6 mt-3">
-          <p className="eyebrow">{COUPLE.city}</p>
-        </Reveal>
       </div>
 
       {/* Tranh lễ đường — để nguyên bề cao thật, không cắt. Section vì thế cao

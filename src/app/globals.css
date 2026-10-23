@@ -364,9 +364,10 @@
      Không viết hoa như .date-sub: đây là một câu, không phải nhãn. */
   .date-lunar {
     margin: 0.55rem 0 0;
-    font-family: var(--font-date);
+    font-family: var(--font-body);
     font-size: clamp(0.9rem, 3.6vw, 1.05rem);
     font-weight: 500;
+    font-style: italic;
     font-variant-numeric: lining-nums;
     letter-spacing: 0.06em;
     line-height: 1.35;
