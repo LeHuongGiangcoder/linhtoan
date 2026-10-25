@@ -146,3 +146,34 @@ thì thành hàng mới.
 Khách đổi ý thì phản hồi mới ghi đè lên đúng hàng cũ. Khách vào thẳng trang
 chủ không qua link riêng thì được nối thành hàng mới, và script cấp luôn
 `No` / `Slug` / `Link` cho hàng đó.
+
+## 6. Khi thiệp hiện "Đang tải"
+
+Màn "Đang tải" (`GuestUnavailable`) nghĩa là site KHÔNG đọc được danh sách
+khách. Nó cố ý chặn ở đó thay vì dựng đại thiệp nhà trai — đoán trượt nhà là
+khách đi sai cả ngày lẫn địa điểm.
+
+Lý do thật nằm trong **Vercel → Logs**, lọc chữ `Danh sách khách`:
+
+| Dòng log | Nghĩa là | Sửa |
+|---|---|---|
+| `lỗi "unauthorized"` | `SECRET` trong script đã deploy ≠ `RSVP_SHARED_SECRET` trên Vercel | đặt lại cho khớp, rồi **deploy cả hai bên** (xem dưới) |
+| `thiếu mảng guests (các khoá: …)` | URL trỏ vào deployment cũ, chưa biết `action: 'guests'` | Deploy → Manage deployments → ✏️ → **New version** |
+| `trả 401/403` hoặc không phải JSON | Web App để sai *Who has access* | đặt lại **Anyone** |
+| `không gọi được Apps Script` | Apps Script chậm/timeout | thử lại; nếu lặp lại nhiều thì kiểm tra quota của script |
+
+Hai cái bẫy làm người ta sửa mãi không ăn, vì cả hai đều "đã lưu rồi" mà bản
+đang chạy vẫn là bản cũ:
+
+- **Sửa code trong Apps Script editor KHÔNG đổi Web App.** Phải Deploy →
+  Manage deployments → ✏️ → Version: **New version** → Deploy. Giữ nguyên
+  deployment cũ thì URL không đổi, không phải sửa lại biến trên Vercel.
+- **Đổi biến môi trường trên Vercel KHÔNG áp dụng cho bản đang chạy.** Phải
+  **Redeploy**.
+
+Kết quả gọi Apps Script được cache 5 phút (`TTL_SECONDS` trong
+`src/lib/guests.ts`), nên sửa xong vẫn có thể thấy "Đang tải" thêm vài phút.
+Redeploy trên Vercel là xoá cache luôn.
+
+> Secret sai làm hỏng CẢ HAI chiều: khách không thấy tên mình, mà phản hồi
+> RSVP gửi lên cũng không ghi được vào sheet.
