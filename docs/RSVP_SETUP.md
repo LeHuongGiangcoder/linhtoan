@@ -13,7 +13,7 @@ cho một khách đã nhận link cũng không làm hỏng link của họ.
 |-----|---------|---------|
 | `No` | tự sinh | số thứ tự **và là mã khách** — 3 chữ số (`001`, `002`…) |
 | `Name` | **bạn gõ** | tên hiện trên thiệp — có dấu tiếng Việt thoải mái |
-| `Nhà` | **bạn chọn** | `Nhà trai` hoặc `Nhà gái` — quyết định giờ và địa điểm trên thiệp. Bỏ trống thì khách thấy thiệp **nhà trai** |
+| `Nhà` | **bạn chọn** | `Nhà trai`, `Nhà trai 2` hoặc `Nhà gái` — quyết định giờ và địa điểm trên thiệp. `Nhà trai 2` giống nhà trai, chỉ thêm phần **Gia đình** (tên bố mẹ hai bên) ngay sau hero. Bỏ trống thì khách thấy thiệp **nhà trai** |
 | `Slug` | tự sinh | phần đuôi URL, sinh từ tên |
 | `Link` | tự sinh | link để gửi cho khách — copy thẳng từ đây |
 | `Attending` | website ghi | `YES` / `NO` |
@@ -54,6 +54,9 @@ https://linhtoan.gloweb.site/main/ms-tran-thi-bao-ngoc
 
 ## Hai tấm thiệp khác nhau ở đâu
 
+Cột `Nhà trai 2` không có trong bảng: nó dùng đúng mọi thứ của nhà trai, chỉ
+thêm phần Gia đình.
+
 | | Nhà trai | Nhà gái |
 |---|---|---|
 | Ngày | Chủ Nhật 29.11.2026 | **Thứ Bảy 28.11.2026** |
@@ -69,7 +72,8 @@ khách đến nhầm hẳn một ngày, không chỉ nhầm địa điểm.
 Mọi phần còn lại — lời chào, dresscode, lời cảm ơn, form RSVP — dùng chung.
 Nội dung hai tấm nằm ở `PARTIES` trong `src/lib/content.ts`.
 
-Xem thử: `/preview/party` (nhà trai) và `/preview/party-bride` (nhà gái).
+Xem thử: `/preview/party` (nhà trai), `/preview/party-groom2` (nhà trai có
+phần Gia đình) và `/preview/party-bride` (nhà gái).
 Từng phần riêng: `hero-bride`, `time-venue-bride`, `agenda-bride`,
 `thank-you-bride`.
 

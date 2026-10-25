@@ -21,6 +21,10 @@ export function isEventPath(value: string): boolean {
  * Cô dâu chú rể gõ tay cột này nên nhận mọi cách viết thường gặp: "Nhà gái",
  * "gái", "Gai", "nữ", "bride"… Bỏ trống hoặc gõ gì không hiểu thì về thiệp
  * mặc định, vì thà sai địa điểm cho vài người còn hơn vỡ cả trang.
+ *
+ * "trai2" (hay "nhà trai 2", "groom2") là thiệp nhà trai có thêm phần Gia
+ * đình. Phải xét TRƯỚC "trai": chữ số dính liền nên `\btrai\b` không khớp
+ * "trai2", và nếu để sau thì "nhà trai 2" rơi vào nhánh nhà trai thường.
  */
 export function partyFromSide(value: string): PartyId {
   const text = String(value)
@@ -31,6 +35,7 @@ export function partyFromSide(value: string): PartyId {
     .toLowerCase();
   if (!text) return DEFAULT_PARTY;
 
+  if (/\b(trai|nam|chu re|groom)\s*2\b/.test(text)) return "groom2";
   if (/\b(gai|nu|co dau|bride)\b/.test(text)) return "bride";
   if (/\b(trai|nam|chu re|groom)\b/.test(text)) return "groom";
   return DEFAULT_PARTY;

@@ -9,8 +9,10 @@
  *   No · Name · Nhà · Slug · Link · Attending · Guests · Other ·
  *   Meal Preferences · Message · Updated
  *
- * Cột "Nhà" quyết định khách thấy tấm thiệp nào: "Nhà trai" hay "Nhà gái" —
- * hai bên chỉ khác giờ và địa điểm. Bỏ trống thì khách thấy thiệp nhà trai.
+ * Cột "Nhà" quyết định khách thấy tấm thiệp nào: "Nhà trai", "Nhà trai 2"
+ * hay "Nhà gái". Hai nhà khác nhau ở giờ và địa điểm; "Nhà trai 2" giống hệt
+ * nhà trai, chỉ thêm phần Gia đình (tên bố mẹ hai bên) ngay sau hero.
+ * Bỏ trống thì khách thấy thiệp nhà trai.
  * Link riêng của cả hai nhà đều là /main/<slug>, nên đổi cột Nhà cho một
  * khách KHÔNG làm hỏng link đã gửi cho họ.
  *
@@ -48,8 +50,8 @@ const SITE_ORIGIN = 'https://linhtoan.gloweb.site';
  */
 const EVENT_KEY = 'main';
 
-/** Hai cách viết được chấp nhận ở cột Nhà — dropdown trong setupSheet. */
-const SIDES = ['Nhà trai', 'Nhà gái'];
+/** Các cách viết được chấp nhận ở cột Nhà — dropdown trong setupSheet. */
+const SIDES = ['Nhà trai', 'Nhà trai 2', 'Nhà gái'];
 
 const HEADERS = [
   'No', 'Name', 'Nhà', 'Slug', 'Link',

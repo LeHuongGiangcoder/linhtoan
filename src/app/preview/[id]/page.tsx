@@ -4,6 +4,7 @@ import { Hero } from "@/components/sections/Hero";
 import { TimeVenue } from "@/components/sections/TimeVenue";
 import { Agenda } from "@/components/sections/Agenda";
 import { Dresscode } from "@/components/sections/Dresscode";
+import { Families } from "@/components/sections/Families";
 import { Rsvp } from "@/components/sections/Rsvp";
 import { ThankYou } from "@/components/sections/ThankYou";
 import { Party } from "@/components/sections/Party";
@@ -31,6 +32,7 @@ const SECTIONS: Record<string, () => React.ReactNode> = {
       }}
     />
   ),
+  families: Families,
   "thank-you": ThankYou,
   /** Tấm chắn khi không tra được danh sách khách */
   unavailable: GuestUnavailable,
@@ -39,6 +41,8 @@ const SECTIONS: Record<string, () => React.ReactNode> = {
   /** Thiệp nhà gái: khác giờ, khác địa điểm, khác chương trình */
   "party-bride": () => <Party party="bride" />,
   "time-venue-bride": () => <TimeVenue party={PARTIES.bride} />,
+  /** Thiệp nhà trai bản 2: như nhà trai, thêm phần Gia đình ngay sau hero */
+  "party-groom2": () => <Party party="groom2" />,
   "agenda-bride": () => <Agenda agenda={PARTIES.bride.agenda} />,
   /** Hai nhà hai ngày khác nhau — ngày ở hero và chân thiệp phải theo nhà */
   "hero-bride": () => <Hero guestName="Nguyễn Văn A" party="bride" />,

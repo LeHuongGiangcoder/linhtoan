@@ -39,7 +39,33 @@ export const HERO = {
  * phải do đường dẫn: link riêng của mọi khách vẫn là /main/<slug> như cũ, nên
  * những link đã gửi đi trước khi tách thiệp vẫn sống nguyên.
  */
-export type PartyId = "groom" | "bride";
+/**
+ * Hai bên gia đình — tên bố mẹ và nơi ở, dùng cho phần Gia đình ngay sau hero.
+ *
+ * Chỉ tấm thiệp nào bật `families` mới hiện khối này (xem `Party.families`).
+ */
+export const FAMILIES = {
+  groom: {
+    label: "Nhà trai",
+    father: "Ông Phạm Xuân Kiêm",
+    mother: "Bà Trịnh Thị Năm",
+    address: "CC Discovery, 302 Đ. Cầu Giấy, P. Cầu Giấy, TP. Hà Nội",
+  },
+  bride: {
+    label: "Nhà gái",
+    father: "Ông Tống Thanh Dương",
+    mother: "Bà Tống Thị Huệ",
+    address: "Tiên Phương, P. Chương Mỹ, TP. Hà Nội",
+  },
+};
+
+/**
+ * `groom2` là thiệp nhà trai CÓ thêm phần Gia đình — mọi thứ còn lại (ngày,
+ * giờ, địa điểm, chương trình) giống hệt `groom`. Tách thành một id riêng chứ
+ * không thêm tham số, để cột "Nhà" trong Sheet vẫn là thứ duy nhất quyết định
+ * khách thấy tấm nào: gõ "trai2" là ra tấm có tên bố mẹ.
+ */
+export type PartyId = "groom" | "groom2" | "bride";
 
 /** Khách chưa ghi "Nhà", hoặc mở thẳng trang chủ, thì thấy tấm này. */
 export const DEFAULT_PARTY: PartyId = "groom";
@@ -85,52 +111,70 @@ export type Party = {
   /** Chương trình của riêng buổi tiệc này — giờ phải khớp với `time`. */
   agenda: AgendaItem[];
   /**
+   * Có hiện phần Gia đình (tên bố mẹ hai bên) ngay sau hero hay không. Chỉ
+   * thiệp `groom2` bật — các tấm còn lại giữ nguyên như trước.
+   */
+  families?: boolean;
+  /**
    * Có hiện phần Trang phục hay không. Nhà gái không đặt dresscode, mà phần
    * này nằm giữa thiệp nên không thể "để trống" — phải bỏ hẳn section.
    */
   dresscode: boolean;
 };
 
+/**
+ * Nhà trai — giữ nguyên như tấm thiệp trước khi tách.
+ *
+ * Tách ra khỏi `PARTIES` để `groom2` sao lại được bằng spread: hai tấm chỉ
+ * khác đúng phần Gia đình, chép tay lần hai là sớm muộn cũng lệch giờ.
+ */
+const GROOM: Party = {
+  id: "groom",
+  tab: "Tiệc chính",
+  event: "Tiệc cưới",
+  weekday: "Chủ Nhật",
+  dateShort: "29 . 11 . 2026",
+  dateDisplay: "29.11.2026",
+  dateFull: "Chủ Nhật, ngày 29 tháng 11 năm 2026",
+  lunarDate: "Tức ngày 21 tháng 10 năm Bính Ngọ",
+  time: "11:00",
+  startsAt: "2026-11-29T11:00:00+07:00",
+  hall: "Sảnh Khánh Tiết",
+  venue: "Trung tâm Hội nghị Quốc gia",
+  address: "57 Phạm Hùng, Mễ Trì, Nam Từ Liêm, Hà Nội",
+  city: "Hà Nội",
+  // Ghim thẳng vào địa điểm bằng CID của chính nó trên Google Maps, không
+  // phải link tìm kiếm theo tên: tìm kiếm thì mỗi máy ra một kết quả đầu
+  // khác nhau, còn CID luôn mở đúng một ghim.
+  mapUrl: "https://maps.google.com/?cid=14669039340776990556",
+  agenda: [
+    {
+      time: "10:30",
+      title: "Chào đón khách mời",
+      desc: "Chụp ảnh check-in photobooth sảnh ballroom cùng khách mời",
+    },
+    {
+      time: "11:00",
+      title: "Nghi thức lễ cưới",
+      desc: "Cắt bánh, rót rượu — nghi thức làm lễ",
+    },
+    {
+      time: "11:30",
+      title: "Khai tiệc",
+      desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
+    },
+  ],
+  dresscode: true,
+};
+
 export const PARTIES: Record<PartyId, Party> = {
-  /** Nhà trai — giữ nguyên như tấm thiệp trước khi tách. */
-  groom: {
-    id: "groom",
-    tab: "Tiệc chính",
-    event: "Tiệc cưới",
-    weekday: "Chủ Nhật",
-    dateShort: "29 . 11 . 2026",
-    dateDisplay: "29.11.2026",
-    dateFull: "Chủ Nhật, ngày 29 tháng 11 năm 2026",
-    lunarDate: "Tức ngày 21 tháng 10 năm Bính Ngọ",
-    time: "11:00",
-    startsAt: "2026-11-29T11:00:00+07:00",
-    hall: "Sảnh Khánh Tiết",
-    venue: "Trung tâm Hội nghị Quốc gia",
-    address: "57 Phạm Hùng, Mễ Trì, Nam Từ Liêm, Hà Nội",
-    city: "Hà Nội",
-    // Ghim thẳng vào địa điểm bằng CID của chính nó trên Google Maps, không
-    // phải link tìm kiếm theo tên: tìm kiếm thì mỗi máy ra một kết quả đầu
-    // khác nhau, còn CID luôn mở đúng một ghim.
-    mapUrl: "https://maps.google.com/?cid=14669039340776990556",
-    agenda: [
-      {
-        time: "10:30",
-        title: "Chào đón khách mời",
-        desc: "Chụp ảnh check-in photobooth sảnh ballroom cùng khách mời",
-      },
-      {
-        time: "11:00",
-        title: "Nghi thức lễ cưới",
-        desc: "Cắt bánh, rót rượu — nghi thức làm lễ",
-      },
-      {
-        time: "11:30",
-        title: "Khai tiệc",
-        desc: "Mở tiệc chiêu đãi và gửi lời cảm ơn tới quan khách",
-      },
-    ],
-    dresscode: true,
-  },
+  groom: GROOM,
+
+  /**
+   * Nhà trai bản 2 — y hệt nhà trai, chỉ thêm phần Gia đình (tên bố mẹ hai
+   * bên) ngay sau hero. Khách vào tấm này khi cột "Nhà" ghi "trai2".
+   */
+  groom2: { ...GROOM, id: "groom2", families: true },
 
   /** Nhà gái — trước nhà trai một ngày, khác cả giờ lẫn địa điểm. */
   bride: {

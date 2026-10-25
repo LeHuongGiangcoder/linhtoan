@@ -577,6 +577,43 @@
     opacity: 0.85;
   }
 
+  /* ─────────── Phần Gia đình (thiệp nhà trai bản 2) ─────────── */
+
+  /* Tên bố mẹ: chữ display như tên địa điểm, nhưng nhỏ hơn một bậc để không
+     tranh chỗ với tên cô dâu chú rể ở hero ngay phía trên. */
+  .family-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    line-height: 1.45;
+    font-weight: 400;
+    color: var(--color-olive);
+    margin: 0;
+  }
+
+  .family-side > .eyebrow {
+    margin-bottom: 0.6rem;
+  }
+
+  .family-address {
+    margin-top: 0.6rem;
+    color: var(--color-olive-soft);
+  }
+
+  /* Vạch dọc ngăn hai nhà. Phải khai `display: block`: .rule căn giữa bằng
+     margin-inline, mà margin ngang không ăn vào một span inline. */
+  .family-rule {
+    display: block;
+    width: 1px;
+    height: 2rem;
+    margin: 1.75rem auto;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--color-line),
+      transparent
+    );
+  }
+
   /* Dấu nối dùng chung: tên couple, mốc agenda */
   .cross-mark {
     display: block;
