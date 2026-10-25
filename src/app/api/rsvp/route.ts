@@ -25,8 +25,10 @@ type Reply = { ok: true } | { ok: false; error: string };
 const reply = (body: Reply, status = 200) => Response.json(body, { status });
 
 export async function POST(request: Request) {
-  const url = process.env.RSVP_WEBHOOK_URL;
-  const secret = process.env.RSVP_SHARED_SECRET;
+  // Trần hai đầu như bên `loadGuests`: ký tự trắng thừa lúc dán vào Vercel là
+  // đủ để Apps Script trả "unauthorized".
+  const url = process.env.RSVP_WEBHOOK_URL?.trim();
+  const secret = process.env.RSVP_SHARED_SECRET?.trim();
   if (!url || !secret) {
     return reply({ ok: false, error: "not-configured" }, 503);
   }

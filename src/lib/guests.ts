@@ -170,8 +170,12 @@ export type GuestLookup =
  * địa điểm, nên hỏng ở đây nghiêm trọng hơn trước khi tách thiệp.
  */
 const loadGuests = cache(async function loadGuests(): Promise<Guest[] | null> {
-  const url = process.env.RSVP_WEBHOOK_URL;
-  const secret = process.env.RSVP_SHARED_SECRET;
+  // `.trim()` không thừa: dán giá trị vào ô Environment Variables của Vercel
+  // rất dễ kéo theo một dấu xuống dòng hoặc dấu cách ở cuối. Mắt thường không
+  // thấy, mà Apps Script so secret bằng `!==` nên lệch một ký tự trắng là trả
+  // "unauthorized" — y hệt như gõ sai hẳn chuỗi.
+  const url = process.env.RSVP_WEBHOOK_URL?.trim();
+  const secret = process.env.RSVP_SHARED_SECRET?.trim();
   if (!url || !secret) return lastGood;
 
   for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
