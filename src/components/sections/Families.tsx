@@ -1,5 +1,4 @@
 import { Decor } from "@/components/Decor";
-import { Divider } from "@/components/Divider";
 import { Reveal } from "@/components/Reveal";
 import { FAMILIES } from "@/lib/content";
 
@@ -41,12 +40,6 @@ export function Families() {
       <Decor id="el-46" width="26%" top="6%" right="2%" className="motion-float" />
 
       <div className="section-inner text-center">
-        <Reveal className="section-head">
-          <p className="eyebrow">Trân trọng báo tin</p>
-          <h2 className="display-2">Gia đình</h2>
-          <Divider />
-        </Reveal>
-
         <Side
           label={FAMILIES.groom.label}
           father={FAMILIES.groom.father}

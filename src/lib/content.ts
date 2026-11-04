@@ -116,6 +116,15 @@ export type Party = {
    */
   families?: boolean;
   /**
+   * Lời chào riêng ở hero — bỏ trống thì dùng `HERO` chung. Chỉ thiệp nào gia
+   * chủ muốn đổi giọng văn (hiện là `groom2`) mới khai.
+   *
+   * `nameOnNewLine`: tên khách xuống dòng riêng, dưới lời chào.
+   */
+  hero?: { greeting: string; invite: string; nameOnNewLine?: boolean };
+  /** Ẩn đoạn "Sự hiện diện của quý khách…" ở phần Thank you. */
+  hideThanksNote?: boolean;
+  /**
    * Có hiện phần Trang phục hay không. Nhà gái không đặt dresscode, mà phần
    * này nằm giữa thiệp nên không thể "để trống" — phải bỏ hẳn section.
    */
@@ -174,7 +183,17 @@ export const PARTIES: Record<PartyId, Party> = {
    * Nhà trai bản 2 — y hệt nhà trai, chỉ thêm phần Gia đình (tên bố mẹ hai
    * bên) ngay sau hero. Khách vào tấm này khi cột "Nhà" ghi "trai2".
    */
-  groom2: { ...GROOM, id: "groom2", families: true },
+  groom2: {
+    ...GROOM,
+    id: "groom2",
+    families: true,
+    hero: {
+      greeting: "Trân trọng kính mời",
+      invite: "Đến dự Lễ Thành Hôn của hai con chúng tôi",
+      nameOnNewLine: true,
+    },
+    hideThanksNote: true,
+  },
 
   /** Nhà gái — trước nhà trai một ngày, khác cả giờ lẫn địa điểm. */
   bride: {
