@@ -47,6 +47,8 @@ const SECTIONS: Record<string, () => React.ReactNode> = {
   /** Hai nhà hai ngày khác nhau — ngày ở hero và chân thiệp phải theo nhà */
   "hero-bride": () => <Hero guestName="Nguyễn Văn A" party="bride" />,
   "thank-you-bride": () => <ThankYou party="bride" />,
+  "hero-groom2": () => <Hero guestName="Nguyễn Văn A" party="groom2" />,
+  "thank-you-groom2": () => <ThankYou party="groom2" />,
 };
 
 export function generateStaticParams() {

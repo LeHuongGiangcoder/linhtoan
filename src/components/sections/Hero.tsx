@@ -14,6 +14,12 @@ type HeroProps = {
 // Mặc định `{}` để Hero vẫn gọi được không tham số — route /preview/[id] gom
 // các section vào một map `() => ReactNode`, thiếu nó là build TS đứt.
 export function Hero({ guestName, party = DEFAULT_PARTY }: HeroProps = {}) {
+  // Thiệp nào khai `hero` riêng (nhà trai bản 2) thì dùng lời chào đó.
+  const copy = PARTIES[party].hero;
+  const greeting = copy?.greeting ?? HERO.greeting;
+  const invite = copy?.invite ?? HERO.invite;
+  const name = guestName?.trim() || HERO.guest;
+
   return (
     <section
       id="hero"
@@ -42,12 +48,14 @@ export function Hero({ guestName, party = DEFAULT_PARTY }: HeroProps = {}) {
       <div className="section-inner flex flex-1 flex-col items-center justify-center pt-[14vh] pb-2 text-center">
         <Reveal className="max-w-[17.5rem]">
           <p className="guest-line">
-            {HERO.greeting} {guestName?.trim() || HERO.guest}
+            {greeting}
+            {copy?.nameOnNewLine ? <br /> : " "}
+            {name}
           </p>
         </Reveal>
 
         <Reveal delay={1} className="mt-3 max-w-[19rem]">
-          <p className="invite-line">{HERO.invite}</p>
+          <p className="invite-line">{invite}</p>
         </Reveal>
 
         {/* Chú rể trước, cô dâu sau — một khối chữ đã có sẵn chữ "and" nối

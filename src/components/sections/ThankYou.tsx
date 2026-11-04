@@ -44,13 +44,15 @@ export function ThankYou({
           <Divider />
         </Reveal>
 
-        <Reveal delay={2}>
-          <p className="body-text center text-balance">
-            Sự hiện diện của quý khách là món quà ý nghĩa nhất với gia đình
-            chúng tôi. Cảm ơn vì đã đồng hành và chúc phúc cho chặng đường phía
-            trước.
-          </p>
-        </Reveal>
+        {p.hideThanksNote ? null : (
+          <Reveal delay={2}>
+            <p className="body-text center text-balance">
+              Sự hiện diện của quý khách là món quà ý nghĩa nhất với gia đình
+              chúng tôi. Cảm ơn vì đã đồng hành và chúc phúc cho chặng đường
+              phía trước.
+            </p>
+          </Reveal>
+        )}
 
         <Reveal delay={3} className="mt-8 flex flex-col items-center gap-3">
           <span className="rule !h-8" />
