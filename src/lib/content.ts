@@ -106,6 +106,8 @@ export type Party = {
   hall: string;
   venue: string;
   address: string;
+  /** Dặn thêm cách vào, in ngay dưới địa chỉ. Để trống nếu không cần. */
+  addressNote?: string;
   city: string;
   mapUrl: string;
   /** Chương trình của riêng buổi tiệc này — giờ phải khớp với `time`. */
@@ -151,11 +153,11 @@ const GROOM: Party = {
   hall: "Sảnh Khánh Tiết",
   venue: "Trung tâm Hội nghị Quốc gia",
   address: "57 Phạm Hùng, Mễ Trì, Nam Từ Liêm, Hà Nội",
+  addressNote: "(Lối vào theo cổng số 3 đường Phạm Hùng)",
   city: "Hà Nội",
-  // Ghim thẳng vào địa điểm bằng CID của chính nó trên Google Maps, không
-  // phải link tìm kiếm theo tên: tìm kiếm thì mỗi máy ra một kết quả đầu
-  // khác nhau, còn CID luôn mở đúng một ghim.
-  mapUrl: "https://maps.google.com/?cid=14669039340776990556",
+  // Link ghim sẵn do nhà trai gửi — mở đúng điểm đón khách, không phải link
+  // tìm kiếm theo tên (mỗi máy ra một kết quả đầu khác nhau).
+  mapUrl: "https://maps.app.goo.gl/qWxrZGtR9tbe8gc77",
   agenda: [
     {
       time: "10:30",

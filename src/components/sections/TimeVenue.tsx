@@ -100,6 +100,12 @@ export function TimeVenue({
           ) : null}
           <p className="body-text body-text--sm text-balance">
             {party.address}
+            {party.addressNote ? (
+              <>
+                <br />
+                {party.addressNote}
+              </>
+            ) : null}
           </p>
         </Reveal>
 
